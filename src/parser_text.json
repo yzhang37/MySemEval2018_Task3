@@ -1,0 +1,521 @@
+{
+  "sentences": [
+    {
+      "collapsed-dependencies": [
+        {
+          "dep": "ROOT",
+          "governor": 0,
+          "dependent": 12,
+          "governorGloss": "ROOT",
+          "dependentGloss": "add"
+        },
+        {
+          "dep": "nsubj",
+          "governor": 12,
+          "dependent": 1,
+          "governorGloss": "add",
+          "dependentGloss": "@j0nathandavis"
+        },
+        {
+          "dep": "nsubj",
+          "governor": 3,
+          "dependent": 2,
+          "governorGloss": "who?",
+          "dependentGloss": "They"
+        },
+        {
+          "dep": "acl:relcl",
+          "governor": 1,
+          "dependent": 3,
+          "governorGloss": "@j0nathandavis",
+          "dependentGloss": "who?"
+        },
+        {
+          "dep": "amod",
+          "governor": 7,
+          "dependent": 4,
+          "governorGloss": "opinions",
+          "dependentGloss": "Stupid"
+        },
+        {
+          "dep": "cc",
+          "governor": 4,
+          "dependent": 5,
+          "governorGloss": "Stupid",
+          "dependentGloss": "and"
+        },
+        {
+          "dep": "conj:and",
+          "governor": 4,
+          "dependent": 6,
+          "governorGloss": "Stupid",
+          "dependentGloss": "partial"
+        },
+        {
+          "dep": "dobj",
+          "governor": 3,
+          "dependent": 7,
+          "governorGloss": "who?",
+          "dependentGloss": "opinions"
+        },
+        {
+          "dep": "case",
+          "governor": 10,
+          "dependent": 8,
+          "governorGloss": "one",
+          "dependentGloss": "like"
+        },
+        {
+          "dep": "det",
+          "governor": 10,
+          "dependent": 9,
+          "governorGloss": "one",
+          "dependentGloss": "this"
+        },
+        {
+          "dep": "nmod:like",
+          "governor": 3,
+          "dependent": 10,
+          "governorGloss": "who?",
+          "dependentGloss": "one"
+        },
+        {
+          "dep": "advmod",
+          "governor": 10,
+          "dependent": 11,
+          "governorGloss": "one",
+          "dependentGloss": "only"
+        },
+        {
+          "dep": "dobj",
+          "governor": 12,
+          "dependent": 13,
+          "governorGloss": "add",
+          "dependentGloss": "noise"
+        },
+        {
+          "dep": "case",
+          "governor": 16,
+          "dependent": 14,
+          "governorGloss": "debate.",
+          "dependentGloss": "to"
+        },
+        {
+          "dep": "det",
+          "governor": 16,
+          "dependent": 15,
+          "governorGloss": "debate.",
+          "dependentGloss": "any"
+        },
+        {
+          "dep": "nmod:to",
+          "governor": 12,
+          "dependent": 16,
+          "governorGloss": "add",
+          "dependentGloss": "debate."
+        }
+      ],
+      "tokens": [
+        {
+          "pos": "NN",
+          "characterOffsetEnd": 14,
+          "word": "@j0nathandavis",
+          "characterOffsetBegin": 0,
+          "lemma": "@j0nathandavis",
+          "index": 1,
+          "originalText": "@j0nathandavis",
+          "ner": "O"
+        },
+        {
+          "pos": "PRP",
+          "characterOffsetEnd": 19,
+          "word": "They",
+          "characterOffsetBegin": 15,
+          "lemma": "they",
+          "index": 2,
+          "originalText": "They",
+          "ner": "O"
+        },
+        {
+          "pos": "VBP",
+          "characterOffsetEnd": 24,
+          "word": "who?",
+          "characterOffsetBegin": 20,
+          "lemma": "who?",
+          "index": 3,
+          "originalText": "who?",
+          "ner": "O"
+        },
+        {
+          "pos": "JJ",
+          "characterOffsetEnd": 31,
+          "word": "Stupid",
+          "characterOffsetBegin": 25,
+          "lemma": "stupid",
+          "index": 4,
+          "originalText": "Stupid",
+          "ner": "O"
+        },
+        {
+          "pos": "CC",
+          "characterOffsetEnd": 35,
+          "word": "and",
+          "characterOffsetBegin": 32,
+          "lemma": "and",
+          "index": 5,
+          "originalText": "and",
+          "ner": "O"
+        },
+        {
+          "pos": "JJ",
+          "characterOffsetEnd": 43,
+          "word": "partial",
+          "characterOffsetBegin": 36,
+          "lemma": "partial",
+          "index": 6,
+          "originalText": "partial",
+          "ner": "O"
+        },
+        {
+          "pos": "NNS",
+          "characterOffsetEnd": 52,
+          "word": "opinions",
+          "characterOffsetBegin": 44,
+          "lemma": "opinion",
+          "index": 7,
+          "originalText": "opinions",
+          "ner": "O"
+        },
+        {
+          "pos": "IN",
+          "characterOffsetEnd": 57,
+          "word": "like",
+          "characterOffsetBegin": 53,
+          "lemma": "like",
+          "index": 8,
+          "originalText": "like",
+          "ner": "O"
+        },
+        {
+          "pos": "DT",
+          "characterOffsetEnd": 62,
+          "word": "this",
+          "characterOffsetBegin": 58,
+          "lemma": "this",
+          "index": 9,
+          "originalText": "this",
+          "ner": "O"
+        },
+        {
+          "pos": "CD",
+          "characterOffsetEnd": 66,
+          "normalizedNER": "1.0",
+          "word": "one",
+          "characterOffsetBegin": 63,
+          "lemma": "one",
+          "index": 10,
+          "originalText": "one",
+          "ner": "NUMBER"
+        },
+        {
+          "pos": "RB",
+          "characterOffsetEnd": 71,
+          "word": "only",
+          "characterOffsetBegin": 67,
+          "lemma": "only",
+          "index": 11,
+          "originalText": "only",
+          "ner": "O"
+        },
+        {
+          "pos": "VBP",
+          "characterOffsetEnd": 75,
+          "word": "add",
+          "characterOffsetBegin": 72,
+          "lemma": "add",
+          "index": 12,
+          "originalText": "add",
+          "ner": "O"
+        },
+        {
+          "pos": "NN",
+          "characterOffsetEnd": 81,
+          "word": "noise",
+          "characterOffsetBegin": 76,
+          "lemma": "noise",
+          "index": 13,
+          "originalText": "noise",
+          "ner": "O"
+        },
+        {
+          "pos": "TO",
+          "characterOffsetEnd": 84,
+          "word": "to",
+          "characterOffsetBegin": 82,
+          "lemma": "to",
+          "index": 14,
+          "originalText": "to",
+          "ner": "O"
+        },
+        {
+          "pos": "DT",
+          "characterOffsetEnd": 88,
+          "word": "any",
+          "characterOffsetBegin": 85,
+          "lemma": "any",
+          "index": 15,
+          "originalText": "any",
+          "ner": "O"
+        },
+        {
+          "pos": "NN",
+          "characterOffsetEnd": 96,
+          "word": "debate.",
+          "characterOffsetBegin": 89,
+          "lemma": "debate.",
+          "index": 16,
+          "originalText": "debate.",
+          "ner": "O"
+        }
+      ],
+      "index": 0,
+      "parse": "(ROOT\n  (S\n    (NP\n      (NP (NN @j0nathandavis))\n      (SBAR\n        (S\n          (NP (PRP They))\n          (VP (VBP who?)\n            (NP (JJ Stupid)\n              (CC and)\n              (JJ partial) (NNS opinions))\n            (PP (IN like)\n              (NP (DT this) (CD one) (RB only)))))))\n    (VP (VBP add)\n      (NP (NN noise))\n      (PP (TO to)\n        (NP (DT any) (NN debate.))))))",
+      "basic-dependencies": [
+        {
+          "dep": "ROOT",
+          "governor": 0,
+          "dependent": 12,
+          "governorGloss": "ROOT",
+          "dependentGloss": "add"
+        },
+        {
+          "dep": "nsubj",
+          "governor": 12,
+          "dependent": 1,
+          "governorGloss": "add",
+          "dependentGloss": "@j0nathandavis"
+        },
+        {
+          "dep": "nsubj",
+          "governor": 3,
+          "dependent": 2,
+          "governorGloss": "who?",
+          "dependentGloss": "They"
+        },
+        {
+          "dep": "acl:relcl",
+          "governor": 1,
+          "dependent": 3,
+          "governorGloss": "@j0nathandavis",
+          "dependentGloss": "who?"
+        },
+        {
+          "dep": "amod",
+          "governor": 7,
+          "dependent": 4,
+          "governorGloss": "opinions",
+          "dependentGloss": "Stupid"
+        },
+        {
+          "dep": "cc",
+          "governor": 4,
+          "dependent": 5,
+          "governorGloss": "Stupid",
+          "dependentGloss": "and"
+        },
+        {
+          "dep": "conj",
+          "governor": 4,
+          "dependent": 6,
+          "governorGloss": "Stupid",
+          "dependentGloss": "partial"
+        },
+        {
+          "dep": "dobj",
+          "governor": 3,
+          "dependent": 7,
+          "governorGloss": "who?",
+          "dependentGloss": "opinions"
+        },
+        {
+          "dep": "case",
+          "governor": 10,
+          "dependent": 8,
+          "governorGloss": "one",
+          "dependentGloss": "like"
+        },
+        {
+          "dep": "det",
+          "governor": 10,
+          "dependent": 9,
+          "governorGloss": "one",
+          "dependentGloss": "this"
+        },
+        {
+          "dep": "nmod",
+          "governor": 3,
+          "dependent": 10,
+          "governorGloss": "who?",
+          "dependentGloss": "one"
+        },
+        {
+          "dep": "advmod",
+          "governor": 10,
+          "dependent": 11,
+          "governorGloss": "one",
+          "dependentGloss": "only"
+        },
+        {
+          "dep": "dobj",
+          "governor": 12,
+          "dependent": 13,
+          "governorGloss": "add",
+          "dependentGloss": "noise"
+        },
+        {
+          "dep": "case",
+          "governor": 16,
+          "dependent": 14,
+          "governorGloss": "debate.",
+          "dependentGloss": "to"
+        },
+        {
+          "dep": "det",
+          "governor": 16,
+          "dependent": 15,
+          "governorGloss": "debate.",
+          "dependentGloss": "any"
+        },
+        {
+          "dep": "nmod",
+          "governor": 12,
+          "dependent": 16,
+          "governorGloss": "add",
+          "dependentGloss": "debate."
+        }
+      ],
+      "line": 1,
+      "collapsed-ccprocessed-dependencies": [
+        {
+          "dep": "ROOT",
+          "governor": 0,
+          "dependent": 12,
+          "governorGloss": "ROOT",
+          "dependentGloss": "add"
+        },
+        {
+          "dep": "nsubj",
+          "governor": 12,
+          "dependent": 1,
+          "governorGloss": "add",
+          "dependentGloss": "@j0nathandavis"
+        },
+        {
+          "dep": "nsubj",
+          "governor": 3,
+          "dependent": 2,
+          "governorGloss": "who?",
+          "dependentGloss": "They"
+        },
+        {
+          "dep": "acl:relcl",
+          "governor": 1,
+          "dependent": 3,
+          "governorGloss": "@j0nathandavis",
+          "dependentGloss": "who?"
+        },
+        {
+          "dep": "amod",
+          "governor": 7,
+          "dependent": 4,
+          "governorGloss": "opinions",
+          "dependentGloss": "Stupid"
+        },
+        {
+          "dep": "cc",
+          "governor": 4,
+          "dependent": 5,
+          "governorGloss": "Stupid",
+          "dependentGloss": "and"
+        },
+        {
+          "dep": "conj:and",
+          "governor": 4,
+          "dependent": 6,
+          "governorGloss": "Stupid",
+          "dependentGloss": "partial"
+        },
+        {
+          "dep": "amod",
+          "governor": 7,
+          "dependent": 6,
+          "governorGloss": "opinions",
+          "dependentGloss": "partial"
+        },
+        {
+          "dep": "dobj",
+          "governor": 3,
+          "dependent": 7,
+          "governorGloss": "who?",
+          "dependentGloss": "opinions"
+        },
+        {
+          "dep": "case",
+          "governor": 10,
+          "dependent": 8,
+          "governorGloss": "one",
+          "dependentGloss": "like"
+        },
+        {
+          "dep": "det",
+          "governor": 10,
+          "dependent": 9,
+          "governorGloss": "one",
+          "dependentGloss": "this"
+        },
+        {
+          "dep": "nmod:like",
+          "governor": 3,
+          "dependent": 10,
+          "governorGloss": "who?",
+          "dependentGloss": "one"
+        },
+        {
+          "dep": "advmod",
+          "governor": 10,
+          "dependent": 11,
+          "governorGloss": "one",
+          "dependentGloss": "only"
+        },
+        {
+          "dep": "dobj",
+          "governor": 12,
+          "dependent": 13,
+          "governorGloss": "add",
+          "dependentGloss": "noise"
+        },
+        {
+          "dep": "case",
+          "governor": 16,
+          "dependent": 14,
+          "governorGloss": "debate.",
+          "dependentGloss": "to"
+        },
+        {
+          "dep": "det",
+          "governor": 16,
+          "dependent": 15,
+          "governorGloss": "debate.",
+          "dependentGloss": "any"
+        },
+        {
+          "dep": "nmod:to",
+          "governor": 12,
+          "dependent": 16,
+          "governorGloss": "add",
+          "dependentGloss": "debate."
+        }
+      ]
+    }
+  ]
+}
