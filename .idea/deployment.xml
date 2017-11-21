@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="p_seme_t3">
+    <serverData>
+      <paths name="p_absa_n">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/pyCharmSpace/ABSA_N" local="$PROJECT_DIR$/../absa_n" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="p_seme_t3">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/pyCharmSpace/SemEval2018_T3" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="p_sswe">
+        <serverdata>
+          <mappings>
+            <mapping deploy="" local="$PROJECT_DIR$/../ABSA" web="/" />
+            <mapping deploy="" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/pyCharmSpace/deepnl-master" local="$PROJECT_DIR$/../deepnl-master" web="" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="tembusu">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ON_EXPLICIT_SAVE" />
+  </component>
+</project>
