@@ -85,7 +85,7 @@ def changePosTag(pos):
 
 def normalise_tweet(text):
     '''
-        normalise hyperlinks and @_replies or mention to http://someurl and @someuserxx
+        normalise hyperlinks and @_replies or mention to http://someurl and @someuser
         extract the description of emoji and the index of emojis
         replace the slangs of tweet
         normalise the elongated words of tweet
@@ -186,6 +186,8 @@ def preprocess_data(tweet_list):
 
     json.dump(tweet_list, open(config.PROCESSED_TRAIN_B, "w"), indent=2)
     contrast_file_in.close()
+
+
 
 if __name__ == '__main__':
     fp = config.RAW_TRAIN_B
