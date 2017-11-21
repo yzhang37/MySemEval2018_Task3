@@ -1,3 +1,5 @@
 # disable Windows and macOS desktop configuration file
 Desktop.ini
 .DS_Store
+
+.idea
