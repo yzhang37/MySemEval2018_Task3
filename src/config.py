@@ -1,11 +1,23 @@
 # coding: utf-8
 import socket
+import os
+import pwd
+
 hostname = socket.gethostname()
-#if hostname == "precision":
+cur_user = pwd.getpwuid(os.getuid())[0]
 if hostname == "precision":
-    CWD = "/home/feixiang/pyCharmSpace/SemEval2018_T3"
-    PCCMD = "/home/feixiang/pyCharmSpace"
-    LIB_LINEAR_PATH = "/home/feixiang/tools/liblinear-multicore-2.11-1"
+    if cur_user.lower() == "feixiang":
+        CWD = "/home/feixiang/pyCharmSpace/SemEval2018_T3"
+        PCCMD = "/home/feixiang/pyCharmSpace"
+        LIB_LINEAR_PATH = "/home/feixiang/tools/liblinear-multicore-2.11-1"
+    elif cur_user.lower() == "zhenghang":
+        CWD = "/home/zhenghang/SemEval2018_T3"
+        PCCMD = "/home/feixiang/pyCharmSpace"
+        LIB_LINEAR_PATH = "/home/feixiang/tools/liblinear-multicore-2.11-1"
+elif hostname.lower().startswith("l-mbookpro") or hostname.startswith("192.168"):
+    CWD = "/Users/l/Projects/Python/MySemEval2018_Task3"
+    PCCMD = "/Users/l/Projects/External/feixiang/pyCharmSpace"
+    LIB_LINEAR_PATH = "/Users/l/.tools/liblinear-multicore-2.11-1"
 else:
     CWD = "D:/pyCharmSpace/SemEval18_T3"
     LIB_LINEAR_PATH = ""
