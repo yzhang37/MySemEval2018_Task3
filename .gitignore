@@ -2,8 +2,11 @@
 Desktop.ini
 .DS_Store
 
+# disable pycharm files
 .idea
 feature
 result
+__pycache__
 
-
+# frequently make file, ignoring:
+dict
