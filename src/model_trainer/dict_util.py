@@ -1,12 +1,65 @@
 #coding:utf8
 import sys
-sys.path.append("../..")
 import numpy
+import re
+sys.path.append("../..")
+from src import util
+
+
+'''
+unigram 降维操作 (.md)
+已经完成的修建工作：
+
+-[x] !!!, !!!! -> !! …. -> .. ??? -> ??
+-[x] ", "@someuser -> @someuser, "Big -> Big (split)
+-[x] remove \# (tags)
+-[x] \$, \$1.5, \$BIDU?  
+-[ ] &\#8211; 这个什么东西？
+-[x] 'The, 's -> s (split)
+-[x] (Level, (in, (the, (via -> (split)
+-[x] .@someuser -> @someuser (split)
+-[x] 数字, 数字. 数字! 数字: -> (split)
+-[x] 数字单词 ->L (split)
+-[ ] 数字是否要处理掉？
+-[x] @someuser!, @someuser', @someuser? （结尾的) split
+-[x] 单词末尾有标点 (D: 一个字母加单词例外，是表情)
+-[ ] 所有单词统一小写化处理，除了缩写单词 
+-[x] |#…, |单词 -> (split)
+-[x] 单词*标点符号+\| -> (split)
+
+'''
 
 def get_unigram(tw):
     unigram = tw["tokens"]
 
+    # splitting...
+
+    split_reg_list = [
+        ("^([.(|)\"\'\$])([@#]?\w+.*)$", ["\g<1>", "\g<2>"]),                   # 分割前导多余的单个标点符号
+        ("^(\d+)([.,:;!?\'\"\(\)<>]+)$", ["\g<1>", "\g<2>"]),                   # 数字, 数字. 数字! 数字: -> (split)
+        ("^(\d+)([A-Za-z]+)$", ["\g<1>", "\g<2>"]),                             # 数字单词(split)
+        ("^(\w+.*)\|(\w+.*)$", ["\g<1>", "|", "\g<2>"]),                        # 两个字符串被|分割的情况
+        ("^([@#]?[A-Za-z]{2,})([.,:;!?\'\"\(\)<>]+)$", ["\g<1>", "\g<2>"]),     # 单词末尾有标点(D: 一个字母加单词例外，是表情)
+        ("^(.+)(\")$", ["\g<1>", "\g<2>"]),                                     # 右边多了"
+        ("^(\")(.+)$", ["\g<1>", "\g<2>"]),                                     # 左边多了"
+    ]
+    util.split_reg_tokens(unigram, split_reg_list)
+
+    # pruning...
+
+    prune_reg_list = [
+        "^#.*$"                                                                 # 删除所有的tag
+    ]
+    util.delete_reg_tokens(unigram, prune_reg_list)
+
+    # rewriting...
+    rewrite_reg_list = [
+        (r"^([!.?])\1{2,}$", "\g<1>\g<1>"),                                     # !!!, !!!! -> !! …. -> .. ??? -> ??
+        # (r"^(.+)[\x00-\x08\x0E-\x1B]+$", "\g<1>")
+    ]
+    util.rewrite_reg_tokens(unigram, rewrite_reg_list)
     return unigram
+
 
 def get_stem_unigram(tw):
     unigram = tw["stems_n"]

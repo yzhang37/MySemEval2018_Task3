@@ -41,8 +41,8 @@ if __name__ == '__main__':
     train_data = load_traindata() # load training data
     dict_creator = Dict_creator()
     dict_creator.texts = train_data
-    # dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T2, threshold=2)
-    dict_creator.create_dict(dict_util.get_stem_unigram, config.DICT_UNIGRAM_STEM_T2, threshold=2)
+    dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T2, threshold=2)
+    # dict_creator.create_dict(dict_util.get_stem_unigram, config.DICT_UNIGRAM_STEM_T2, threshold=2)
     # dict_creator.create_dict(dict_util.get_bigram, config.DICT_BIGRAM_T3, threshold=3)
     # dict_creator.create_dict(dict_util.get_trigram, config.DICT_TRIGRAM_T5, threshold=5)
 

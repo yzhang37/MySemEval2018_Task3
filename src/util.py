@@ -1,5 +1,6 @@
 #coding:utf-8
 import sys
+import re
 sys.path.append("..")
 from src.feature import Feature
 
@@ -57,6 +58,7 @@ def get_feature_by_feat_list(dict, token_list):
     # print (len(dict))
     return Feature("", len(dict), feat_dict)
 
+
 ''' 合并 feature_list中的所有feature '''
 def mergeFeatures(feature_list, name = ""):
     # print "-"*80
@@ -79,6 +81,41 @@ def mergeFeatures(feature_list, name = ""):
     merged_feature = Feature(name, dimension, {})
     merged_feature.feat_string = feat_string.strip()
     return merged_feature
+
+
+def split_reg_tokens(data_list, split_reg_list):
+    assert(isinstance(data_list, list))
+    assert(len(split_reg_list) < 1 or (isinstance(split_reg_list[0], tuple) and len(split_reg_list[0]) == 2))
+
+    for re_pat, rsub in split_reg_list:
+        rc = re.compile(re_pat)
+
+        i = 0
+        while i < len(data_list):
+            token = data_list[i]
+            if rc.match(token):
+                del data_list[i]
+                for sub_str in rsub:
+                    data_list.insert(i, rc.sub(sub_str, token))
+                    i += 1
+            else:
+                i += 1
+
+
+def rewrite_reg_tokens(data_list, rewrite_reg_list):
+    split_list = []
+    for item in rewrite_reg_list:
+        item = (item[0], [item[1]])
+        split_list.append(item)
+    split_reg_tokens(data_list, split_list)
+
+
+def delete_reg_tokens(data_list, delete_reg_list):
+    split_list = []
+    for item in delete_reg_list:
+        split_list.append((item, []))
+    split_reg_tokens(data_list, split_list)
+
 
 def write_example_list_to_file(example_list, to_file):
     with open(to_file, "w") as fout:
