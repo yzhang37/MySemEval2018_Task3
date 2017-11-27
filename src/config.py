@@ -31,6 +31,7 @@ DICT_PATH = CWD + "/dict"
 FEATURE_PATH = CWD + "/feature"
 MODEL_PATH = CWD + "/model/binary_clf.model"
 RESULT_PATH = CWD + "/result/predict.txt"
+RESULT_MYDIR = os.path.join(CWD, "result")
 
 RAW_TRAIN_A = DATA_PATH + "/train/SemEval2018-T4-train-taskA.txt"
 RAW_TRAIN_B = DATA_PATH + "/train/SemEval2018-T4-train-taskB.txt"
@@ -38,8 +39,8 @@ RAW_TRAIN_B = DATA_PATH + "/train/SemEval2018-T4-train-taskB.txt"
 PROCESSED_TRAIN_A = DATA_PATH + "/train/processed_train_a.json"
 PROCESSED_TRAIN_B = DATA_PATH + "/train/processed_train_b.json"
 
-DICT_UNIGRAM_T2 = DICT_PATH + "/unigram_t2.txt"
-# DICT_UNIGRAM_T2 = "/home/zhenghang/SemEval2018_T3/dict/unigram_t2.txt"
+DICT_UNIGRAM_T2 = os.path.join(DICT_PATH, "unigram_t2.txt")
+DICT_HASHTAG_UNIGRAM_T1 = os.path.join(DICT_PATH, "hashtag_unigram_t1.txt")
 DICT_UNIGRAM_STEM_T2 = DICT_PATH + "/unigram_stem_t2.txt"
 DICT_BIGRAM_T3 = DICT_PATH + "/bigram_t3.txt"
 DICT_TRIGRAM_T5 = DICT_PATH + "/trigram_t5.txt"
