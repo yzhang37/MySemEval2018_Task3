@@ -50,6 +50,7 @@ class Rf_Calculator(object):
         # calc all the label
         rf_dict = {}
         rf_sorted = {}
+        rf_valueDict = {}
         for class_id in self.clsDict.values():
             rf_dict[class_id] = {}
 
@@ -58,11 +59,20 @@ class Rf_Calculator(object):
                 s = rc_sum[value]
                 iRf = self.Rf(c, s)
                 rf_dict[class_id][value] = iRf
+                # find the biggest rf for each word
+                rf_valueDict.setdefault(value, {})
+                rf_valueDict[value].setdefault("cls", [class_id])
+                rf_valueDict[value].setdefault("max_rf", iRf)
+                if iRf > rf_valueDict[value]["max_rf"]:
+                    rf_valueDict[value]["max_rf"] = iRf
+                    rf_valueDict[value]["cls"] = [class_id]
+                elif iRf == rf_valueDict[value]["max_rf"] and class_id not in rf_valueDict[value]["cls"]:
+                    rf_valueDict[value]["cls"].append(class_id)
 
             rf_sorted[class_id] = sorted(list(rf_dict[class_id].items()), key=lambda x:-x[1])
 
         if len(out) > 0:
-            json.dump({"rf_sorted": rf_sorted, "rf_dict": rf_dict}, open(out, "w"))
+            json.dump({"rf_sorted": rf_sorted, "rf_value": rf_valueDict ,"rf_dict": rf_dict}, open(out, "w"))
             print("Data dumped to\n%s" % out)
 
 
