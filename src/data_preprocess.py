@@ -8,6 +8,7 @@ import pickle
 from src import config
 from src.stanfordCoreNLP import StanfordCoreNLP
 from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import TweetTokenizer
 from nltk import PorterStemmer,pos_tag
 
 
@@ -119,8 +120,8 @@ def normalise_tweet(text):
     # print(text, emoji_list)
     return text, emoji_list
 
-def parse_tweet(nlp_server, tweet_dict):
 
+def parse_tweet(nlp_server, tweet_dict):
     clean_text = tweet_dict["clean_tweet"]
     wnl = WordNetLemmatizer()
     portor = PorterStemmer()
@@ -171,8 +172,11 @@ def preprocess_data(tweet_list):
 
     # save a contrast file for raw_tw and clean_tw
     contrast_file_in = open(config.DATA_PATH + "/train/contrast_file.txt", "w")
+    nltk_tweet_tokenizer = TweetTokenizer(preserve_case=True, reduce_len=True, strip_handles=False)
+
     for idx, tw_dict in enumerate(tweet_list):
-        if idx%100 == 0: print(idx)
+        if idx % 100 == 0:
+            print(idx)
         clean_tweet, emoji_list = normalise_tweet(tw_dict["raw_tweet"])
         tw_dict["clean_tweet"], tw_dict["emojis"] = clean_tweet.strip(), emoji_list
 
@@ -183,10 +187,10 @@ def preprocess_data(tweet_list):
         # if idx==100: break
         # print("over!!")
         # break
+        tw_dict["nltk_tokens"] = nltk_tweet_tokenizer.tokenize(tw_dict["raw_tweet"])
 
     json.dump(tweet_list, open(config.PROCESSED_TRAIN_B, "w"), indent=2)
     contrast_file_in.close()
-
 
 
 if __name__ == '__main__':
