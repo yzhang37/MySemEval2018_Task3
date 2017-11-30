@@ -65,12 +65,9 @@ class Rf_Viewer(object):
 
 
 if __name__ == "__main__":
-    work = "A"
-    in_path = os.path.join(config.RESULT_MYDIR, "rf_unigram_%s.txt" % (work.lower()))
-
     dict_loader = Dict_loader()
-    viewer = Rf_Viewer(dict=dict_loader.dict_unigram)
-    viewer.load_rf_file(rf_file=in_path)
-    viewer.view_class_top_k(k=20)
+    viewer = Rf_Viewer(dict=dict_loader.dict_nltk_unigram)
+    viewer.load_rf_file(rf_file=config.RF_DATA_NLTK_UNIGRAM_PATH)
+    # viewer.view_class_top_k(k=20)
     # viewer.print_list_rf()
     # viewer.print_word_rf("Oxford")

@@ -189,15 +189,20 @@ def preprocess_data(tweet_list):
         # break
         tw_dict["nltk_tokens"] = nltk_tweet_tokenizer.tokenize(tw_dict["raw_tweet"])
 
-    json.dump(tweet_list, open(config.PROCESSED_TRAIN_B, "w"), indent=2)
+    json.dump(tweet_list, open(config.PROCESSED_TRAIN, "w"), indent=2)
     contrast_file_in.close()
 
 
 if __name__ == '__main__':
-    fp = config.RAW_TRAIN_B
+    fp = config.RAW_TRAIN
     tweet_list = load_data(fp)
     preprocess_data(tweet_list)
 
-
-
-
+#
+# if __name__ == "__main__":
+#     data = json.load(open(config.PROCESSED_TRAIN_B, "r"))
+#     nltk_tweet_tokenizer = TweetTokenizer(preserve_case=True, reduce_len=True, strip_handles=False)
+#     for tw in data:
+#         tw["nltk_tokens"] = nltk_tweet_tokenizer.tokenize(tw["clean_tweet"])
+#     json.dump(data, open(config.PROCESSED_TRAIN_B, "w"), indent=2)
+#

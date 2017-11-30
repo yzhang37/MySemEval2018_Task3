@@ -6,6 +6,7 @@ from src import config
 from src import util
 from src.model_trainer import dict_util
 
+
 class Dict_creator(object):
     def __init__(self):
         self.texts = None
@@ -33,15 +34,19 @@ class Dict_creator(object):
 
 
 def load_traindata():
-    train_data = json.load(open(config.PROCESSED_TRAIN_B, "r"))
+    train_data = json.load(open(config.PROCESSED_TRAIN, "r"))
     return train_data
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     train_data = load_traindata() # load training data
     dict_creator = Dict_creator()
     dict_creator.texts = train_data
-    dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T2, threshold=2)
+
+    dict_creator.create_dict(dict_util.get_nltk_unigram, config.DICT_NLTK_UNIGRAM_T2, threshold=2)
+    # dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T1, threshold=1)
+    # dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T2, threshold=2)
+    # dict_creator.create_dict(dict_util.get_hashtag_unigram, config.DICT_HASHTAG_UNIGRAM_T1, threshold=1)
     # dict_creator.create_dict(dict_util.get_stem_unigram, config.DICT_UNIGRAM_STEM_T2, threshold=2)
     # dict_creator.create_dict(dict_util.get_bigram, config.DICT_BIGRAM_T3, threshold=3)
     # dict_creator.create_dict(dict_util.get_trigram, config.DICT_TRIGRAM_T5, threshold=5)

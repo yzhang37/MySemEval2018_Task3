@@ -77,19 +77,19 @@ class Rf_Calculator(object):
 
 
 def load_data():
-    tweets = json.load(open(config.PROCESSED_TRAIN_B, "r"), encoding="utf-8")
+    tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
     return tweets
 
 
 if __name__ == "__main__":
     train_data = load_data()  # load training data
-    work = "A"
+    work = "B"
 
     if work.upper() == "A":
         classify = {"0": 0, "1": 1, "2": 1, "3": 1}
     else:
         classify = {"0": 0, "1": 1, "2": 2, "3": 3}
-    out_path = os.path.join(config.RESULT_MYDIR, "rf_unigram_%s.txt" % (work.lower()))
+    out_path = os.path.join(config.RESULT_MYDIR, "rf_nltk_unigram_%s.txt" % (work.lower()))
 
     rf = Rf_Calculator(train_data, classify)
-    rf.calc(feature_functions.unigram, out_path)
+    rf.calc(feature_functions.nltk_unigram, out_path)

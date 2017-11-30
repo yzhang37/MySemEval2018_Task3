@@ -61,6 +61,30 @@ def get_unigram(tw):
     return unigram
 
 
+def get_nltk_unigram(tw):
+    nltk_unigram = tw["nltk_tokens"]
+
+    # splitting...
+    split_reg_list = [
+        (r"^(.+) +(.+)$", ["\g<1>", "\g<2>"]),
+    ]
+    util.split_reg_tokens(nltk_unigram, split_reg_list)
+
+    # pruning...
+    prune_reg_list = [
+        "^#.*$",
+    ]
+    util.delete_reg_tokens(nltk_unigram, prune_reg_list)
+
+    # rewriting...
+    rewrite_reg_list = [
+        ("^[+-]?\d+.*$", "<SomeNumber>"),
+    ]
+    util.rewrite_reg_tokens(nltk_unigram, rewrite_reg_list)
+
+    return nltk_unigram
+
+
 def get_stem_unigram(tw):
     unigram = tw["stems_n"]
     return unigram
@@ -76,6 +100,7 @@ def get_bigram(tw):
         i += 1
     return bigram
 
+
 def get_trigram(tw):
     trigram = []
     tokens = tw["tokens"]
@@ -85,6 +110,29 @@ def get_trigram(tw):
         trigram.append("%s|%s|%s" % (tokens[i-2], tokens[i-1], tokens[1]))
         i += 1
     return trigram
+
+
+def get_hashtag(tw):
+    all_tokens = tw["tokens"]
+    # filtering all the hashtag like '#somewords'
+    rc = re.compile("#(\w+)")
+
+    hashtag_list = []
+    for token in all_tokens:
+        hashtag_list.extend(rc.findall(token))
+    return hashtag_list
+
+
+def get_hashtag_unigram(tw):
+    hashtag_list = get_hashtag(tw)
+    hashtag_unigram_list = []
+
+    for hashtag in hashtag_list:
+        hashtag_unigram_list.append(handle(hashtag))
+
+    # todo: how to split the word in hashtag?
+
+    return hashtag_unigram_list
 
 
 def get_w2v(tweet, vector):

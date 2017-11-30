@@ -15,10 +15,15 @@ import pickle
 from datetime import datetime
 import re
 
-set_neg = set([t.strip() for t in open(config.NEGATION_PATH)])
-punc = set([".", ",", "?", "!", "...", ";"])
+punc = {".", ",", "?", "!", "...", ";"}
 normal_word = pickle.load(open(config.NORMAL_WORDS_PATH, "rb"), encoding="utf8", errors="ignore")
 dict_emoticon = dict(((t.split("\t")[0], int(t.strip().split("\t")[1])) for t in open(config.EMOTICON, encoding="utf-8", errors="ignore")))
+
+def hashtags(tweet):
+    # load dict
+    dict_unigram = Dict_loader().dict_unigram
+    # feature
+    _hashtag = dict_util.get_hashtag(tweet)
 
 def unigram(tweet):
     # load dict
@@ -26,6 +31,14 @@ def unigram(tweet):
     # feature
     unigram = dict_util.get_unigram(tweet)
     return util.get_feature_by_feat_list(dict_unigram, unigram)
+
+def nltk_unigram(tweet):
+    # load dict
+    dict_nltk_unigram = Dict_loader().dict_nltk_unigram
+    # feature
+    unigram = dict_util.get_unigram(tweet)
+    return util.get_feature_by_feat_list(dict_nltk_unigram, unigram)
+
 
 def bigram(tweet):
     # load dict
@@ -45,6 +58,7 @@ def wv_google(tweet):
 
 #将否定词后的4个词加上_NEG后缀
 def reverse_neg(tweet):
+    set_neg = set([t.strip() for t in open(config.NEGATION_PATH)])
     mtoken = []
     tokens = list(itertools.chain(*tweet["tokens"]))
     sentence = " ".join(tokens)
@@ -355,3 +369,4 @@ def emoticon(microblog):
     feature = [has_pos, has_several_pos, has_neg, has_several_neg, has_pos_neg]
 
     return util.get_feature_by_list(feature)
+

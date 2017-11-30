@@ -10,9 +10,11 @@ from src.word2vec import Word2Vec
 class Dict_loader(object):
     def __init__(self):
         self.dict_unigram = load_dict_from_file(config.DICT_UNIGRAM_T2)
+        self.dict_nltk_unigram = load_dict_from_file(config.DICT_NLTK_UNIGRAM_T2)
         # self.dict_bigram = load_dict_from_file(config.DICT_BIGRAM_T3)
+
         self.google_vec = Word2Vec(config.WORD2VEC_GOOGLE)
-        #
+
         # # Sentiment_Lexicon
         self.dict_BL = self._dict_Senti_Lexi_0(config.LEXI_BL)
         self.dict_GI = self._dict_Senti_Lexi_0(config.LEXI_GI)

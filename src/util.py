@@ -4,6 +4,29 @@ import re
 sys.path.append("..")
 from src.feature import Feature
 
+
+class ProgressBar:
+    def __init__(self, count=0, total=0, width=50):
+        self.count = count
+        self.total = total
+        self.width = width
+
+    def move(self):
+        self.count += 1
+
+    def log(self, s=""):
+        if len(s) > 1:
+            sys.stdout.write(' ' * (self.width + 9) + '\r')
+            sys.stdout.flush()
+            print(s)
+        progress = int(self.width * self.count / self.total)
+        sys.stdout.write('{0:3}/{1:3}: '.format(self.count, self.total))
+        sys.stdout.write('#' * progress + '-' * (self.width - progress) + '\r')
+        if progress == self.width:
+            sys.stdout.write('\n')
+        sys.stdout.flush()
+
+
 # 计算字典中词的频率
 def set_dict_key_value(dict, key):
     if key not in dict:
@@ -95,9 +118,10 @@ def split_reg_tokens(data_list, split_reg_list):
             token = data_list[i]
             if rc.match(token):
                 del data_list[i]
+                j = 0
                 for sub_str in rsub:
-                    data_list.insert(i, rc.sub(sub_str, token))
-                    i += 1
+                    data_list.insert(i + j, rc.sub(sub_str, token))
+                    j += 1
             else:
                 i += 1
 

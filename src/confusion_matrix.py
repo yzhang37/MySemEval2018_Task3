@@ -57,12 +57,9 @@ class ConfusionMatrix(object):
 
         # computing precision, recall, and f1
         for i in range(self.alphabet.size()):
-            precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
-            recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
-            if precision[i] + recall[i] != 0:
-                f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
-            else:
-                f1[i] = 0
+            precision[i] = self.matrix[i, i] / sum(self.matrix[i, :]) if sum(self.matrix[i, :]) != 0 else 0
+            recall[i] = self.matrix[i, i] / sum(self.matrix[:, i]) if sum(self.matrix[:, i]) != 0 else 0
+            f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i]) if precision[i] + recall[i] != 0 else 0
         return numpy.mean(f1)
 
     def print_matrix(self):
@@ -108,12 +105,9 @@ class ConfusionMatrix(object):
         lines = []
         # computing precision, recall, and f1
         for i in range(self.alphabet.size()):
-            precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
-            recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
-            if precision[i] + recall[i] != 0:
-                f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
-            else:
-                f1[i] = 0
+            precision[i] = self.matrix[i,i] / sum(self.matrix[i,:]) if sum(self.matrix[i,:]) != 0 else 0
+            recall[i] = self.matrix[i,i] / sum(self.matrix[:,i]) if sum(self.matrix[:,i]) != 0 else 0
+            f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i]) if precision[i] + recall[i] != 0 else 0
             correct += self.matrix[i,i]
             label = self.alphabet.get_label(i)
             lines.append( '%s \tprecision %f \trecall %f\t F1 %f' %\
@@ -133,12 +127,9 @@ class ConfusionMatrix(object):
         lines = []
         # computing precision, recall, and f1
         for i in range(self.alphabet.size()):
-            precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
-            recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
-            if precision[i] + recall[i] != 0:
-                f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
-            else:
-                f1[i] = 0
+            precision[i] = self.matrix[i, i] / sum(self.matrix[i, :]) if sum(self.matrix[i, :]) != 0 else 0
+            recall[i] = self.matrix[i, i] / sum(self.matrix[:, i]) if sum(self.matrix[:, i]) != 0 else 0
+            f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i]) if precision[i] + recall[i] != 0 else 0
             correct += self.matrix[i,i]
             label = self.alphabet.get_label(i)
             lines.append( '%s \tprecision %f \trecall %f\t F1 %f' %\
@@ -156,12 +147,9 @@ class ConfusionMatrix(object):
         lines = []
         # computing precision, recall, and f1
         for i in range(self.alphabet.size()):
-            precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
-            recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
-            if precision[i] + recall[i] != 0:
-                f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
-            else:
-                f1[i] = 0
+            precision[i] = self.matrix[i, i] / sum(self.matrix[i, :]) if sum(self.matrix[i, :]) != 0 else 0
+            recall[i] = self.matrix[i, i] / sum(self.matrix[:, i]) if sum(self.matrix[:, i]) != 0 else 0
+            f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i]) if precision[i] + recall[i] != 0 else 0
         return numpy.mean(precision), numpy.mean(recall), numpy.mean(f1)
 
     def get_accuracy(self):
@@ -174,12 +162,9 @@ class ConfusionMatrix(object):
         lines = []
         # computing precision, recall, and f1
         for i in range(self.alphabet.size()):
-            precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
-            recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
-            if precision[i] + recall[i] != 0:
-                f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
-            else:
-                f1[i] = 0
+            precision[i] = self.matrix[i, i] / sum(self.matrix[i, :]) if sum(self.matrix[i, :]) != 0 else 0
+            recall[i] = self.matrix[i, i] / sum(self.matrix[:, i]) if sum(self.matrix[:, i]) != 0 else 0
+            f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i]) if precision[i] + recall[i] != 0 else 0
             correct += self.matrix[i,i]
             label = self.alphabet.get_label(i)
             lines.append( '%s \tprecision %f \trecall %f\t F1 %f' %\
@@ -326,5 +311,3 @@ class Alphabet(object):
         assert(len(alphabet._index_to_label) == len(alphabet._label_to_index))
         alphabet.num_labels = len(alphabet._index_to_label)
         return alphabet
-
-
