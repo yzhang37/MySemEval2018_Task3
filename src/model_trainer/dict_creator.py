@@ -5,6 +5,8 @@ import json
 from src import config
 from src import util
 from src.model_trainer import dict_util
+from src.model_trainer import feature_functions
+from src.model_trainer import rf_calculate
 
 
 class Dict_creator(object):
@@ -34,8 +36,13 @@ class Dict_creator(object):
 
 
 def load_traindata():
-    train_data = json.load(open(config.PROCESSED_TRAIN, "r"))
-    return train_data
+    data = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
+    return data
+
+
+def calc_rc(data, feature_function, output_path):
+    rf = rf_calculate.Rf_Calculator(data, config.get_label_map)
+    rf.calc(feature_function, output_path)
 
 
 if __name__ == '__main__':
@@ -44,6 +51,8 @@ if __name__ == '__main__':
     dict_creator.texts = train_data
 
     dict_creator.create_dict(dict_util.get_nltk_unigram, config.DICT_NLTK_UNIGRAM_T2, threshold=2)
+    calc_rc(train_data, feature_functions.nltk_unigram, config.RF_DATA_NLTK_UNIGRAM_PATH)
+
     # dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T1, threshold=1)
     # dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T2, threshold=2)
     # dict_creator.create_dict(dict_util.get_hashtag_unigram, config.DICT_HASHTAG_UNIGRAM_T1, threshold=1)

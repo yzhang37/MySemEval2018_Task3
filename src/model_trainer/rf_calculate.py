@@ -12,11 +12,11 @@ from src.model_trainer import dict_creator
 
 
 class Rf_Calculator(object):
-    def __init__(self, tweets=None, cls=None, Rf=None):
-        if cls is None:
-            cls = {}
+    def __init__(self, tweets=None, map_func=lambda x:x, Rf=None):
+        if map_func is None:
+            map_func = {}
         self.tweets = tweets
-        self.clsDict = cls
+        self.class_map_function = map_func
         if Rf is None:
             self.Rf = self._inner_Rf
         else:
@@ -29,9 +29,12 @@ class Rf_Calculator(object):
         rc = re.compile("(\d+):(\d+)")
 
         rc_data = {}
+        existed_label = []
         for tw in self.tweets:
             feature = feature_function(tw)
-            label = self.clsDict.get(tw["label"])
+            label = self.class_map_function(tw["label"])
+            if label not in existed_label:
+                existed_label.append(label)
 
             for sValue, sFreq in rc.findall(feature.feat_string):
                 iValue = int(sValue)
@@ -47,11 +50,13 @@ class Rf_Calculator(object):
         for value, dat in rc_data.items():
             rc_sum[value] = sum(dat.values())
 
+        existed_label.sort()
+
         # calc all the label
         rf_dict = {}
         rf_sorted = {}
         rf_valueDict = {}
-        for class_id in self.clsDict.values():
+        for class_id in existed_label:
             rf_dict[class_id] = {}
 
             for value, dat in rc_data.items():
@@ -72,24 +77,13 @@ class Rf_Calculator(object):
             rf_sorted[class_id] = sorted(list(rf_dict[class_id].items()), key=lambda x:-x[1])
 
         if len(out) > 0:
+            print("==" * 40)
+            print("Creating Rf files..., dumped to\n%s" % out)
             json.dump({"rf_sorted": rf_sorted, "rf_value": rf_valueDict ,"rf_dict": rf_dict}, open(out, "w"))
-            print("Data dumped to\n%s" % out)
+            print("==" * 40)
 
 
 def load_data():
     tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
     return tweets
 
-
-if __name__ == "__main__":
-    train_data = load_data()  # load training data
-    work = "B"
-
-    if work.upper() == "A":
-        classify = {"0": 0, "1": 1, "2": 1, "3": 1}
-    else:
-        classify = {"0": 0, "1": 1, "2": 2, "3": 3}
-    out_path = os.path.join(config.RESULT_MYDIR, "rf_nltk_unigram_%s.txt" % (work.lower()))
-
-    rf = Rf_Calculator(train_data, classify)
-    rf.calc(feature_functions.nltk_unigram, out_path)
