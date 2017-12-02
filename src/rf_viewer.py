@@ -54,14 +54,18 @@ class Rf_Viewer(object):
 
     def print_word_rf(self, word):
         self.__check_data()
-        id = self.dict.get(word)
-        assert id, "没有找到单词 \'%s\'."%word
+        word_id = self.dict.get(word)
+        assert word_id, "没有找到单词 \'%s\'."%word
         inv_dict = {v: k for k, v in self.dict.items()}
         rf_value = self.rf_data.get("rf_value")
         assert rf_value, "数据错误"
-        if str(id) in rf_value:
+        if str(word_id) in rf_value:
             print("word;cls;max_rf")
-            print(word, ";", rf_value[str(id)]["cls"], ";", rf_value[str(id)]["max_rf"])
+            print(word, ";", rf_value[str(word_id)]["cls"], ";", rf_value[str(word_id)]["max_rf"])
+
+    def get_word_id_rf(self, word_id):
+        rf_value = self.rf_data.get("rf_value")
+        return rf_value[str(word_id)]["cls"], rf_value[str(word_id)]["max_rf"] if str(word_id) in rf_value else None
 
 
 if __name__ == "__main__":
@@ -71,3 +75,4 @@ if __name__ == "__main__":
     # viewer.view_class_top_k(k=20)
     # viewer.print_list_rf()
     # viewer.print_word_rf("Oxford")
+
