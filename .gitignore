@@ -10,3 +10,6 @@ __pycache__
 
 # frequently make file, ignoring:
 dict
+src/draft.py
+
+
