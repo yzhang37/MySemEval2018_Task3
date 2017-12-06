@@ -7,9 +7,6 @@ import json
 sys.path.append("..")
 
 from src import config
-from src import util
-from src.model_trainer import feature_functions
-from src.model_trainer import dict_creator
 from src.model_trainer.dict_loader import Dict_loader
 
 

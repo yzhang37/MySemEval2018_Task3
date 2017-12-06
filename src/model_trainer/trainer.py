@@ -2,6 +2,8 @@
 import sys
 import time
 import json
+import random
+import numpy as np
 sys.path.append("../..")
 from src import config
 from src.evaluation import *
@@ -80,9 +82,13 @@ def algorithm_liblinear(train_tweets, dev_tweets):
 
     '''feature_function'''
     feature_list = [
-        nltk_unigram,
+        # nltk_unigram,
+        nltk_unigram_with_rf,
+        # hashtag_with_rf,
+        ners_existed,
         # bigram,
-        wv_google,
+        # wv_google,
+        wv_GloVe,
         sentilexi,
         emoticon,
         punction,
@@ -106,8 +112,9 @@ def build_cv(tweets, map_function, fold=4):
         data_dict[new_label].append(tw)
 
     data_len_dict = {}
-    for label, data in data_dict.items():
-        data_len_dict[label] = len(data)
+    for label in data_dict.keys():
+        data_len_dict[label] = len(data_dict[label])
+        random.shuffle(data_dict[label])
 
     cv = fold
     index_cv = []
@@ -143,6 +150,7 @@ def main():
 
     average_score = sum(score) / len(score)
     print(average_score)
+    util.print_dedicated_mean(score)
 
 
 if __name__ == '__main__':

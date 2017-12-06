@@ -1,6 +1,7 @@
 #coding:utf-8
 import sys
 import re
+import numpy as np
 sys.path.append("..")
 from src.feature import Feature
 
@@ -56,6 +57,36 @@ def load_dict_from_file(dict_file_path):
             d[line] = index+1
         return d
 
+
+# 专门用于读取 GloVe 词典的函数
+def load_dict_from_GloVe_file(dict_file_path):
+    d = dict()
+    rc = re.compile("^(.+?)(?=(?:\s|$))")
+    with open(dict_file_path) as dict_file:
+        idx = 0
+        for line in dict_file:
+            w = rc.findall(line)
+            if len(w) > 0:
+                d[w[0]] = idx
+                idx += 1
+    return d
+
+
+def dict_overlap(dict1=None, dict2=None):
+    assert isinstance(dict1, dict), "dict1 should be an instance of Dictionary."
+    assert isinstance(dict2, dict), "dict2 should be an instance of Dictionary."
+
+    s1 = set(dict1.keys())
+    s2 = set(dict2.keys())
+    s3 = s1.intersection(s2)
+
+    return {"intersection": len(s3),
+            "overlap_1": len(s3) / len(s1),
+            "overlap_2": len(s3) / len(s2),
+            "len_1": len(s1),
+            "len_2": len(s2)}
+
+
 def singleton(cls):
     instances = {}
     def _singleton(*args, **kw):
@@ -78,6 +109,16 @@ def get_feature_by_feat_list(dict, token_list):
     for token in token_list:
         if token in dict:
             feat_dict[dict[token]] = 1
+    # print (len(dict))
+    return Feature("", len(dict), feat_dict)
+
+
+def get_feature_by_feature_list_with_rf(dict, token_list, rf_object):
+    feat_dict = {}
+    for token in token_list:
+        if token in dict:
+            cls, rf_v = rf_object.get_word_id_rf(dict[token])
+            feat_dict[dict[token]] = rf_v
     # print (len(dict))
     return Feature("", len(dict), feat_dict)
 
@@ -196,3 +237,11 @@ def handle_train_test_dim(train_path, dev_path):
     if dev_max_dim > train_max_dim:
         # 在train中给某个维度加 train_max_dim:0
         _add_max_dim_for_file(train_path, dev_max_dim)
+
+
+def print_dedicated_mean(l):
+    print("=" * 20)
+    for id, x in enumerate(l):
+        print("Fold %d\t: %.2f%%" % (id + 1, x * 100))
+    print("=" * 20)
+    print("Mean\t: %.2f%%" % (np.mean(l) * 100))

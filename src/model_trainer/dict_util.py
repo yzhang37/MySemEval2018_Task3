@@ -78,7 +78,7 @@ def get_nltk_unigram(tw):
 
     # rewriting...
     rewrite_reg_list = [
-        ("^[+-]?\d+.*$", "<SomeNumber>"),
+        #("^[+-]?\d+.*$", "<SomeNumber>"),
     ]
     util.rewrite_reg_tokens(nltk_unigram, rewrite_reg_list)
 
@@ -137,7 +137,7 @@ def get_hashtag_unigram(tw):
 
 def get_w2v(tweet, vector):
     vec = []
-    for token in tweet["tokens"]:
+    for token in tweet["nltk_tokens"]:
         if token in vector.word2vec:
             vec.append(vector.word2vec[token])
     # vec 是矩阵
@@ -148,4 +148,12 @@ def get_w2v(tweet, vector):
               [max(vec[:, i]) for i in range(len(vec[0]))] + \
               [sum(vec[:, i])/len(vec) for i in range(len(vec[0]))]
 
+    return feature
+
+
+def get_ners_exist(tweet):
+    ners_tag = ["DURATION", "SET", "NUMBER", "LOCATION", "PERSON", "ORGANIZATION", "PERCENT", "MISC", "ORDINAL", "TIME",
+                "DATE", "MONEY"]
+    ners_c_set = set(tweet["ners"])
+    feature = [1 if tag in ners_c_set else 0 for tag in ners_tag]
     return feature

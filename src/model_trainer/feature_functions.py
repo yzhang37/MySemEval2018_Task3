@@ -5,6 +5,7 @@ from src import util
 from src.model_trainer import dict_util
 from src.model_trainer.dict_loader import Dict_loader
 from src.model_trainer.dict_creator import Dict_creator
+from src import rf_viewer
 from src.feature import Feature
 from src import config
 import json
@@ -13,17 +14,21 @@ import nltk
 import itertools
 import pickle
 from datetime import datetime
+from src.util import singleton
 import re
 
 punc = {".", ",", "?", "!", "...", ";"}
 normal_word = pickle.load(open(config.NORMAL_WORDS_PATH, "rb"), encoding="utf8", errors="ignore")
 dict_emoticon = dict(((t.split("\t")[0], int(t.strip().split("\t")[1])) for t in open(config.EMOTICON, encoding="utf-8", errors="ignore")))
 
-def hashtags(tweet):
+
+def hashtag(tweet):
     # load dict
-    dict_unigram = Dict_loader().dict_unigram
+    dict_hashtag = Dict_loader().dict_hashtag
     # feature
-    _hashtag = dict_util.get_hashtag(tweet)
+    hashtag = dict_util.get_hashtag(tweet)
+    return util.get_feature_by_feat_list(dict_hashtag, hashtag)
+
 
 def unigram(tweet):
     # load dict
@@ -32,12 +37,37 @@ def unigram(tweet):
     unigram = dict_util.get_unigram(tweet)
     return util.get_feature_by_feat_list(dict_unigram, unigram)
 
+
 def nltk_unigram(tweet):
     # load dict
     dict_nltk_unigram = Dict_loader().dict_nltk_unigram
     # feature
     unigram = dict_util.get_unigram(tweet)
     return util.get_feature_by_feat_list(dict_nltk_unigram, unigram)
+
+
+def ners_existed(tweet):
+    ners_list = dict_util.get_ners_exist(tweet)
+    return util.get_feature_by_list(ners_list)
+
+# all the rf values
+rfdata_nltk_unigram = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_UNIGRAM_PATH)
+rfdata_hashtag = rf_viewer.Rf_Viewer(None, config.RF_DATA_HASHTAG_PATH)
+
+def nltk_unigram_with_rf(tweet):
+    # load dict
+    dict_nltk_unigram = Dict_loader().dict_nltk_unigram
+    # feature
+    unigram = dict_util.get_unigram(tweet)
+    return util.get_feature_by_feature_list_with_rf(dict_nltk_unigram, unigram, rfdata_nltk_unigram)
+
+
+def hashtag_with_rf(tweet):
+    # load dict
+    dict_hashtag = Dict_loader().dict_hashtag
+    # feature
+    hashtag = dict_util.get_hashtag(tweet)
+    return util.get_feature_by_feature_list_with_rf(dict_hashtag, hashtag, rfdata_hashtag)
 
 
 def bigram(tweet):
@@ -55,6 +85,13 @@ def wv_google(tweet):
     # print("!!!!!")
     # print(len(word2vec))
     return util.get_feature_by_list(word2vec)
+
+def wv_GloVe(tweet):
+    GloVe_vec = Dict_loader().dict_glove_vec
+
+    word2vec = dict_util.get_w2v(tweet, GloVe_vec)
+
+    return util.get_feature_by_list(GloVe_vec)
 
 #将否定词后的4个词加上_NEG后缀
 def reverse_neg(tweet):

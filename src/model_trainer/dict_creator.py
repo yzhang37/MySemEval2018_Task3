@@ -1,12 +1,9 @@
 #coding:utf-8
 import sys
 sys.path.append("../..")
-import json
 from src import config
 from src import util
 from src.model_trainer import dict_util
-from src.model_trainer import feature_functions
-from src.model_trainer import rf_calculate
 
 
 class Dict_creator(object):
@@ -35,29 +32,11 @@ class Dict_creator(object):
                 util.set_dict_key_value(dictionary, result)
 
 
-def load_traindata():
-    data = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
-    return data
-
-
-def calc_rc(data, feature_function, output_path):
-    rf = rf_calculate.Rf_Calculator(data, config.get_label_map)
-    rf.calc(feature_function, output_path)
-
-
-if __name__ == '__main__':
-    train_data = load_traindata() # load training data
-    dict_creator = Dict_creator()
-    dict_creator.texts = train_data
-
+def create_nltk_unigram_dict(dict_creator):
     dict_creator.create_dict(dict_util.get_nltk_unigram, config.DICT_NLTK_UNIGRAM_T2, threshold=2)
-    calc_rc(train_data, feature_functions.nltk_unigram, config.RF_DATA_NLTK_UNIGRAM_PATH)
 
-    # dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T1, threshold=1)
-    # dict_creator.create_dict(dict_util.get_unigram, config.DICT_UNIGRAM_T2, threshold=2)
-    # dict_creator.create_dict(dict_util.get_hashtag_unigram, config.DICT_HASHTAG_UNIGRAM_T1, threshold=1)
-    # dict_creator.create_dict(dict_util.get_stem_unigram, config.DICT_UNIGRAM_STEM_T2, threshold=2)
-    # dict_creator.create_dict(dict_util.get_bigram, config.DICT_BIGRAM_T3, threshold=3)
-    # dict_creator.create_dict(dict_util.get_trigram, config.DICT_TRIGRAM_T5, threshold=5)
 
+def create_hashtag_dict(dict_creator):
+    # dict_creator.create_dict(dict_util.get_hashtag, config.DICT_HASHTAG_T1, threshold=1)
+    dict_creator.create_dict(dict_util.get_hashtag, config.DICT_HASHTAG_T2, threshold=2)
 

@@ -93,8 +93,6 @@ class ConfusionMatrix(object):
         return (precision, recall, f1)
 
 
-
-
     def print_summary(self):
         correct = 0
 

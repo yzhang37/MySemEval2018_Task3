@@ -8,7 +8,6 @@ sys.path.append("../..")
 from src import config
 from src import util
 from src.model_trainer import feature_functions
-from src.model_trainer import dict_creator
 
 
 class Rf_Calculator(object):
@@ -35,6 +34,9 @@ class Rf_Calculator(object):
             label = self.class_map_function(tw["label"])
             if label not in existed_label:
                 existed_label.append(label)
+
+            if feature == None:
+                feature = feature
 
             for sValue, sFreq in rc.findall(feature.feat_string):
                 iValue = int(sValue)
@@ -86,4 +88,17 @@ class Rf_Calculator(object):
 def load_data():
     tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
     return tweets
+
+
+def calc_rc(data, feature_function, output_path):
+    rf = Rf_Calculator(data, config.get_label_map)
+    rf.calc(feature_function, output_path)
+
+
+def create_nltk_unigram_rf(train_data):
+    calc_rc(train_data, feature_functions.nltk_unigram, config.RF_DATA_NLTK_UNIGRAM_PATH)
+
+
+def create_hashtag_rf(train_data):
+    calc_rc(train_data, feature_functions.hashtag, config.RF_DATA_HASHTAG_PATH)
 
