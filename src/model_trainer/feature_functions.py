@@ -91,7 +91,7 @@ def wv_GloVe(tweet):
 
     word2vec = dict_util.get_w2v(tweet, GloVe_vec)
 
-    return util.get_feature_by_list(GloVe_vec)
+    return util.get_feature_by_list(word2vec)
 
 #将否定词后的4个词加上_NEG后缀
 def reverse_neg(tweet):

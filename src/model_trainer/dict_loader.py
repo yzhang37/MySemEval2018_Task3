@@ -6,6 +6,7 @@ from src.util import singleton
 from src.util import load_dict_from_file
 from src import config
 from src.word2vec import Word2Vec
+from src.word2vec import Word2VecTag
 from src.word2vec import GloVe
 from src.model_trainer.dict_cacher import DictCache
 
@@ -31,7 +32,8 @@ class Dict_loader(object):
 
         # GloVe is too large, make cache for it.
         glove_cache = DictCache(config.GLOVE_CACHE_PATH, self._load_glove)
-        self.dict_glove_vec = {k: numpy.asarray(v) for k, v in glove_cache.load_dict().items()}
+        glove_vec = {k: numpy.asarray(v) for k, v in glove_cache.load_dict().items()}
+        self.dict_glove_vec = Word2VecTag(glove_vec)
 
     def _load_glove(self):
         if self.dict_nltk_unigram is None:

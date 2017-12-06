@@ -4,11 +4,15 @@ import re
 
 
 class Word2Vec():
-    def __init__(self, fname):
-        info = self.load_vec(fname)
-        self.word2vec = info[0]
-        self.length = info[1]
-        self.size = info[2]
+    def __init__(self, fname=""):
+        self.word2vec=None
+        self.length=0
+        self.size=0
+        if len(fname) > 0:
+            info = self.load_vec(fname)
+            self.word2vec = info[0]
+            self.length = info[1]
+            self.size = info[2]
 
     def load_vec(self, fname):
         dict_ = {}
@@ -22,6 +26,17 @@ class Word2Vec():
             dict_[line[0]] = numpy.asarray(list(map(float, line[1: ])))
 
         return dict_, length, size
+
+
+class Word2VecTag(Word2Vec):
+    def __init__(self, word2vec: dict):
+        Word2Vec.__init__(self, "")
+        self.word2vec = word2vec
+        self.length = len(word2vec)
+        self.size = 0
+        for key, value in word2vec.items():
+            self.size = len(value)
+            break
 
 
 class GloVe(object):

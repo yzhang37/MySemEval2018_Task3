@@ -33,12 +33,9 @@ class Trainer(object):
         self.model_path = model_path
         self.result_file_path = result_file_path
 
-
     def make_feature(self):
-
         make_feature(self.train_tweets, self.feature_functions, self.train_feature_path)
         make_feature(self.dev_tweets, self.feature_functions, self.dev_feature_path)
-
         util.handle_train_test_dim(self.train_feature_path, self.dev_feature_path)
 
     def train_model(self):
@@ -55,8 +52,8 @@ class Trainer(object):
         # cm.print_out()
         return cm
 
-def classification(train_feature_path, dev_feature_path, model_path, result_file_path, feature_functions, classifier, train_tweets, dev_tweets):
 
+def classification(train_feature_path, dev_feature_path, model_path, result_file_path, feature_functions, classifier, train_tweets, dev_tweets):
     trainer = Trainer(train_tweets, dev_tweets, feature_functions, train_feature_path, dev_feature_path, classifier,
                        model_path, result_file_path)
     trainer.make_feature()
@@ -68,6 +65,7 @@ def classification(train_feature_path, dev_feature_path, model_path, result_file
     cm.print_out()
     return cm
 
+
 def write_to_file(tuple, file_path):
     with open(file_path, "a") as file_out:
         file_out.write("\n-----------------------------------------------\n")
@@ -78,16 +76,16 @@ def load_data():
     tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
     return tweets
 
-def algorithm_liblinear(train_tweets, dev_tweets):
 
+def algorithm_liblinear(train_tweets, dev_tweets):
     '''feature_function'''
     feature_list = [
         # nltk_unigram,
         nltk_unigram_with_rf,
-        # hashtag_with_rf,
+        hashtag_with_rf,
         ners_existed,
         # bigram,
-        # wv_google,
+        wv_google,
         wv_GloVe,
         sentilexi,
         emoticon,
@@ -132,7 +130,7 @@ def main():
     tweets = load_data()
 
     '''build_cv'''
-    index_cv = build_cv(tweets, config.get_label_map)
+    index_cv = build_cv(tweets, config.get_label_map, 10)
 
     score = []
     for i, list_item in enumerate(index_cv):
@@ -155,4 +153,5 @@ def main():
 
 if __name__ == '__main__':
     print("Trainer started at", time.asctime(time.localtime(time.time())))
+    print("==" * 30)
     main()
