@@ -29,6 +29,7 @@ unigram 降维操作 (.md)
 
 '''
 
+'''
 def get_unigram(tw):
     unigram = tw["tokens"]
 
@@ -59,7 +60,7 @@ def get_unigram(tw):
     ]
     util.rewrite_reg_tokens(unigram, rewrite_reg_list)
     return unigram
-
+'''
 
 def get_nltk_unigram(tw):
     nltk_unigram = tw["nltk_tokens"]
@@ -85,21 +86,39 @@ def get_nltk_unigram(tw):
     return nltk_unigram
 
 
+def get_nltk_bigram(tw):
+    nltk_unigram = get_nltk_unigram(tw)
+    nltk_bigram = []
+    n = len(nltk_unigram)
+    i = 1
+    while i < n:
+        nltk_bigram.append("%s|%s" % (nltk_unigram[i - 1], nltk_unigram[i]))
+        i += 1
+    return nltk_bigram
+
+
+def get_nltk_trigram(tw):
+    nltk_unigram = get_nltk_unigram(tw)
+    nltk_trigram = []
+    n = len(nltk_unigram)
+    i = 1
+    while i < n:
+        nltk_trigram.append("%s|%s" % (nltk_unigram[i - 1], nltk_unigram[i]))
+        i += 1
+    return nltk_trigram
+
+
 def get_stem_unigram(tw):
     unigram = tw["stems_n"]
     return unigram
 
-
+'''
 def get_bigram(tw):
     bigram = []
     tokens = tw["tokens"]
-    n = len(tokens)
-    i = 1
-    while i < n:
+    for i in range(1, len(tokens)):
         bigram.append("%s|%s" % (tokens[i-1], tokens[i]))
-        i += 1
     return bigram
-
 
 def get_trigram(tw):
     trigram = []
@@ -110,7 +129,7 @@ def get_trigram(tw):
         trigram.append("%s|%s|%s" % (tokens[i-2], tokens[i-1], tokens[1]))
         i += 1
     return trigram
-
+'''
 
 def get_hashtag(tw):
     all_tokens = tw["tokens"]

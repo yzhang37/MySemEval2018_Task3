@@ -239,9 +239,20 @@ def handle_train_test_dim(train_path, dev_path):
         _add_max_dim_for_file(train_path, dev_max_dim)
 
 
-def print_dedicated_mean(l):
-    print("=" * 20)
-    for id, x in enumerate(l):
-        print("Fold %d\t: %.2f%%" % (id + 1, x * 100))
-    print("=" * 20)
-    print("Mean\t: %.2f%%" % (np.mean(l) * 100))
+def print_dedicated_mean(prec, recl, f1l):
+    print("=" * 40)
+    line_count = len(prec)
+    for id in range(0, line_count):
+        print("Fold %d\t: %.2f%%\t%.2f%%\t%.2f%%" % (id + 1, prec[id] * 100, recl[id] * 100, f1l[id] * 100))
+    print("=" * 40)
+    print("Mean\t: %.2f%%\t%.2f%%\t%.2f%%" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100))
+
+
+def print_markdown_mean(prec, recl, f1l):
+    print("#### Train Result Table: ")
+    print("| Fold | Precision | Recall | F-1 |")
+    print("| ---- | --------- | ------ | --- |")
+    line_count = len(prec)
+    for id in range(0, line_count):
+        print("| Fold %d | %.2f%% | %.2f%% | %.2f%% |" % (id + 1, prec[id] * 100, recl[id] * 100, f1l[id] * 100))
+    print("| **Mean** | **%.2f%%** | **%.2f%%** | **%.2f%%** |" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100))

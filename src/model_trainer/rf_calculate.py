@@ -102,3 +102,10 @@ def create_nltk_unigram_rf(train_data):
 def create_hashtag_rf(train_data):
     calc_rc(train_data, feature_functions.hashtag, config.RF_DATA_HASHTAG_PATH)
 
+
+def create_nltk_bigram_rf(train_data):
+    calc_rc(train_data, feature_functions.nltk_bigram, config.RF_DATA_NLTK_BIGRAM_PATH)
+
+
+def create_nltk_trigram_rf(train_data):
+    calc_rc(train_data, feature_functions.nltk_trigram, config.RF_DATA_NLTK_TRIGRAM_PATH)

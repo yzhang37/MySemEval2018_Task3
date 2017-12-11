@@ -76,6 +76,10 @@ DICT_TRIGRAM_T5 = DICT_PATH + "/trigram_t5.txt"
 
 DICT_NLTK_UNIGRAM_T1 = os.path.join(DICT_PATH, "nltk_unigram_t1.txt")
 DICT_NLTK_UNIGRAM_T2 = os.path.join(DICT_PATH, "nltk_unigram_t2.txt")
+DICT_NLTK_BIGRAM_T1 = os.path.join(DICT_PATH, "nltk_bigram_t1.txt")
+DICT_NLTK_BIGRAM_T2 = os.path.join(DICT_PATH, "nltk_bigram_t2.txt")
+DICT_NLTK_TRIGRAM_T1 = os.path.join(DICT_PATH, "nltk_trigram_t1.txt")
+DICT_NLTK_TRIGRAM_T2 = os.path.join(DICT_PATH, "nltk_trigram_t2.txt")
 
 WORD2VEC_GOOGLE = os.path.join(PCCMD, "SemEval2017_T8/data_new/Google.txt")
 VOCABULARY_PATH = os.path.join(YXPCCMD, "vocabulary")
@@ -108,3 +112,5 @@ GLOVE_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "glove.small.300d.txt")
 # the following is RF files
 RF_DATA_NLTK_UNIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_unigram_%s.txt" % __CLASS.lower())
 RF_DATA_HASHTAG_PATH = os.path.join(RESULT_MYDIR, "rf_hashtag_%s.txt" % __CLASS.lower())
+RF_DATA_NLTK_BIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_bigram_%s.txt" % __CLASS.lower())
+RF_DATA_NLTK_TRIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_trigram_%s.txt" % __CLASS.lower())

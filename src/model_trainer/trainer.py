@@ -54,6 +54,7 @@ class Trainer(object):
 
 
 def classification(train_feature_path, dev_feature_path, model_path, result_file_path, feature_functions, classifier, train_tweets, dev_tweets):
+
     trainer = Trainer(train_tweets, dev_tweets, feature_functions, train_feature_path, dev_feature_path, classifier,
                        model_path, result_file_path)
     trainer.make_feature()
@@ -77,22 +78,7 @@ def load_data():
     return tweets
 
 
-def algorithm_liblinear(train_tweets, dev_tweets):
-    '''feature_function'''
-    feature_list = [
-        # nltk_unigram,
-        nltk_unigram_with_rf,
-        hashtag_with_rf,
-        ners_existed,
-        # bigram,
-        wv_google,
-        wv_GloVe,
-        sentilexi,
-        emoticon,
-        punction,
-        elongated
-    ]
-
+def algorithm_liblinear(train_tweets, dev_tweets, feature_list):
     '''classifier'''
     classifier = Classifier(LibLinear(0, 1))
     cm = classification(config.TRAIN_FEATURE_PATH, config.DEV_FEATURE_PATH,
@@ -132,7 +118,32 @@ def main():
     '''build_cv'''
     index_cv = build_cv(tweets, config.get_label_map, 10)
 
-    score = []
+    '''feature_function'''
+    features = [
+        # nltk_unigram,
+        nltk_unigram_with_rf,
+        # nltk_bigram,
+        hashtag_with_rf,
+        ners_existed,
+        # bigram,
+        wv_google,
+        wv_GloVe,
+        sentilexi,
+        emoticon,
+        punction,
+        elongated
+    ]
+
+    print("Using following features:")
+    print("=" * 30)
+    for fe_func in features:
+        print(fe_func.__name__)
+    print("=" * 30)
+    print()
+
+    prec_score = []
+    recall_score = []
+    f1_score = []
     for i, list_item in enumerate(index_cv):
         dev = list_item
         train = []
@@ -141,14 +152,17 @@ def main():
                 continue
             else:
                 train += list_item
-        cm = algorithm_liblinear(train, dev)
+        cm = algorithm_liblinear(train, dev, features)
         p, r, f1 = cm.get_average_prf()
         print("p:{},r:{},f1:{}".format(p, r, f1))
-        score.append(f1)
+        prec_score.append(p)
+        recall_score.append(r)
+        f1_score.append(f1)
 
-    average_score = sum(score) / len(score)
+    average_score = sum(f1_score) / len(f1_score)
     print(average_score)
-    util.print_dedicated_mean(score)
+    util.print_dedicated_mean(prec_score, recall_score, f1_score)
+    util.print_markdown_mean(prec_score, recall_score, f1_score)
 
 
 if __name__ == '__main__':

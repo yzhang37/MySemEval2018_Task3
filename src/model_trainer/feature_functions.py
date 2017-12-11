@@ -30,20 +30,38 @@ def hashtag(tweet):
     return util.get_feature_by_feat_list(dict_hashtag, hashtag)
 
 
+'''
 def unigram(tweet):
     # load dict
     dict_unigram = Dict_loader().dict_unigram
     # feature
     unigram = dict_util.get_unigram(tweet)
     return util.get_feature_by_feat_list(dict_unigram, unigram)
+'''
 
 
 def nltk_unigram(tweet):
     # load dict
     dict_nltk_unigram = Dict_loader().dict_nltk_unigram
     # feature
-    unigram = dict_util.get_unigram(tweet)
-    return util.get_feature_by_feat_list(dict_nltk_unigram, unigram)
+    nltk_uni = dict_util.get_nltk_unigram(tweet)
+    return util.get_feature_by_feat_list(dict_nltk_unigram, nltk_uni)
+
+
+def nltk_bigram(tweet):
+    # load dict
+    dict_nltk_bigram = Dict_loader().dict_nltk_bigram
+    # feature
+    nltk_bi = dict_util.get_nltk_bigram(tweet)
+    return util.get_feature_by_feat_list(dict_nltk_bigram, nltk_bi)
+
+
+def nltk_trigram(tweet):
+    # load dict
+    dict_nltk_bigram = Dict_loader().dict_nltk_trigram
+    # feature
+    nltk_tri = dict_util.get_nltk_trigram(tweet)
+    return util.get_feature_by_feat_list(dict_nltk_bigram, nltk_tri)
 
 
 def ners_existed(tweet):
@@ -58,7 +76,7 @@ def nltk_unigram_with_rf(tweet):
     # load dict
     dict_nltk_unigram = Dict_loader().dict_nltk_unigram
     # feature
-    unigram = dict_util.get_unigram(tweet)
+    unigram = dict_util.get_nltk_unigram(tweet)
     return util.get_feature_by_feature_list_with_rf(dict_nltk_unigram, unigram, rfdata_nltk_unigram)
 
 
