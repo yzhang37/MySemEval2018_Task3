@@ -71,6 +71,8 @@ def ners_existed(tweet):
 # all the rf values
 rfdata_nltk_unigram = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_UNIGRAM_PATH)
 rfdata_hashtag = rf_viewer.Rf_Viewer(None, config.RF_DATA_HASHTAG_PATH)
+rfdata_nltk_bigram = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_BIGRAM_PATH)
+
 
 def nltk_unigram_with_rf(tweet):
     # load dict
@@ -78,6 +80,14 @@ def nltk_unigram_with_rf(tweet):
     # feature
     unigram = dict_util.get_nltk_unigram(tweet)
     return util.get_feature_by_feature_list_with_rf(dict_nltk_unigram, unigram, rfdata_nltk_unigram)
+
+
+def nltk_bigram_with_rf(tweet):
+    # load dict
+    dict_nltk_bigram = Dict_loader().dict_nltk_bigram
+    # feature
+    bigram = dict_util.get_nltk_bigram(tweet)
+    return util.get_feature_by_feature_list_with_rf(dict_nltk_bigram, bigram, rfdata_nltk_bigram)
 
 
 def hashtag_with_rf(tweet):

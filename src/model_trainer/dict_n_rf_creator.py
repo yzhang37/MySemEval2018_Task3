@@ -38,7 +38,7 @@ if __name__ == '__main__':
     d_creator.texts = train_data
 
     # create_hashtag(d_creator)
-    # create_nltk_bigram(d_creator)
+    create_nltk_bigram(d_creator)
     # create_nltk_unigram(d_creator)
 
     # dict_creator.create_dict(dict_util.get_hashtag_unigram, config.DICT_HASHTAG_UNIGRAM_T1, threshold=1)

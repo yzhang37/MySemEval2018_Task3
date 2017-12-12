@@ -122,7 +122,7 @@ def main():
     features = [
         # nltk_unigram,
         nltk_unigram_with_rf,
-        # nltk_bigram,
+        nltk_bigram_with_rf,
         hashtag_with_rf,
         ners_existed,
         # bigram,

@@ -42,7 +42,7 @@ def create_hashtag_dict(dict_creator):
 
 
 def create_nltk_bigram_dict(dict_creator):
-    dict_creator.create_dict(dict_util.get_nltk_bigram, config.DICT_NLTK_BIGRAM_T1, threshold=1)
+    dict_creator.create_dict(dict_util.get_nltk_bigram, config.DICT_NLTK_BIGRAM_T3, threshold=3)
 
 
 def create_nltk_trigram_dict(dict_creator):
