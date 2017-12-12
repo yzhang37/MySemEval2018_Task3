@@ -46,5 +46,5 @@ def create_nltk_bigram_dict(dict_creator):
 
 
 def create_nltk_trigram_dict(dict_creator):
-    dict_creator.create_dict(dict_util.get_nltk_trigram, config.DICT_NLTK_TRIGRAM_T1, threshold=1)
+    dict_creator.create_dict(dict_util.get_nltk_trigram, config.DICT_NLTK_TRIGRAM_T2, threshold=2)
 

@@ -16,7 +16,7 @@ class Dict_loader(object):
         self.dict_unigram = load_dict_from_file(config.DICT_UNIGRAM_T2)
         self.dict_nltk_unigram = load_dict_from_file(config.DICT_NLTK_UNIGRAM_T2)
         self.dict_nltk_bigram = load_dict_from_file(config.DICT_NLTK_BIGRAM_T3)
-        self.dict_nltk_trigram = load_dict_from_file(config.DICT_NLTK_TRIGRAM_T1)
+        self.dict_nltk_trigram = load_dict_from_file(config.DICT_NLTK_TRIGRAM_T2)
         self.dict_hashtag = load_dict_from_file(config.DICT_HASHTAG_T2)
         # self.dict_bigram = load_dict_from_file(config.DICT_BIGRAM_T3)
         self.google_vec = Word2Vec(config.WORD2VEC_GOOGLE)

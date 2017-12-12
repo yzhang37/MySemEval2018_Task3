@@ -101,9 +101,9 @@ def get_nltk_trigram(tw):
     nltk_unigram = get_nltk_unigram(tw)
     nltk_trigram = []
     n = len(nltk_unigram)
-    i = 1
+    i = 2
     while i < n:
-        nltk_trigram.append("%s|%s" % (nltk_unigram[i - 1], nltk_unigram[i]))
+        nltk_trigram.append("%s|%s|%s" % (nltk_unigram[i-2], nltk_unigram[i - 1], nltk_unigram[i]))
         i += 1
     return nltk_trigram
 

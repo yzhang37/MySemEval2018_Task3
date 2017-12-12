@@ -72,6 +72,7 @@ def ners_existed(tweet):
 rfdata_nltk_unigram = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_UNIGRAM_PATH)
 rfdata_hashtag = rf_viewer.Rf_Viewer(None, config.RF_DATA_HASHTAG_PATH)
 rfdata_nltk_bigram = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_BIGRAM_PATH)
+rfdata_nltk_trigram = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_TRIGRAM_PATH)
 
 
 def nltk_unigram_with_rf(tweet):
@@ -90,6 +91,15 @@ def nltk_bigram_with_rf(tweet):
     return util.get_feature_by_feature_list_with_rf(dict_nltk_bigram, bigram, rfdata_nltk_bigram)
 
 
+def nltk_trigram_with_rf(tweet):
+    # load dict
+    dict_nltk_trigram = Dict_loader().dict_nltk_trigram
+    # feature
+    trigram = dict_util.get_nltk_trigram(tweet)
+    return util.get_feature_by_feature_list_with_rf(dict_nltk_trigram, trigram, rfdata_nltk_trigram)
+
+
+
 def hashtag_with_rf(tweet):
     # load dict
     dict_hashtag = Dict_loader().dict_hashtag
@@ -105,6 +115,7 @@ def bigram(tweet):
     bigram = dict_util.get_bigram(tweet)
     # 得到unigram Feature 对象
     return util.get_feature_by_feat_list(dict_bigram, bigram)
+
 
 def wv_google(tweet):
     google_vec = Dict_loader().google_vec

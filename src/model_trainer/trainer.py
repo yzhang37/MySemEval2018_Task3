@@ -123,6 +123,8 @@ def main():
         # nltk_unigram,
         nltk_unigram_with_rf,
         nltk_bigram_with_rf,
+        # nltk_trigram,
+        nltk_trigram_with_rf,
         hashtag_with_rf,
         ners_existed,
         # bigram,
@@ -169,3 +171,4 @@ if __name__ == '__main__':
     print("Trainer started at", time.asctime(time.localtime(time.time())))
     print("==" * 30)
     main()
+
