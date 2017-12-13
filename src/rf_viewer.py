@@ -23,6 +23,9 @@ class Rf_Viewer(object):
 
     def load_rf_file(self, rf_file=None):
         if rf_file is not None:
+            if not os.path.exists(rf_file):
+                fout = open(rf_file, "w")
+                fout.close()
             self.rf_data = json.load(open(rf_file, "r"))
 
     def view_class_top_k(self, dict=None, k=10):

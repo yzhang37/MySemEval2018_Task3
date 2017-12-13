@@ -32,19 +32,18 @@ class Dict_creator(object):
                 util.set_dict_key_value(dictionary, result)
 
 
-def create_nltk_unigram_dict(dict_creator):
-    dict_creator.create_dict(dict_util.get_nltk_unigram, config.DICT_NLTK_UNIGRAM_T2, threshold=2)
+def create_nltk_unigram_dict(dict_creator, freq):
+    dict_creator.create_dict(dict_util.get_nltk_unigram, config.DICT_NLTK_UNIGRAM_TU % freq, threshold=freq)
 
 
-def create_hashtag_dict(dict_creator):
-    # dict_creator.create_dict(dict_util.get_hashtag, config.DICT_HASHTAG_T1, threshold=1)
-    dict_creator.create_dict(dict_util.get_hashtag, config.DICT_HASHTAG_T2, threshold=2)
+def create_hashtag_dict(dict_creator, freq):
+    dict_creator.create_dict(dict_util.get_hashtag, config.DICT_HASHTAG_TU % freq, threshold=freq)
 
 
-def create_nltk_bigram_dict(dict_creator):
-    dict_creator.create_dict(dict_util.get_nltk_bigram, config.DICT_NLTK_BIGRAM_T3, threshold=3)
+def create_nltk_bigram_dict(dict_creator, freq):
+    dict_creator.create_dict(dict_util.get_nltk_bigram, config.DICT_NLTK_BIGRAM_TU % freq, threshold=freq)
 
 
-def create_nltk_trigram_dict(dict_creator):
-    dict_creator.create_dict(dict_util.get_nltk_trigram, config.DICT_NLTK_TRIGRAM_T2, threshold=2)
+def create_nltk_trigram_dict(dict_creator, freq):
+    dict_creator.create_dict(dict_util.get_nltk_trigram, config.DICT_NLTK_TRIGRAM_TU % freq, threshold=freq)
 

@@ -63,29 +63,23 @@ RESULT_MYDIR = os.path.join(CWD, "result")
 
 RAW_TRAIN = DATA_PATH + "/train/SemEval2018-T4-train-task%s.txt" % __CLASS.upper()
 
-PROCESSED_TRAIN = DATA_PATH + "/train/processed_train_%s.json" % __CLASS.lower()
+PROCESSED_TRAIN = DATA_PATH + "/train/processed_train_%s.json" % "b"
 
 DICT_UNIGRAM_T2 = os.path.join(DICT_PATH, "unigram_t2.txt")
 DICT_UNIGRAM_T1 = os.path.join(DICT_PATH, "unigram_t1.txt")
-DICT_HASHTAG_UNIGRAM_T1 = os.path.join(DICT_PATH, "hashtag_unigram_t1.txt")
-DICT_HASHTAG_T1 = os.path.join(DICT_PATH, "hashtag_t1.txt")
-DICT_HASHTAG_T2 = os.path.join(DICT_PATH, "hashtag_t2.txt")
+# DICT_HASHTAG_UNIGRAM_T1 = os.path.join(DICT_PATH, "hashtag_unigram_t1.txt")
+# DICT_HASHTAG_T1 = os.path.join(DICT_PATH, "hashtag_t1.txt")
+# DICT_HASHTAG_T2 = os.path.join(DICT_PATH, "hashtag_t2.txt")
 DICT_UNIGRAM_STEM_T2 = DICT_PATH + "/unigram_stem_t2.txt"
 DICT_BIGRAM_T3 = DICT_PATH + "/bigram_t3.txt"
 DICT_TRIGRAM_T5 = DICT_PATH + "/trigram_t5.txt"
 
-DICT_NLTK_UNIGRAM_T1 = os.path.join(DICT_PATH, "nltk_unigram_t1.txt")
-DICT_NLTK_UNIGRAM_T2 = os.path.join(DICT_PATH, "nltk_unigram_t2.txt")
-DICT_NLTK_BIGRAM_T1 = os.path.join(DICT_PATH, "nltk_bigram_t1.txt")
-DICT_NLTK_BIGRAM_T2 = os.path.join(DICT_PATH, "nltk_bigram_t2.txt")
-DICT_NLTK_BIGRAM_T3 = os.path.join(DICT_PATH, "nltk_bigram_t3.txt")
-DICT_NLTK_BIGRAM_T4 = os.path.join(DICT_PATH, "nltk_bigram_t4.txt")
-DICT_NLTK_BIGRAM_T5 = os.path.join(DICT_PATH, "nltk_bigram_t5.txt")
-DICT_NLTK_TRIGRAM_T1 = os.path.join(DICT_PATH, "nltk_trigram_t1.txt")
-DICT_NLTK_TRIGRAM_T2 = os.path.join(DICT_PATH, "nltk_trigram_t2.txt")
-DICT_NLTK_TRIGRAM_T3 = os.path.join(DICT_PATH, "nltk_trigram_t3.txt")
-DICT_NLTK_TRIGRAM_T4 = os.path.join(DICT_PATH, "nltk_trigram_t4.txt")
-DICT_NLTK_TRIGRAM_T5 = os.path.join(DICT_PATH, "nltk_trigram_t5.txt")
+# UNITAG FILENAME
+DICT_HASHTAG_UNIGRAM_TU = os.path.join(DICT_PATH, "hashtag_unigram_t%d.txt")
+DICT_HASHTAG_TU = os.path.join(DICT_PATH, "hashtag_t%d.txt")
+DICT_NLTK_UNIGRAM_TU = os.path.join(DICT_PATH, "nltk_unigram_t%d.txt")
+DICT_NLTK_BIGRAM_TU = os.path.join(DICT_PATH, "nltk_bigram_t%d.txt")
+DICT_NLTK_TRIGRAM_TU = os.path.join(DICT_PATH, "nltk_trigram_t%d.txt")
 
 WORD2VEC_GOOGLE = os.path.join(PCCMD, "SemEval2017_T8/data_new/Google.txt")
 VOCABULARY_PATH = os.path.join(YXPCCMD, "vocabulary")
@@ -114,9 +108,15 @@ DEV_FEATURE_PATH = FEATURE_PATH + "/dev.fea.txt"
 GLOVE_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "glove.small.300d.txt")
 
 
-
 # the following is RF files
-RF_DATA_NLTK_UNIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_unigram_%s.txt" % __CLASS.lower())
-RF_DATA_HASHTAG_PATH = os.path.join(RESULT_MYDIR, "rf_hashtag_%s.txt" % __CLASS.lower())
-RF_DATA_NLTK_BIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_bigram_%s.txt" % __CLASS.lower())
-RF_DATA_NLTK_TRIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_trigram_%s.txt" % __CLASS.lower())
+# RF_DATA_NLTK_UNIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_unigram_%s.txt" % __CLASS.lower())
+# RF_DATA_HASHTAG_PATH = os.path.join(RESULT_MYDIR, "rf_hashtag_%s.txt" % __CLASS.lower())
+# RF_DATA_NLTK_BIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_bigram_%s.txt" % __CLASS.lower())
+# RF_DATA_NLTK_TRIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_trigram_%s.txt" % __CLASS.lower())
+RF_DATA_NLTK_UNIGRAM_TU_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_unigram_t%%d_%s.txt" % __CLASS.lower())
+RF_DATA_HASHTAG_TU_PATH = os.path.join(RESULT_MYDIR, "rf_hashtag_t%%d_%s.txt" % __CLASS.lower())
+RF_DATA_NLTK_BIGRAM_TU_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_bigram_t%%d_%s.txt" % __CLASS.lower())
+RF_DATA_NLTK_TRIGRAM_TU_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_trigram_t%%d_%s.txt" % __CLASS.lower())
+
+RESULT_HC_DICT = os.path.join(RESULT_MYDIR, "feature_hc_dict_%s.txt" % __CLASS.lower())
+RESULT_HC_OUTPUT = os.path.join(RESULT_MYDIR, "feature_hc_output_%s.txt" % __CLASS.lower())

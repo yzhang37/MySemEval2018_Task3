@@ -248,11 +248,27 @@ def print_dedicated_mean(prec, recl, f1l):
     print("Mean\t: %.2f%%\t%.2f%%\t%.2f%%" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100))
 
 
-def print_markdown_mean(prec, recl, f1l):
-    print("#### Train Result Table: ")
-    print("| Fold | Precision | Recall | F-1 |")
-    print("| ---- | --------- | ------ | --- |")
+def print_markdown_mean_file(prec, recl, f1l, outfile=None):
+    if outfile is not None:
+        print("#### Train Result Table: ", file=outfile)
+        print("| Fold | Precision | Recall | F-1 |", file=outfile)
+        print("| ---- | --------- | ------ | --- |", file=outfile)
+    else:
+        print("#### Train Result Table: ")
+        print("| Fold | Precision | Recall | F-1 |")
+        print("| ---- | --------- | ------ | --- |")
     line_count = len(prec)
-    for id in range(0, line_count):
-        print("| Fold %d | %.2f%% | %.2f%% | %.2f%% |" % (id + 1, prec[id] * 100, recl[id] * 100, f1l[id] * 100))
-    print("| **Mean** | **%.2f%%** | **%.2f%%** | **%.2f%%** |" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100))
+    if outfile is not None:
+        for id in range(0, line_count):
+            print("| Fold %d | %.2f%% | %.2f%% | %.2f%% |" % (id + 1, prec[id] * 100, recl[id] * 100, f1l[id] * 100), file=outfile)
+        print("| **Mean** | **%.2f%%** | **%.2f%%** | **%.2f%%** |" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100), file=outfile)
+    else:
+        for id in range(0, line_count):
+            print("| Fold %d | %.2f%% | %.2f%% | %.2f%% |" % (id + 1, prec[id] * 100, recl[id] * 100, f1l[id] * 100))
+        print("| **Mean** | **%.2f%%** | **%.2f%%** | **%.2f%%** |" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100))
+
+
+# 将字典写入指定文件, 按key从大到小排序
+def write_dict_to_file(dict, file_path):
+    with open(file_path, "w") as file_out:
+        file_out.write("\n".join(["%s %s" % (str(key), str(dict[key])) for key in sorted(dict.keys(),reverse=True)]))

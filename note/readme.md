@@ -1,5 +1,75 @@
 # MySemEval2018_Task3 Experimental Logs
 
+## Dec. 13th 2017
+
+本次的任务:
+
+1. 将unigram, bigram, trigram等所有的词典，按照t1-t5分开计算，形成几个独立的特征。
+2. 分别对于所有的词典，需要计算rf的这些部分，分别按照任务A，B拆开成单独的文件。
+3. 对所有的t, 或者a,b设计成单独的特征。
+
+
+
+PS:更新了以后，总共有这么多的特征函数了！
+
+```
+Using following features:
+==============================
+ners_existed
+wv_google
+wv_GloVe
+sentilexi
+emoticon
+punction
+elongated
+nltk_unigram_t1
+nltk_bigram_t1
+nltk_trigram_t1
+hashtag_t1
+nltk_unigram_t1_with_rf
+nltk_bigram_t1_with_rf
+nltk_trigram_t1_with_rf
+hashtag_t1_with_rf
+nltk_unigram_t2
+nltk_bigram_t2
+nltk_trigram_t2
+hashtag_t2
+nltk_unigram_t2_with_rf
+nltk_bigram_t2_with_rf
+nltk_trigram_t2_with_rf
+hashtag_t2_with_rf
+nltk_unigram_t3
+nltk_bigram_t3
+nltk_trigram_t3
+hashtag_t3
+nltk_unigram_t3_with_rf
+nltk_bigram_t3_with_rf
+nltk_trigram_t3_with_rf
+hashtag_t3_with_rf
+nltk_unigram_t4
+nltk_bigram_t4
+nltk_trigram_t4
+hashtag_t4
+nltk_unigram_t4_with_rf
+nltk_bigram_t4_with_rf
+nltk_trigram_t4_with_rf
+hashtag_t4_with_rf
+nltk_unigram_t5
+nltk_bigram_t5
+nltk_trigram_t5
+hashtag_t5
+nltk_unigram_t5_with_rf
+nltk_bigram_t5_with_rf
+nltk_trigram_t5_with_rf
+hashtag_t5_with_rf
+==============================
+```
+
+
+
+
+
+
 ## Dec. 12th 2017
 ### 计算1
 

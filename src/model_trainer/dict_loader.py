@@ -14,10 +14,18 @@ from src.model_trainer.dict_cacher import DictCache
 class Dict_loader(object):
     def __init__(self):
         self.dict_unigram = load_dict_from_file(config.DICT_UNIGRAM_T2)
-        self.dict_nltk_unigram = load_dict_from_file(config.DICT_NLTK_UNIGRAM_T2)
-        self.dict_nltk_bigram = load_dict_from_file(config.DICT_NLTK_BIGRAM_T3)
-        self.dict_nltk_trigram = load_dict_from_file(config.DICT_NLTK_TRIGRAM_T2)
-        self.dict_hashtag = load_dict_from_file(config.DICT_HASHTAG_T2)
+
+        self.dict_nltk_unigram_t = {}
+        self.dict_nltk_bigram_t = {}
+        self.dict_nltk_trigram_t = {}
+        self.dict_hashtag_t = {}
+        for freq in range(1, 6):
+            self.dict_nltk_unigram_t[freq] = load_dict_from_file(config.DICT_NLTK_UNIGRAM_TU % freq)
+            self.dict_nltk_bigram_t[freq] = load_dict_from_file(config.DICT_NLTK_BIGRAM_TU % freq)
+            self.dict_nltk_trigram_t[freq] = load_dict_from_file(config.DICT_NLTK_TRIGRAM_TU % freq)
+            self.dict_hashtag_t[freq] = load_dict_from_file(config.DICT_HASHTAG_TU % freq)
+            pass
+
         # self.dict_bigram = load_dict_from_file(config.DICT_BIGRAM_T3)
         self.google_vec = Word2Vec(config.WORD2VEC_GOOGLE)
         # Sentiment_Lexicon
@@ -38,9 +46,7 @@ class Dict_loader(object):
         self.dict_glove_vec = Word2VecTag(glove_vec)
 
     def _load_glove(self):
-        if self.dict_nltk_unigram is None:
-            self.dict_nltk_unigram = load_dict_from_file(config.DICT_NLTK_UNIGRAM_T2)
-        glove = GloVe(config.GLOVE_840B_300_PATH, self.dict_nltk_unigram.keys())
+        glove = GloVe(config.GLOVE_840B_300_PATH, self.dict_nltk_unigram_t[2].keys())
         return glove.word2vec
 
     def _dict_Senti_Lexi_0(slef, fLexi):

@@ -95,17 +95,17 @@ def calc_rc(data, feature_function, output_path):
     rf.calc(feature_function, output_path)
 
 
-def create_nltk_unigram_rf(train_data):
-    calc_rc(train_data, feature_functions.nltk_unigram, config.RF_DATA_NLTK_UNIGRAM_PATH)
+def create_nltk_unigram_rf(train_data, freq):
+    calc_rc(train_data, feature_functions.nltk_unigram_t[freq], config.RF_DATA_NLTK_UNIGRAM_TU_PATH % freq)
 
 
-def create_hashtag_rf(train_data):
-    calc_rc(train_data, feature_functions.hashtag, config.RF_DATA_HASHTAG_PATH)
+def create_hashtag_rf(train_data, freq):
+    calc_rc(train_data, feature_functions.hashtag_t[freq], config.RF_DATA_HASHTAG_TU_PATH % freq)
 
 
-def create_nltk_bigram_rf(train_data):
-    calc_rc(train_data, feature_functions.nltk_bigram, config.RF_DATA_NLTK_BIGRAM_PATH)
+def create_nltk_bigram_rf(train_data, freq):
+    calc_rc(train_data, feature_functions.nltk_bigram_t[freq], config.RF_DATA_NLTK_BIGRAM_TU_PATH % freq)
 
 
-def create_nltk_trigram_rf(train_data):
-    calc_rc(train_data, feature_functions.nltk_trigram, config.RF_DATA_NLTK_TRIGRAM_PATH)
+def create_nltk_trigram_rf(train_data, freq):
+    calc_rc(train_data, feature_functions.nltk_trigram_t[freq], config.RF_DATA_NLTK_TRIGRAM_TU_PATH % freq)
