@@ -74,3 +74,9 @@ def Evaluation3(golds, predictions, label):
 
 
     # return F1score, precision, recall
+if __name__ == '__main__':
+    print('a')
+    cm = Evaluation2([0,1,2,3,4],[0, 1,1,1,1],5)
+    cm.print_out()
+    p,r,f = cm.get_average_prf()
+    print(p,r,f)

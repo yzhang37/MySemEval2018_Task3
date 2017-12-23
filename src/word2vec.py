@@ -54,7 +54,7 @@ class GloVe(object):
         rc = re.compile(r"[ ]+")
         # GloVe don't have headline
 
-        length = 0
+        word_count = 0
         size = 0
 
         if smalldict is None:
@@ -62,21 +62,21 @@ class GloVe(object):
                 line = rc.split(sLine)
                 dict_[line[0]] = list(map(float, line[1:]))
                 size = max(size, len(line) - 1)
-                length += 1
-                if length % 100 == 0:
-                    print(length)
+                word_count += 1
+                if word_count % 100 == 0:
+                    print(word_count)
         else:
             for sLine in fVector:
                 line = rc.split(sLine)
                 if line[0] in smalldict:
                     dict_[line[0]] = list(map(float, line[1:]))
                     size = max(size, len(line) - 1)
-                    length += 1
-                    if length % 100 == 0:
-                        print(length)
+                    word_count += 1
+                    if word_count % 100 == 0:
+                        print(word_count)
 
         print("==" * 30)
         print("Completed in loading GloVe dict from %s." % (os.path.split(fname)[1]))
-        print("Total data %d items." % (length))
+        print("Total data %d items." % (word_count))
         print()
-        return dict_, length, size
+        return dict_, word_count, size
