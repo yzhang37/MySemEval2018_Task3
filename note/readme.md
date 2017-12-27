@@ -1,5 +1,213 @@
 # MySemEval2018_Task3 Experimental Logs
 
+## Dec.25th 2017
+
+很久都没有跑过这个程序了。最近集中在于学习深度学习的论文。
+
+觉得上次程序跑的有问题，一次性同时使用了太多的特征，一切计算hc，而且每个特征都有较大的随机性。因此最终计算结果不可行所以准备如下：
+
+### 1. nltk_unigram: hc 测试
+
+测试算法：**liblinear**
+
+#### 01
+
+**0.369581985754 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t2**
+
+**0.369448070684 nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2**
+
+0.369314621888 nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t2
+
+0.369291312663 nltk_unigram_t1 | nltk_unigram_t2
+
+0.369154192201 nltk_unigram_t5 | nltk_unigram_t2
+
+0.364930074987 nltk_unigram_t2
+
+0.364624855942 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t2
+
+0.363834142979 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.362434469128 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 02
+
+**0.371875128179 nltk_unigram_t1 | nltk_unigram_t5**
+
+**0.371698587807 nltk_unigram_t4 | nltk_unigram_t5**
+
+0.371457744993 nltk_unigram_t5 | nltk_unigram_t2
+
+0.369604307925 nltk_unigram_t5
+
+0.369498068712 nltk_unigram_t2
+
+0.365035861433 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5
+
+0.3649854524 nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.362983011793 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5
+
+0.362836743097 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.361204970356 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 03
+
+**0.378551644174 nltk_unigram_t5**
+
+**0.378537625253 nltk_unigram_t2**
+
+0.376581015591 nltk_unigram_t5 | nltk_unigram_t2
+
+0.376460533664 nltk_unigram_t3 | nltk_unigram_t5
+
+0.376350196061 nltk_unigram_t4 | nltk_unigram_t5
+
+0.368861264512 nltk_unigram_t3 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.368723646859 nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.367847871397 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.36742745158 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.367402778682 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 04
+
+**0.384446063772 nltk_unigram_t2**
+
+**0.381780317057 nltk_unigram_t5 | nltk_unigram_t2**
+
+0.381647864134 nltk_unigram_t1 | nltk_unigram_t2
+
+0.37881348899 nltk_unigram_t3 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.373945985459 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.373805151317 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.373744545524 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 05
+
+**0.37026796411 nltk_unigram_t2**
+
+**0.369977250356 nltk_unigram_t5 | nltk_unigram_t2**
+
+0.369934148556 nltk_unigram_t3 | nltk_unigram_t2
+
+0.369095980008 nltk_unigram_t1 | nltk_unigram_t2
+
+0.367779134053 nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.367584153752 nltk_unigram_t3 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.364725930448 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.362115045598 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 06
+
+**0.369902891015 nltk_unigram_t1**
+
+**0.369722940693 nltk_unigram_t2**
+
+0.364761041647 nltk_unigram_t4 | nltk_unigram_t1
+
+0.364628973125 nltk_unigram_t1 | nltk_unigram_t2
+
+0.364489311017 nltk_unigram_t3 | nltk_unigram_t1
+
+0.364357253849 nltk_unigram_t1 | nltk_unigram_t5
+
+0.362257064608 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1
+
+0.360817348327 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t2
+
+0.360813688964 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5
+
+0.360682557976 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 07
+
+**0.375362225114 nltk_unigram_t2**
+
+**0.372375993269 nltk_unigram_t5 | nltk_unigram_t2**
+
+0.372357146321 nltk_unigram_t3 | nltk_unigram_t2
+
+0.372310860566 nltk_unigram_t1 | nltk_unigram_t2
+
+0.369765685089 nltk_unigram_t3 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.367632057585 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.365150553079 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 08
+
+**0.375834108272 nltk_unigram_t2**
+
+**0.375816681375 nltk_unigram_t4**
+
+0.37566087279 nltk_unigram_t3
+
+0.373470633425 nltk_unigram_t4 | nltk_unigram_t2
+
+0.37329499045 nltk_unigram_t5 | nltk_unigram_t2
+
+0.370375810961 nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t2
+
+0.370246721527 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t2
+
+0.368326229539 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t2
+
+0.367914889534 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 09
+
+**0.375032610065 nltk_unigram_t2**
+
+**0.374024245252 nltk_unigram_t5 | nltk_unigram_t2**
+
+0.373852091069 nltk_unigram_t1 | nltk_unigram_t2
+
+0.366304327541 nltk_unigram_t3 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.364291810749 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.363968649007 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.362164126306 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### 10
+
+**0.369668086845 nltk_unigram_t2**
+
+**0.368103152901 nltk_unigram_t3 | nltk_unigram_t2**
+
+0.368102587093 nltk_unigram_t4 | nltk_unigram_t2
+
+0.367833087522 nltk_unigram_t1 | nltk_unigram_t2
+
+0.367805740817 nltk_unigram_t5 | nltk_unigram_t2
+
+0.365517123005 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.36538299754 nltk_unigram_t3 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.365356303928 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t5 | nltk_unigram_t2
+
+0.365247164172 nltk_unigram_t3 | nltk_unigram_t1 | nltk_unigram_t2
+
+0.360248885772 nltk_unigram_t3 | nltk_unigram_t4 | nltk_unigram_t1 | nltk_unigram_t5 | nltk_unigram_t2
+
+#### nltk_unigram on `liblinear` 总结
+
+Unigram_t2 出现的频次最高，因此在 liblinear 下最终采用 t_2 作为候选特征。
+
 ## Dec. 13th 2017
 
 本次的任务:

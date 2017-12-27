@@ -138,7 +138,7 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
                 current_best_features = dict_pending[key]
 
         feature_functions -= current_best_features
-    util.write_dict_to_file(dict_all, os.path.join(config.RESULT_PATH, "hc.txt"))
+    util.write_dict_to_file(dict_all, os.path.join(config.RESULT_MYDIR, "hc.txt"))
 
 
 def write_to_file(tuple, file_path):
@@ -196,24 +196,29 @@ def main(mode="default"):
     index_cv = build_cv(tweets, config.get_label_map, 10)
 
     '''feature_function'''
-    features = [
-        ners_existed,
-        wv_google,
-        wv_GloVe,
-        sentilexi,
-        emoticon,
-        punction,
-        elongated
-    ]
+
+    if False:
+        features = [
+            ners_existed,
+            wv_google,
+            wv_GloVe,
+            sentilexi,
+            emoticon,
+            punction,
+            elongated
+        ]
+    else:
+        features = []
+
     for __freq in range(1, 6):
         features.append(nltk_unigram_t[__freq])
-        features.append(nltk_bigram_t[__freq])
-        features.append(nltk_trigram_t[__freq])
-        features.append(hashtag_t[__freq])
-        features.append(nltk_unigram_t_with_rf[__freq])
-        features.append(nltk_bigram_t_with_rf[__freq])
-        features.append(nltk_trigram_with_t_rf[__freq])
-        features.append(hashtag_t_with_rf[__freq])
+        # features.append(nltk_bigram_t[__freq])
+        # features.append(nltk_trigram_t[__freq])
+        # features.append(hashtag_t[__freq])
+        # features.append(nltk_unigram_t_with_rf[__freq])
+        # features.append(nltk_bigram_t_with_rf[__freq])
+        # features.append(nltk_trigram_with_t_rf[__freq])
+        # features.append(hashtag_t_with_rf[__freq])
 
     print("Using following features:")
     print("=" * 30)
@@ -244,7 +249,7 @@ def main(mode="default"):
         average_score = sum(f1_score) / len(f1_score)
         print(average_score)
         util.print_dedicated_mean(prec_score, recall_score, f1_score)
-        util.print_markdown_mean(prec_score, recall_score, f1_score)
+        util.print_markdown_mean_file(prec_score, recall_score, f1_score)
     elif mode.lower() == "hc":
         classification_hc(config.TRAIN_FEATURE_PATH, config.DEV_FEATURE_PATH,
                        config.MODEL_PATH, config.RESULT_PATH, features,
