@@ -1,5 +1,263 @@
 # MySemEval2018_Task3 Experimental Logs
 
+## Dec.27th 2017
+
+bigram on liblinear测试。
+
+### 1. `nltk_bigram`: hc 测试
+
+测试算法: **liblinear**
+
+#### 01
+
+**0.329769282293 nltk_bigram_t1 | nltk_bigram_t2**
+
+0.329519543919 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.327001651311 nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.326181224416 nltk_bigram_t3 | nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.315614780526 nltk_bigram_t2
+
+#### 02
+
+**0.325025886053 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2**
+
+0.323133552669 nltk_bigram_t1 | nltk_bigram_t2
+
+0.32228988636 nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.318313253737 nltk_bigram_t3 | nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.316268179702 nltk_bigram_t2
+
+#### 03
+
+**0.322274880314 nltk_bigram_t2**
+
+0.318817306551 nltk_bigram_t1 | nltk_bigram_t2
+
+0.316033852828 nltk_bigram_t3 | nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.315886269771 nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.315343400862 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+#### 04
+
+**0.32957223487 nltk_bigram_t2**
+
+0.329233138221 nltk_bigram_t3 | nltk_bigram_t5 | nltk_bigram_t4 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.328555781547 nltk_bigram_t5 | nltk_bigram_t4 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.328130951764 nltk_bigram_t1 | nltk_bigram_t2
+
+0.32628454174 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+#### 05
+
+**0.333845714189 nltk_bigram_t5 | nltk_bigram_t4 | nltk_bigram_t1 | nltk_bigram_t2**
+
+0.333795434796 nltk_bigram_t5 | nltk_bigram_t4 | nltk_bigram_t3 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.327578802962 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.326570003365 nltk_bigram_t1 | nltk_bigram_t2
+
+0.325213642235 nltk_bigram_t2
+
+#### 06
+
+**0.33144529914 nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2**
+
+0.330553544644 nltk_bigram_t3 | nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.328270687501 nltk_bigram_t5 | nltk_bigram_t2
+
+0.32782777866 nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t2
+
+0.326036112671 nltk_bigram_t2
+
+#### 07
+
+**0.323809158553 nltk_bigram_t2**
+
+0.323180676245 nltk_bigram_t1 | nltk_bigram_t2
+
+0.322398858757 nltk_bigram_t3 | nltk_bigram_t5 | nltk_bigram_t4 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.322274062136 nltk_bigram_t5 | nltk_bigram_t4 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.320769090866 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+#### 08
+
+**0.324599259469 nltk_bigram_t2**
+
+0.321102737864 nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.320918672177 nltk_bigram_t1 | nltk_bigram_t2
+
+0.320075363555 nltk_bigram_t3 | nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.319275515587 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+#### 09
+
+**0.338108022053 nltk_bigram_t3 | nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2**
+
+0.335639159754 nltk_bigram_t1 | nltk_bigram_t2
+
+0.335555606867 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.334206596761 nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.331090775257 nltk_bigram_t2
+
+#### 10
+
+**0.318037136028 nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2**
+
+0.317953429582 nltk_bigram_t1 | nltk_bigram_t2
+
+0.317691036496 nltk_bigram_t2
+
+0.317322420236 nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+0.315766913735 nltk_bigram_t3 | nltk_bigram_t4 | nltk_bigram_t5 | nltk_bigram_t1 | nltk_bigram_t2
+
+#### nltk_bigram_liblinear_hc 总结
+
+经过统计，bigram_t1 ~ trigram_t5 分别为 `[6, 10, 1, 3, 5]`。因此 bigram 使用 t2 作为候选的特征。
+
+### 2. `nltk_trigram` hc 测试
+
+#### 01
+
+**0.23921504211 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5**
+
+0.23875786777 nltk_trigram_t1 | nltk_trigram_t5
+
+0.23858578281 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.23760898914 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.237313149475 nltk_trigram_t5
+
+#### 02
+
+**0.21531314499 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5**
+
+0.215063462487 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.214988073947 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.214832100699 nltk_trigram_t1 | nltk_trigram_t5
+
+0.212635959908 nltk_trigram_t5
+
+#### 03
+
+**0.189942715769 nltk_trigram_t5**
+
+0.189262400944 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.189095106819 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.189057091945 nltk_trigram_t1 | nltk_trigram_t5
+
+0.188931979076 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+#### 04
+
+**0.217262918807 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5**
+
+0.216393445735 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.216266403657 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.215500431585 nltk_trigram_t1 | nltk_trigram_t5
+
+0.215338895292 nltk_trigram_t5
+
+#### 05
+
+**0.245088801151 nltk_trigram_t1 | nltk_trigram_t5**
+
+0.243855163486 nltk_trigram_t5
+
+0.243226036116 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.242798445602 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.242705958982 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+#### 06
+
+**0.242128330495 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5**
+
+0.241958584628 nltk_trigram_t1 | nltk_trigram_t5
+
+0.241859742675 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.241469167599 nltk_trigram_t5
+
+0.241276111254 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+#### 07
+
+**0.188404413349 nltk_trigram_t5**
+
+0.188385367681 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.18805421648 nltk_trigram_t1 | nltk_trigram_t5
+
+0.187920133426 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.187547654894 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+#### 08
+
+**0.237856024127 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5**
+
+0.237720830862 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.237685641866 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.237424702995 nltk_trigram_t1 | nltk_trigram_t5
+
+0.235815049575 nltk_trigram_t5
+
+#### 09
+
+**0.190378263048 nltk_trigram_t5**
+
+0.189901484901 nltk_trigram_t1 | nltk_trigram_t5
+
+0.189503052049 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.188452711737 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.188429328751 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+#### 10
+
+**0.176093214229 nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5**
+
+0.175690703603 nltk_trigram_t1 | nltk_trigram_t5
+
+0.175594391871 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t4 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.175045287593 nltk_trigram_t2 | nltk_trigram_t3 | nltk_trigram_t1 | nltk_trigram_t5
+
+0.173327687163 nltk_trigram_t5
+
+#### nltk_trigram_liblinear_hc 总结
+
+经过统计，trigram_t1 ~ trigram_t5 分别为 `[7, 2, 6, 0, 10]`。因此 trigram 使用 t5 作为候选的特征。
+
 ## Dec.25th 2017
 
 很久都没有跑过这个程序了。最近集中在于学习深度学习的论文。
@@ -206,7 +464,7 @@
 
 #### nltk_unigram on `liblinear` 总结
 
-Unigram_t2 出现的频次最高，因此在 liblinear 下最终采用 t_2 作为候选特征。
+经过统计，unigram_t1 ~ ungram_t5 分别为 `[3, 7, 1, 0, 2]`。因此 unigram 使用 t2 作为候选的特征。
 
 ## Dec. 13th 2017
 
