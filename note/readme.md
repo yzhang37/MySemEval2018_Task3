@@ -1,5 +1,419 @@
 # MySemEval2018_Task3 Experimental Logs
 
+## Dec.28th 2017
+
+Hashtag on liblinear 测试
+
+### 1. `hashtag on Liblinear`
+
+#### 01
+
+**0.0695715912621 hashtag_t1 | hashtag_t2 | hashtag_t5**
+
+0.0695552300886 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.0688183991688 hashtag_t5
+
+0.0684544190024 hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.0676752829008 hashtag_t2 | hashtag_t5
+
+#### 02
+
+**0.174607858187 hashtag_t2 | hashtag_t5**
+
+0.174562920793 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.172710816083 hashtag_t5
+
+0.172663783628 hashtag_t1 | hashtag_t2 | hashtag_t5
+
+#### 03
+
+**0.0790037701029 hashtag_t2 | hashtag_t5**
+
+0.0783353034927 hashtag_t1 | hashtag_t2 | hashtag_t5
+
+0.0779483959795 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.077512601315 hashtag_t5
+
+#### 04
+
+**0.0789197953858 hashtag_t2 | hashtag_t5**
+
+0.0785576770143 hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.0785388076847 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.0785037612999 hashtag_t5
+
+0.0784398149356 hashtag_t1 | hashtag_t2 | hashtag_t5
+
+#### 05
+
+**0.0710620879568 hashtag_t2 | hashtag_t5**
+
+0.0700413369113 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.0684764852752 hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.068181150129 hashtag_t1 | hashtag_t2 | hashtag_t5
+
+0.0672448324806 hashtag_t5
+
+#### 06
+
+**0.0690628026319 hashtag_t1 | hashtag_t2 | hashtag_t5**
+
+0.0688974051928 hashtag_t5
+
+0.0678254981616 hashtag_t2 | hashtag_t5
+
+0.0671630972763 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+#### 07
+
+**0.176947937651 hashtag_t2 | hashtag_t5**
+
+0.176720499934 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.176701852222 hashtag_t1 | hashtag_t2 | hashtag_t5
+
+0.175353307896 hashtag_t5
+
+#### 08
+
+**0.175531327689 hashtag_t1 | hashtag_t2 | hashtag_t5**
+
+0.175103624217 hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.174776958237 hashtag_t5
+
+0.174584894869 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.174075826208 hashtag_t2 | hashtag_t5
+
+#### 09
+
+**0.170801445334 hashtag_t1 | hashtag_t2 | hashtag_t5**
+
+0.170479144997 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.170449332658 hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5
+
+0.170051058111 hashtag_t5
+
+0.169238945334 hashtag_t2 | hashtag_t5
+
+#### 10
+
+**0.0700327240258 hashtag_t3 | hashtag_t1 | hashtag_t4 | hashtag_t2 | hashtag_t5**
+
+0.0686191224673 hashtag_t2 | hashtag_t5
+
+0.0685872020893 hashtag_t1 | hashtag_t2 | hashtag_t5
+
+0.0674177140936 hashtag_t5
+
+#### hashtag_liblinear_hc 总结
+
+经过统计，hashtag_t1 ~ hashtag_t5 分别为 `[5, 10, 1, 1, 10]`。因此 hashtag 使用 t2, t5 作为候选的特征。
+
+### 2. `nltk_unigram_with_rf_on_liblinear` hc 测试
+
+#### 01
+
+**0.374886719357 nltk_unigram_t4_with_rf**
+
+0.374760244988 nltk_unigram_t5_with_rf
+
+0.374587315468 nltk_unigram_t3_with_rf
+
+0.369904179085 nltk_unigram_t4_with_rf | nltk_unigram_t2_with_rf
+
+0.369682744031 nltk_unigram_t4_with_rf | nltk_unigram_t3_with_rf
+
+0.366806535373 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf
+
+0.366795249877 nltk_unigram_t4_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.366606671791 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf
+
+0.364977784252 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.364641353174 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t5_with_rf
+
+0.363991968824 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+#### 02
+
+**0.37532266807 nltk_unigram_t1_with_rf**
+
+0.375155779275 nltk_unigram_t2_with_rf
+
+0.375017736947 nltk_unigram_t3_with_rf
+
+0.365112443411 nltk_unigram_t1_with_rf | nltk_unigram_t3_with_rf
+
+0.364119749494 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t3_with_rf
+
+0.363762266448 nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.36314182279 nltk_unigram_t5_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t3_with_rf
+
+0.360925222849 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t3_with_rf
+
+0.360779139387 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.357863032185 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+#### 03
+
+**0.372243225234 nltk_unigram_t5_with_rf**
+
+0.372081738213 nltk_unigram_t1_with_rf
+
+0.372074030012 nltk_unigram_t3_with_rf
+
+0.364753032539 nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.363827208861 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.362897225965 nltk_unigram_t5_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t3_with_rf
+
+0.362739321187 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.362595526486 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t3_with_rf
+
+0.361714056232 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+#### 04
+
+**0.382326827696 nltk_unigram_t4_with_rf**
+
+0.382196923202 nltk_unigram_t2_with_rf
+
+0.382023032419 nltk_unigram_t5_with_rf
+
+0.378102302353 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf
+
+0.371268827511 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf
+
+0.371260916003 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t1_with_rf
+
+0.371253426219 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.368501127488 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.368324097438 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t1_with_rf
+
+0.361820681924 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+#### 05
+
+**0.370331444289 nltk_unigram_t3_with_rf**
+
+0.365838135832 nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.365703455697 nltk_unigram_t4_with_rf | nltk_unigram_t3_with_rf
+
+0.364959754993 nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.362941892923 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.362900150843 nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf | nltk_unigram_t1_with_rf
+
+0.361135455831 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.361002063282 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf | nltk_unigram_t1_with_rf
+
+0.357631672234 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf | nltk_unigram_t1_with_rf
+
+#### 06
+
+**0.365341682765 nltk_unigram_t5_with_rf**
+
+0.365259577918 nltk_unigram_t3_with_rf
+
+0.365048941217 nltk_unigram_t4_with_rf
+
+0.361126435042 nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.361087913481 nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf
+
+0.358203558755 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.358084503611 nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.357926124432 nltk_unigram_t1_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.356136837949 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.355765308014 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.352492334585 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+#### 07
+
+**0.377537113745 nltk_unigram_t3_with_rf**
+
+0.377280434151 nltk_unigram_t4_with_rf
+
+0.364907912817 nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.364771476794 nltk_unigram_t4_with_rf | nltk_unigram_t3_with_rf
+
+0.362477627289 nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.362368449259 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.362339289822 nltk_unigram_t1_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t3_with_rf
+
+0.359196390988 nltk_unigram_t1_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.359027558143 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.355364304892 nltk_unigram_t4_with_rf | nltk_unigram_t1_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+#### 08
+
+**0.372323398554 nltk_unigram_t2_with_rf**
+
+0.372198682703 nltk_unigram_t5_with_rf
+
+0.372020854044 nltk_unigram_t3_with_rf
+
+0.361057364393 nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.35808082831 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf | nltk_unigram_t1_with_rf
+
+0.356868639049 nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf | nltk_unigram_t1_with_rf
+
+0.356857141283 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.356249760706 nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.356113529622 nltk_unigram_t4_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+#### 09
+
+**0.365848629798 nltk_unigram_t3_with_rf**
+
+0.365798171244 nltk_unigram_t1_with_rf
+
+0.36563492937 nltk_unigram_t5_with_rf
+
+0.36163827638 nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.359025689803 nltk_unigram_t1_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.35854884825 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.356717618489 nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.356663521324 nltk_unigram_t4_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.355468918837 nltk_unigram_t1_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf | nltk_unigram_t4_with_rf
+
+#### 10
+
+**0.370733331342 nltk_unigram_t3_with_rf**
+
+0.36589799807 nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.359597956477 nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.359424850871 nltk_unigram_t4_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.358293765271 nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf | nltk_unigram_t1_with_rf
+
+0.358292402123 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf
+
+0.355211837692 nltk_unigram_t4_with_rf | nltk_unigram_t5_with_rf | nltk_unigram_t2_with_rf | nltk_unigram_t3_with_rf | nltk_unigram_t1_with_rf
+
+#### nltk_unigram_with_rf_liblinear_hc 总结
+
+经过统计，nltk_unigram_with_rf_t1 ~ nltk_unigram_with_rf_t5 分别为 `[1, 1, 4, 2, 2]`。因此  使用 t3 作为候选的特征。
+
+### 3. `on_liblinear` hc 测试
+
+#### 01
+
+#### 02
+
+#### 03
+
+#### 04
+
+#### 05
+
+#### 06
+
+#### 07
+
+#### 08
+
+#### 09
+
+#### 10
+
+#### liblinear_hc 总结
+
+经过统计，_t1 ~ _t5 分别为 `[5, 10, 1, 1, 10]`。因此  使用 t2, t5 作为候选的特征。
+
+### 4. `on_liblinear` hc 测试
+
+#### 01
+
+#### 02
+
+#### 03
+
+#### 04
+
+#### 05
+
+#### 06
+
+#### 07
+
+#### 08
+
+#### 09
+
+#### 10
+
+#### liblinear_hc 总结
+
+经过统计，_t1 ~ _t5 分别为 `[5, 10, 1, 1, 10]`。因此  使用 t2, t5 作为候选的特征。
+
+### 5. `on_liblinear` hc 测试
+
+#### 01
+
+#### 02
+
+#### 03
+
+#### 04
+
+#### 05
+
+#### 06
+
+#### 07
+
+#### 08
+
+#### 09
+
+#### 10
+
+#### liblinear_hc 总结
+
+经过统计，_t1 ~ _t5 分别为 `[5, 10, 1, 1, 10]`。因此  使用 t2, t5 作为候选的特征。
+
 ## Dec.27th 2017
 
 bigram on liblinear测试。
