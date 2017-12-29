@@ -1,3 +1,5 @@
+
+
 # MySemEval2018_Task3 Experimental Logs
 
 ## Dec.28th 2017
@@ -117,6 +119,22 @@ Hashtag on liblinear 测试
 0.0674177140936 hashtag_t5
 
 #### hashtag_liblinear_hc 总结
+
+| 名称         | 频次 (tier 1) |
+| ---------- | ----------- |
+| hashtag_t1 | 5           |
+| hashtag_t2 | 10          |
+| hashtag_t3 | 1           |
+| hashtag_t4 | 1           |
+| hashtag_t5 | 10          |
+
+| 名称         | 频次 (tier 2) |
+| ---------- | ----------- |
+| hashtag_t1 | 13          |
+| hashtag_t2 | 19          |
+| hashtag_t3 | 6           |
+| hashtag_t4 | 8           |
+| hashtag_t5 | 20          |
 
 经过统计，hashtag_t1 ~ hashtag_t5 分别为 `[5, 10, 1, 1, 10]`。因此 hashtag 使用 t2, t5 作为候选的特征。
 
@@ -336,83 +354,265 @@ Hashtag on liblinear 测试
 
 经过统计，nltk_unigram_with_rf_t1 ~ nltk_unigram_with_rf_t5 分别为 `[1, 1, 4, 2, 2]`。因此  使用 t3 作为候选的特征。
 
-### 3. `on_liblinear` hc 测试
+### 3. `nltk_bigram_with_rf_on_liblinear` hc 测试
 
 #### 01
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 02
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 03
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 04
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 05
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 06
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 07
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 08
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 09
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
 
 #### 10
+0.3367500254 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336420418995 nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.336193697409 nltk_bigram_t3_with_rf
+0.335798215714 nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t3_with_rf
+0.334784588717 nltk_bigram_t4_with_rf | nltk_bigram_t5_with_rf | nltk_bigram_t2_with_rf | nltk_bigram_t1_with_rf | nltk_bigram_t3_with_rf
+
+#### nltk_bigram_with_rf_hc 总结
+
+| 名称                     | 频次 (2 tier) |
+| ---------------------- | ----------- |
+| nltk_bigram_t2_with_rf | 20          |
+| nltk_bigram_t3_with_rf | 20          |
+| nltk_bigram_t4_with_rf | 10          |
+| nltk_bigram_t5_with_rf | 10          |
+
+| 名称                     | 频次 （3 tier) |
+| ---------------------- | ----------- |
+| nltk_bigram_t2_with_rf | 20          |
+| nltk_bigram_t3_with_rf | 30          |
+| nltk_bigram_t4_with_rf | 10          |
+| nltk_bigram_t5_with_rf | 10          |
+
+经过统计，nltk_bigram_with_rf_t1 ~ nltk_bigram_with_rf_t5 分别为 `[0, 20, 30, 10, 10]`。因此  使用 t2, t3 作为候选的特征。
+
+### 4. `nltk_trigram_with_rf_on_liblinear` hc 测试
+
+#### 01
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 02
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 03
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 04
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 05
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 06
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 07
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 08
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 09
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### 10
+**0.21637725752 nltk_trigram_t3_with_rf**
+0.213552382858 nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212645767826 nltk_trigram_t4_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212564150491 nltk_trigram_t4_with_rf | nltk_trigram_t1_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+0.212552604942 nltk_trigram_t4_with_rf | nltk_trigram_t5_with_rf | nltk_trigram_t2_with_rf | nltk_trigram_t3_with_rf
+
+#### nltk_trigram_with_rf_liblinear_hc 总结
+
+| 名称                      | 频次 (tier 1) |
+| ----------------------- | ----------- |
+| nltk_trigram_t3_with_rf | 10          |
+
+经过统计，nltk_trigram_with_rf_t1 ~ nltk_trigram_with_rf_t5 分别为 `[0, 0, 10, 0, 0]`。因此使用 t3 作为候选的特征。
+
+### 5. `hashtag_with_rf_on_liblinear` hc 测试
+
+#### 01
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 02
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 03
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 04
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 05
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 06
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 07
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 08
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 09
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### 10
+0.0780428468756 hashtag_t3_with_rf
+0.0776298680755 hashtag_t4_with_rf | hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0775793741094 hashtag_t5_with_rf | hashtag_t1_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+0.0770433910287 hashtag_t2_with_rf | hashtag_t3_with_rf
+0.076906418647 hashtag_t5_with_rf | hashtag_t2_with_rf | hashtag_t3_with_rf
+
+#### hashtag_with_rf_on_hc 总结
+
+| 名称                 | 频次 (tier 1) |
+| ------------------ | ----------- |
+| hashtag_t3_with_rf | 10          |
+
+| 名称                 | 频次 (tier 2) |
+| ------------------ | ----------- |
+| hashtag_t1_with_rf | 10          |
+| hashtag_t2_with_rf | 10          |
+| hashtag_t3_with_rf | 20          |
+| hashtag_t4_with_rf | 10          |
+| hashtag_t5_with_rf | 10          |
 
 #### liblinear_hc 总结
 
-经过统计，_t1 ~ _t5 分别为 `[5, 10, 1, 1, 10]`。因此  使用 t2, t5 作为候选的特征。
-
-### 4. `on_liblinear` hc 测试
-
-#### 01
-
-#### 02
-
-#### 03
-
-#### 04
-
-#### 05
-
-#### 06
-
-#### 07
-
-#### 08
-
-#### 09
-
-#### 10
-
-#### liblinear_hc 总结
-
-经过统计，_t1 ~ _t5 分别为 `[5, 10, 1, 1, 10]`。因此  使用 t2, t5 作为候选的特征。
-
-### 5. `on_liblinear` hc 测试
-
-#### 01
-
-#### 02
-
-#### 03
-
-#### 04
-
-#### 05
-
-#### 06
-
-#### 07
-
-#### 08
-
-#### 09
-
-#### 10
-
-#### liblinear_hc 总结
-
-经过统计，_t1 ~ _t5 分别为 `[5, 10, 1, 1, 10]`。因此  使用 t2, t5 作为候选的特征。
+经过统计，使用 t3 作为候选的特征。
 
 ## Dec.27th 2017
 
