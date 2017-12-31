@@ -272,3 +272,40 @@ def print_markdown_mean_file(prec, recl, f1l, outfile=None):
 def write_dict_to_file(dict, file_path):
     with open(file_path, "w") as file_out:
         file_out.write("\n".join(["%s %s" % (str(key), str(dict[key])) for key in sorted(dict.keys(),reverse=True)]))
+
+
+def standard_hc_info_output(filepath_wildcard, scope, tier=1):
+    # rc = re.compile(r"\s*|\s*")
+    result = dict()
+    for id in scope:
+        file_name = filepath_wildcard % (id + 1)
+        print("#### %02d" % (id + 1))
+        fin = open(file_name)
+        idx = 0
+        for line in fin:
+            line = line.strip()
+            print(line)
+            if idx < tier:
+                line = line.split(" ", 1)[1]
+                lst = line.split(" | ")
+                j = 0
+                while j < len(lst):
+                    result.setdefault(lst[j], 0)
+                    result[lst[j]] += 1
+                    j += 1
+            idx += 1
+        print()
+        fin.close()
+    print()
+    print("#### hc 总结")
+    print("| 名称 | 频次 |")
+    print("|------|------|")
+    result = sorted(list(result.items()), key=lambda x: x[0])
+    for a, b in result:
+        print("| %s | %s |" % (a, b))
+
+
+if __name__ == "__main__":
+    import config
+    import os
+    standard_hc_info_output(os.path.join(config.RESULT_MYDIR, "liblinear_masterrun_%05d.txt"), range(3), 10)
