@@ -2,6 +2,8 @@
 import socket
 import os
 import pwd
+import uuid
+
 
 __CLASS = "B"
 
@@ -105,6 +107,28 @@ GLOVE_840B_300_PATH = os.path.join(GLOVE_PATH, "glove.840B.300d.txt")
 TRAIN_FEATURE_PATH = FEATURE_PATH + "/train.fea.txt"
 DEV_FEATURE_PATH = FEATURE_PATH + "/dev.fea.txt"
 
+
+def __make_unique_string(pattern: str):
+    return pattern.replace("<uni>", str(uuid.uuid1()))
+
+
+def make_feature_path(dev=False, dspr=""):
+    path = "dev" if dev else "train"
+    path = path + ".fea."
+    if len(dspr.strip()) > 0:
+        path = path + dspr + "."
+    path = "%s<uni>.txt" % path
+    return __make_unique_string(os.path.join(FEATURE_PATH, path))
+
+
+def make_model_path():
+    return __make_unique_string(os.path.join(CWD, "model", "<uni>.model"))
+
+
+def make_result_path():
+    return __make_unique_string(os.path.join(CWD, "result", "predict.<uni>.model"))
+
+
 GLOVE_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "glove.small.300d.txt")
 
 
@@ -118,5 +142,12 @@ RF_DATA_HASHTAG_TU_PATH = os.path.join(RESULT_MYDIR, "rf_hashtag_t%%d_%s.txt" % 
 RF_DATA_NLTK_BIGRAM_TU_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_bigram_t%%d_%s.txt" % __CLASS.lower())
 RF_DATA_NLTK_TRIGRAM_TU_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_trigram_t%%d_%s.txt" % __CLASS.lower())
 
-RESULT_HC_DICT = os.path.join(RESULT_MYDIR, "feature_hc_dict_%s.txt" % __CLASS.lower())
-RESULT_HC_OUTPUT = os.path.join(RESULT_MYDIR, "feature_hc_output_%s.txt" % __CLASS.lower())
+RESULT_HC_DICT = os.path.join(RESULT_MYDIR, "feature_hc_dict_<uni>_%s.txt" % __CLASS.lower())
+RESULT_HC_OUTPUT = os.path.join(RESULT_MYDIR, "feature_hc_output_<uni>_%s.txt" % __CLASS.lower())
+
+def make_result_hc_dict():
+    return __make_unique_string(RESULT_HC_DICT)
+
+
+def make_result_hc_output():
+    return __make_unique_string(RESULT_HC_OUTPUT)
