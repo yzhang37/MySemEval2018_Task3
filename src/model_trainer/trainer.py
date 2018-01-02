@@ -9,7 +9,6 @@ import numpy as np
 sys.path.append("../..")
 from src import config
 from src.evaluation import *
-from src.model_trainer.make_feature_file import make_feature
 from src import util
 from src.classifier import *
 from src.model_trainer.feature_functions import *
@@ -37,8 +36,8 @@ class Trainer(object):
         self.result_file_path = result_file_path
 
     def make_feature(self):
-        make_feature(self.train_tweets, self.feature_functions, self.train_feature_path)
-        make_feature(self.dev_tweets, self.feature_functions, self.dev_feature_path)
+        self.classifier.make_feature(self.train_tweets, self.feature_functions, self.train_feature_path)
+        self.classifier.make_feature(self.dev_tweets, self.feature_functions, self.dev_feature_path)
         util.handle_train_test_dim(self.train_feature_path, self.dev_feature_path)
 
     def train_model(self):
@@ -159,7 +158,8 @@ def single_train_algorithm(train_tweets, dev_tweets, feature_list):
     cm.print_out()
 
     for path in [train_fea_path, dev_fea_path, model_path, result_path]:
-        os.remove(path)
+        if os.path.exists(path):
+            os.remove(path)
     return cm
 
 
@@ -196,7 +196,7 @@ def main(mode="default"):
 
     '''feature_function'''
 
-    if True:
+    if False:
         features = [
             ners_existed,
             wv_google,
@@ -220,15 +220,15 @@ def main(mode="default"):
         # features.append(hashtag_t_with_rf[__freq])
 
     features.append(nltk_unigram_t[2])
-    features.append(nltk_bigram_t[2])
-    features.append(nltk_trigram_t[5])
-    features.append(hashtag_t[2])
-    features.append(hashtag_t[5])
-    features.append(nltk_unigram_t_with_rf[3])
-    features.append(nltk_bigram_t_with_rf[2])
-    features.append(nltk_bigram_t_with_rf[3])
-    features.append(nltk_trigram_with_t_rf[3])
-    features.append(hashtag_t_with_rf[3])
+    # features.append(nltk_bigram_t[2])
+    # features.append(nltk_trigram_t[5])
+    # features.append(hashtag_t[2])
+    # features.append(hashtag_t[5])
+    # features.append(nltk_unigram_t_with_rf[3])
+    # features.append(nltk_bigram_t_with_rf[2])
+    # features.append(nltk_bigram_t_with_rf[3])
+    # features.append(nltk_trigram_with_t_rf[3])
+    # features.append(hashtag_t_with_rf[3])
 
     print("Using following features:")
     print("=" * 30)
@@ -277,13 +277,18 @@ def main(mode="default"):
                               get_classifier, index_cv, output_format % (exec_id + 1))
 
             for path in [train_fea_path, dev_fea_path, model_path, result_path]:
-                os.remove(path)
+                if os.path.exists(path):
+                    os.remove(path)
 
         util.standard_hc_info_output(os.path.join(config.RESULT_MYDIR, output_format), range(10), 2)
 
 
+# def get_classifier():
+#     return Classifier(LibLinear(0, 1))
+
+
 def get_classifier():
-    return Classifier(LibLinear(0, 1))
+    return Classifier(skLearn_AdaBoostClassifier())
 
 
 if __name__ == '__main__':

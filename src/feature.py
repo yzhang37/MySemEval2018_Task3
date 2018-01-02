@@ -13,7 +13,6 @@ class Feature:
         return " ".join(list)
 
 
-
 if __name__ == '__main__':
     f = Feature("", 2, {3:2, 1:8})
     print(f.feat_string)
