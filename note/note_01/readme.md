@@ -2,6 +2,48 @@
 
 # MySemEval2018_Task3 Experimental Logs
 
+## 特征总结
+
+### Liblinear
+
+* unigram 使用 t2 作为候选的特征。
+* bigram使用 t2 作为候选的特征。
+* trigram 使用 t5 作为候选的特征。
+* hashtag 使用 t2, t5 作为候选的特征 
+
+- nltk_unigram_with_rf使用 t3 作为候选的特征。 
+- nltk_bigram_with_rf使用 t2, t3 作为候选的特征。
+- nltk_trigram_with_rf使用 t3 作为候选的特征。
+- hashtag_with_rf使用 t3 作为候选的特征。
+
+## Dec.29th 2017
+
+今天整理了 liblinear, as following:
+
+```Shell
+Using following features:
+==============================
+ners_existed
+wv_google
+wv_GloVe
+sentilexi
+emoticon
+punction
+elongated
+nltk_unigram_t2
+nltk_bigram_t2
+nltk_trigram_t5
+hashtag_t2
+hashtag_t5
+nltk_unigram_t3_with_rf
+nltk_bigram_t2_with_rf
+nltk_bigram_t3_with_rf
+nltk_trigram_t3_with_rf
+hashtag_t3_with_rf
+```
+
+
+
 ## Dec.28th 2017
 
 Hashtag on liblinear 测试
@@ -609,8 +651,6 @@ Hashtag on liblinear 测试
 | hashtag_t3_with_rf | 20          |
 | hashtag_t4_with_rf | 10          |
 | hashtag_t5_with_rf | 10          |
-
-#### liblinear_hc 总结
 
 经过统计，使用 t3 作为候选的特征。
 
