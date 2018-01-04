@@ -41,15 +41,15 @@ class Trainer(object):
         util.handle_train_test_dim(self.train_feature_path, self.dev_feature_path)
 
     def train_model(self):
-        print("training!!!!!")
+        # print("training!!!!!")
         self.classifier.train_model(self.train_feature_path, self.model_path)
 
     def test_model(self):
-        print("testing!!!!!")
+        # print("testing!!!!!")
         self.classifier.test_model(self.dev_feature_path, self.model_path, self.result_file_path)
 
     def evaluation_for_several_label(self, label):
-        print("evaluating!!!!!")
+        print("Evaluating...")
         cm = Evaluation(self.dev_feature_path, self.result_file_path, label)
         # cm.print_out()
         return cm
@@ -60,7 +60,9 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
     num_iter = (len(feature_functions) + 1) * len(feature_functions) // 2
     curr_iter = 0
 
-    foutput = open(config.make_result_hc_output(), "w+")
+    filePath = config.make_result_hc_output()
+    foutput = open(filePath, "w+")
+    print("Hill Climbing file dumping to %s." % filePath)
     print("", file=foutput)
     print("Trainer started at", time.asctime(time.localtime(time.time())), file=foutput)
     current_best_features = set([])
@@ -74,32 +76,10 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
             curr_iter += 1
             pending_feature_functions = current_best_features | {feature_function}
 
-            prec_score = []
-            recall_score = []
-            f1_score = []
-            for i, list_item in enumerate(tweet_cv):
-                dev_tweets = list_item
-                train_tweets = []
-                for j, list_item in enumerate(tweet_cv):
-                    if i == j:
-                        continue
-                    else:
-                        train_tweets += list_item
+            cm = run(tweet_cv, pending_feature_functions)
+            p, r, f1 = cm.get_average_prf()
 
-                classifier = get_classifier_function()
-                trainer = Trainer(train_tweets, dev_tweets, pending_feature_functions, train_feature_path,
-                                  dev_feature_path, classifier, model_path, result_file_path)
-                trainer.make_feature()
-                trainer.train_model()
-                trainer.test_model()
-                cm = trainer.evaluation_for_several_label(config.get_label_list())
-
-                p, r, f1 = cm.get_average_prf()
-                prec_score.append(p)
-                recall_score.append(r)
-                f1_score.append(f1)
-
-            score = np.mean(f1_score)
+            score = f1
             dict_pending[score] = pending_feature_functions
             cur_funcs = " | ".join([func.__name__ for func in pending_feature_functions])
             dict_all[score] = cur_funcs
@@ -111,11 +91,11 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
             print()
             print("--> %d/%d" % (curr_iter, num_iter), file=foutput)
             print("##" * 45, file=foutput)
-            print("Best score: %.4f" % best_score, file=foutput)
+            print("Best score: %.2f%%" % best_score, file=foutput)
             print("Best feature set: ", " | ".join([func.__name__ for func in best_features]), file=foutput)
             print("-" * 45, file=foutput)
-            print("Current functions: %s" % cur_funcs, file=foutput);
-            util.print_markdown_mean_file(prec_score, recall_score, f1_score, foutput)
+            print("Current functions: %s" % cur_funcs, file=foutput)
+            print("Current score: %.2f%%" % score, file=foutput)
             print("##" * 45, file=foutput)
             foutput.flush()
 
@@ -126,6 +106,7 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
                 current_best_features = dict_pending[key]
 
         feature_functions -= current_best_features
+    print("Hill Climbing file dumped to %s." % filePath)
     util.write_dict_to_file(dict_all, os.path.join(config.RESULT_MYDIR, output_file_name))
 
 
@@ -138,29 +119,6 @@ def write_to_file(tuple, file_path):
 def load_data():
     tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
     return tweets
-
-
-def single_train_algorithm(train_tweets, dev_tweets, feature_list):
-    '''classifier'''
-    classifier = get_classifier()
-
-    train_fea_path = config.make_feature_path(dev=False)
-    dev_fea_path = config.make_feature_path(dev=True)
-    model_path = config.make_model_path()
-    result_path = config.make_result_path()
-
-    trainer = Trainer(train_tweets, dev_tweets, feature_list, train_fea_path, dev_fea_path, classifier,
-                      model_path, result_path)
-    trainer.make_feature()
-    trainer.train_model()
-    trainer.test_model()
-    cm = trainer.evaluation_for_several_label(config.get_label_list())
-    cm.print_out()
-
-    for path in [train_fea_path, dev_fea_path, model_path, result_path]:
-        if os.path.exists(path):
-            os.remove(path)
-    return cm
 
 
 def build_cv(tweets, map_function, fold=4):
@@ -187,7 +145,167 @@ def build_cv(tweets, map_function, fold=4):
     return index_cv
 
 
-def main(mode="default"):
+def get_features_on_liblinear(feature: list):
+    feature += [
+        ners_existed,
+        wv_google,
+        wv_GloVe,
+        sentilexi,
+        emoticon,
+        punction,
+        elongated
+    ]
+
+    # feature.append(nltk_unigram_t_with_rf[2])
+    # feature.append(nltk_bigram_t_with_rf[3])
+    # feature.append(nltk_trigram_t[2])
+    # feature.append(hashtag_t_with_rf[3])
+    for __freq in range(1, 6):
+        feature.append(nltk_unigram_t[__freq])
+        feature.append(nltk_bigram_t[__freq])
+        feature.append(nltk_trigram_t[__freq])
+        feature.append(hashtag_t[__freq])
+        feature.append(nltk_unigram_t_with_rf[__freq])
+        feature.append(nltk_bigram_t_with_rf[__freq])
+        feature.append(nltk_trigram_with_t_rf[__freq])
+        feature.append(hashtag_t_with_rf[__freq])
+    return feature
+
+
+def get_features_on_AdaBoost(features: list):
+    print("!!!!! uncleared !!!!!")
+    features.extend([
+        ners_existed,
+        wv_google,
+        wv_GloVe,
+        sentilexi,
+        emoticon,
+        punction,
+        elongated
+    ])
+
+    features.append(nltk_unigram_t[2])
+
+    # features.append(nltk_bigram_t[__freq])
+
+    features.append(nltk_trigram_t[2])
+
+    features.append(hashtag_t[2])
+
+    features.append(nltk_unigram_t_with_rf[2])
+
+    features.append(nltk_bigram_t_with_rf[2])
+
+    features.append(nltk_trigram_with_t_rf[1])
+    features.append(nltk_trigram_with_t_rf[4])
+
+    features.append(hashtag_t_with_rf[4])
+    features.append(hashtag_t_with_rf[5])
+
+
+def get_features_on_DecisionTree(features: list):
+    print("!!!!! uncleared !!!!!")
+    for __freq in range(1, 6):
+        # features.append(nltk_unigram_t[__freq])
+        # features.append(nltk_bigram_t[__freq])
+        # features.append(nltk_trigram_t[__freq])
+        # features.append(hashtag_t[__freq])
+        # features.append(nltk_unigram_t_with_rf[__freq])
+        # features.append(nltk_bigram_t_with_rf[__freq])
+        # features.append(nltk_trigram_with_t_rf[__freq])
+        features.append(hashtag_t_with_rf[__freq])
+
+
+def get_features_on_NaiveBayes(features: list):
+    print("!!!!! uncleared !!!!!")
+    for __freq in range(1, 6):
+        # features.append(nltk_unigram_t[__freq])
+        # features.append(nltk_bigram_t[__freq])
+        # features.append(nltk_trigram_t[__freq])
+        features.append(hashtag_t[__freq])
+        # features.append(nltk_unigram_t_with_rf[__freq])
+        # features.append(nltk_bigram_t_with_rf[__freq])
+        # features.append(nltk_trigram_with_t_rf[__freq])
+        # features.append(hashtag_t_with_rf[__freq])
+
+
+def run(index_cv, feature_list, keep_train=False, keep_pw=False):
+
+    # define the power file
+    power_dev_fea_path = config.make_feature_path(dev=True, dspr="power")
+    fpower = open(power_dev_fea_path, "w+")
+    power_result_path = config.make_result_path(dspr="power")
+    fresPower = open(power_result_path, "w+")
+
+    for i, __item in enumerate(index_cv):
+        dev_tweets = __item
+        train_tweets = []
+        for j, __item in enumerate(index_cv):
+            if i != j:
+                train_tweets += __item
+
+        print("Fold %d / %d" % (i+1, len(index_cv)))
+        # get classifier
+        classifier = get_classifier()
+
+        # get paths
+        train_fea_path = config.make_feature_path(dev=False)
+        dev_fea_path = config.make_feature_path(dev=True)
+        model_path = config.make_model_path()
+        result_path = config.make_result_path()
+
+        trainer = Trainer(train_tweets, dev_tweets, feature_list, train_fea_path, dev_fea_path, classifier,
+                          model_path, result_path)
+
+        trainer.make_feature()
+        trainer.train_model()
+        trainer.test_model()
+
+        with open(dev_fea_path) as fdev_in:
+            for line in fdev_in:
+                fpower.write(line)
+                if line[-1] != '\n':
+                    fpower.write('\n')
+
+        fpower.flush()
+        with open(result_path) as fres_in:
+            for line in fres_in:
+                fresPower.write(line)
+                if line[-1] != '\n':
+                    fpower.write('\n')
+        fresPower.flush()
+
+        if keep_train:
+            print("--" * 30)
+            print("current train file:")
+            print("train_feature: %s" % (train_fea_path))
+            print("dev_feature: %s" % (dev_fea_path))
+            print("model: %s" % (model_path))
+            print("result: %s" % (result_path))
+        else:
+            for path in [train_fea_path, dev_fea_path, model_path, result_path]:
+                if os.path.exists(path):
+                    os.remove(path)
+        print()
+
+    fpower.close()
+    fresPower.close()
+    cm = Evaluation(power_dev_fea_path, power_result_path, config.get_label_list())
+    cm.print_out()
+    if keep_pw:
+        print("==" * 30)
+        print("Power dev_feature and result file path is:")
+        print(power_dev_fea_path)
+        print(power_result_path)
+        print()
+    else:
+        for path in [power_dev_fea_path, power_result_path]:
+            if os.path.exists(path):
+                os.remove(path)
+    return cm
+
+
+def main(mode="default", hc_output_filename="%05d.txt"):
     '''load data'''
     tweets = load_data()
 
@@ -195,21 +313,24 @@ def main(mode="default"):
     index_cv = build_cv(tweets, config.get_label_map, 10)
 
     '''feature_function'''
+    features = []
+    # feature_func = get_features_on_NaiveBayes
+    feature_func = get_features_on_liblinear
 
-    if False:
-        features = [
-            ners_existed,
-            wv_google,
-            wv_GloVe,
-            sentilexi,
-            emoticon,
-            punction,
-            elongated
-        ]
-    else:
-        features = []
+    print(feature_func.__name__.replace("_", " ").replace("get", "Using"))
+    feature_func(features)
 
-        # for __freq in range(1, 6):
+    # features = [
+    #     ners_existed,
+    #     wv_google,
+    #     wv_GloVe,
+    #     sentilexi,
+    #     emoticon,
+    #     punction,
+    #     elongated
+    # ]
+
+    # for __freq in range(1, 6):
         # features.append(nltk_unigram_t[__freq])
         # features.append(nltk_bigram_t[__freq])
         # features.append(nltk_trigram_t[__freq])
@@ -219,17 +340,6 @@ def main(mode="default"):
         # features.append(nltk_trigram_with_t_rf[__freq])
         # features.append(hashtag_t_with_rf[__freq])
 
-    features.append(nltk_unigram_t[2])
-    # features.append(nltk_bigram_t[2])
-    # features.append(nltk_trigram_t[5])
-    # features.append(hashtag_t[2])
-    # features.append(hashtag_t[5])
-    # features.append(nltk_unigram_t_with_rf[3])
-    # features.append(nltk_bigram_t_with_rf[2])
-    # features.append(nltk_bigram_t_with_rf[3])
-    # features.append(nltk_trigram_with_t_rf[3])
-    # features.append(hashtag_t_with_rf[3])
-
     print("Using following features:")
     print("=" * 30)
     for fe_func in features:
@@ -238,32 +348,35 @@ def main(mode="default"):
     print()
 
     if mode.lower() == "default":
-        prec_score = []
-        recall_score = []
-        f1_score = []
-        for i, list_item in enumerate(index_cv):
-            dev = list_item
-            train = []
-            for j, list_item in enumerate(index_cv):
-                if i == j:
-                    continue
-                else:
-                    train += list_item
-            cm = single_train_algorithm(train, dev, features)
-            p, r, f1 = cm.get_average_prf()
-            print("p:{},r:{},f1:{}".format(p, r, f1))
-            prec_score.append(p)
-            recall_score.append(r)
-            f1_score.append(f1)
+        cm = run(index_cv, features)
+        p, r, f1 = cm.get_average_prf()
 
-        average_score = sum(f1_score) / len(f1_score)
-        print(average_score)
-        util.print_dedicated_mean(prec_score, recall_score, f1_score)
-        util.print_markdown_mean_file(prec_score, recall_score, f1_score)
+        # prec_score = []
+        # recall_score = []
+        # f1_score = []
+        # for i, list_item in enumerate(index_cv):
+        #     dev = list_item
+        #     train = []
+        #     for j, list_item in enumerate(index_cv):
+        #         if i == j:
+        #             continue
+        #         else:
+        #             train += list_item
+        #     cm = single_train_algorithm(train, dev, features)
+        #     p, r, f1 = cm.get_average_prf()
+        #     # print("p:{},r:{},f1:{}".format(p, r, f1))
+        #     prec_score.append(p)
+        #     recall_score.append(r)
+        #     f1_score.append(f1)
+        #
+        # average_score = sum(f1_score) / len(f1_score)
+        # print(average_score)
+        # util.print_dedicated_mean(prec_score, recall_score, f1_score)
+        # util.print_markdown_mean_file(prec_score, recall_score, f1_score)
     elif mode.lower() == "hc":
         # execute the hc procedure several times
-        output_format = "liblinear_masterrun_%05d.txt"
-        for exec_id in range(10):
+
+        for exec_id in range(1):
             print()
             print("Running hc time %d" % (exec_id + 1))
 
@@ -274,24 +387,27 @@ def main(mode="default"):
 
             classification_hc(train_fea_path, dev_fea_path,
                               model_path, result_path, features,
-                              get_classifier, index_cv, output_format % (exec_id + 1))
+                              get_classifier, index_cv, hc_output_filename % (exec_id + 1))
 
             for path in [train_fea_path, dev_fea_path, model_path, result_path]:
                 if os.path.exists(path):
                     os.remove(path)
 
-        util.standard_hc_info_output(os.path.join(config.RESULT_MYDIR, output_format), range(10), 2)
-
-
-# def get_classifier():
-#     return Classifier(LibLinear(0, 1))
+        util.standard_hc_info_output(os.path.join(config.RESULT_MYDIR, hc_output_filename), range(1), 2)
 
 
 def get_classifier():
-    return Classifier(skLearn_AdaBoostClassifier())
+    return Classifier(LibLinear(0, 1))
+    # return Classifier(skLearn_AdaBoostClassifier())
+    # return Classifier(skLearn_DecisionTree())
+    # return Classifier(skLearn_NaiveBayes())
 
 
 if __name__ == '__main__':
     print("Trainer started at", time.asctime(time.localtime(time.time())))
     print("==" * 30)
-    main("default")
+    # output_format = "hc_hashtag_NaiveBayes_%05d.txt"
+    main("hc", "liblinear_licorice_masterrun_%05d.txt")
+    # main("default")
+
+

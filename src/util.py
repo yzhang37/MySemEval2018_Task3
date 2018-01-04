@@ -272,13 +272,21 @@ def handle_train_test_dim(train_path, dev_path):
         _add_max_dim_for_file(train_path, dev_max_dim)
 
 
-def print_dedicated_mean(prec, recl, f1l):
-    print("=" * 40)
-    line_count = len(prec)
-    for id in range(0, line_count):
-        print("Fold %d\t: %.2f%%\t%.2f%%\t%.2f%%" % (id + 1, prec[id] * 100, recl[id] * 100, f1l[id] * 100))
-    print("=" * 40)
-    print("Mean\t: %.2f%%\t%.2f%%\t%.2f%%" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100))
+def print_dedicated_mean(prec, recl, f1l, outfile=None):
+    if outfile is not None:
+        print("=" * 40, file=outfile)
+        line_count = len(prec)
+        for id in range(0, line_count):
+            print("Fold %d\t: %.2f%%\t%.2f%%\t%.2f%%" % (id + 1, prec[id] * 100, recl[id] * 100, f1l[id] * 100), file=outfile)
+        print("=" * 40, file=outfile)
+        print("Mean\t: %.2f%%\t%.2f%%\t%.2f%%" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100), file=outfile)
+    else:
+        print("=" * 40)
+        line_count = len(prec)
+        for id in range(0, line_count):
+            print("Fold %d\t: %.2f%%\t%.2f%%\t%.2f%%" % (id + 1, prec[id] * 100, recl[id] * 100, f1l[id] * 100))
+        print("=" * 40)
+        print("Mean\t: %.2f%%\t%.2f%%\t%.2f%%" % (np.mean(prec) * 100, np.mean(recl) * 100, np.mean(f1l) * 100))
 
 
 def print_markdown_mean_file(prec, recl, f1l, outfile=None):
@@ -309,7 +317,7 @@ def write_dict_to_file(dict, file_path):
 
 
 
-def standard_hc_info_output(filepath_wildcard, scope, tier=1):
+def standard_hc_info_output(filepath_wildcard, scope, tier=1, sort_idx = 0, sign = 1):
     # rc = re.compile(r"\s*|\s*")
     result = dict()
     for id in scope:
@@ -335,7 +343,7 @@ def standard_hc_info_output(filepath_wildcard, scope, tier=1):
     print("#### hc 总结")
     print("| 名称 | 频次 |")
     print("|------|------|")
-    result = sorted(list(result.items()), key=lambda x: x[0])
+    result = sorted(list(result.items()), key=lambda x: sign * x[sort_idx])
     for a, b in result:
         print("| %s | %s |" % (a, b))
 

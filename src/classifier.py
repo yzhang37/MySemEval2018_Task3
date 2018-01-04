@@ -18,13 +18,19 @@ from src.model_trainer import make_feature_file
 
 
 class Strategy(object):
+    def __init__(self):
+        self.make_feature_handler = make_feature_file.make_feature_for_liblinear
     def train_model(self, train_feature_path, model_path):
         return None
     def test_model(self, test_feature_path, model_path, result_file_path):
         return None
-    @staticmethod
-    def make_feature_handler(tweets, feature_function_list, to_file):
-        assert False, "Make feature function not yet implemented."
+
+    # We no longer need this static method, because scikit contains a function
+    # to convert liblinear format to its own data format.
+    #
+    # @staticmethod
+    # def make_feature_handler(tweets, feature_function_list, to_file):
+    #     assert False, "Make feature function not yet implemented."
 
 
 class Classifier(object):
@@ -42,6 +48,7 @@ class Classifier(object):
 
 class skLearn_DecisionTree(Strategy):
     def __init__(self):
+        super().__init__()
         self.trainer = "skLearn decisionTree"
         self.clf = tree.DecisionTreeClassifier()
         print("Using %s Classifier" % (self.trainer))
@@ -68,6 +75,7 @@ class skLearn_DecisionTree(Strategy):
 
 class skLearn_NaiveBayes(Strategy):
     def __init__(self):
+        super().__init__()
         self.trainer = "skLearn NaiveBayes"
         self.clf = GaussianNB()
         print("Using %s Classifier" % (self.trainer))
@@ -93,6 +101,7 @@ class skLearn_NaiveBayes(Strategy):
 
 class skLearn_svm(Strategy):
     def __init__(self):
+        super().__init__()
         self.trainer = "skLearn svm"
         self.clf = svm.LinearSVC()
         self.make_feature_handler = make_feature_file.make_feature_for_sklearn
@@ -118,6 +127,7 @@ class skLearn_svm(Strategy):
 
 class skLearn_lr(Strategy):
     def __init__(self):
+        super().__init__()
         self.trainer = "skLearn LogisticRegression"
         self.clf = LogisticRegression()
         print("Using %s Classifier" % (self.trainer))
@@ -142,6 +152,7 @@ class skLearn_lr(Strategy):
 
 class skLearn_KNN(Strategy):
     def __init__(self):
+        super().__init__()
         self.trainer = "skLearn KNN"
         self.clf = KNeighborsClassifier(n_neighbors=3)
         print("Using %s Classifier" % (self.trainer))
@@ -167,9 +178,9 @@ class skLearn_KNN(Strategy):
 
 class skLearn_AdaBoostClassifier(Strategy):
     def __init__(self):
+        super().__init__()
         self.trainer = "skLearn AdaBoostClassifier"
         self.clf = AdaBoostClassifier()
-        self.make_feature_handler = make_feature_file.make_feature_for_liblinear
         print("Using %s Classifier" % (self.trainer))
 
     def train_model(self, train_file_path, model_path):
@@ -191,6 +202,7 @@ class skLearn_AdaBoostClassifier(Strategy):
 
 class sklearn_RandomForestClassifier(Strategy):
     def __init__(self):
+        super().__init__()
         self.trainer = "skLearn RandomForestClassifier"
         self.clf = RandomForestClassifier()
         print("Using %s Classifier" % (self.trainer))
@@ -215,6 +227,7 @@ class sklearn_RandomForestClassifier(Strategy):
 
 class sklearn_VotingClassifier(Strategy):
     def __init__(self):
+        super().__init__()
         self.trainer = "skLearn VotingClassifier"
 
         clf1 = LogisticRegression()
@@ -249,9 +262,9 @@ class sklearn_VotingClassifier(Strategy):
 class LibLinear(Strategy):
 
     def __init__(self, s, c):
+        super().__init__()
         self.s = s
         self.c = c
-        self.make_feature_handler = make_feature_file.make_feature_for_liblinear
         self.trainer = "Liblinear"
         print ("Using %s Classfier" % self.trainer)
 

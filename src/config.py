@@ -116,17 +116,25 @@ def make_feature_path(dev=False, dspr=""):
     path = "dev" if dev else "train"
     path = path + ".fea."
     if len(dspr.strip()) > 0:
-        path = path + dspr + "."
+        path += dspr + "."
     path = "%s<uni>.txt" % path
     return __make_unique_string(os.path.join(FEATURE_PATH, path))
 
 
-def make_model_path():
-    return __make_unique_string(os.path.join(CWD, "model", "<uni>.model"))
+def make_model_path(dspr=""):
+    pattern = ""
+    if len(dspr.strip()) > 0:
+        pattern += dspr + "."
+    pattern += "<uni>.model"
+    return __make_unique_string(os.path.join(CWD, "model", pattern))
 
 
-def make_result_path():
-    return __make_unique_string(os.path.join(CWD, "result", "predict.<uni>.model"))
+def make_result_path(dspr=""):
+    pattern = "predict."
+    if len(dspr.strip()) > 0:
+        pattern += dspr + "."
+    pattern += "<uni>.txt"
+    return __make_unique_string(os.path.join(CWD, "result", pattern))
 
 
 GLOVE_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "glove.small.300d.txt")
