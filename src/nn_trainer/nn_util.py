@@ -1,11 +1,13 @@
-#encoding:utf-8
+# encoding: utf-8
 import sys
-sys.path.append("../..")
-from src import config
 import numpy as np
 import os
+import tensorflow as tf
+sys.path.append("../..")
+from src import config
 from src.word2vec import GloVe
 from src.model_trainer.dict_loader import Dict_loader
+
 
 def load_word2vec_for_vocab(dict_word_to_index, from_origin=True):
 
@@ -23,6 +25,7 @@ def load_word2vec_for_vocab(dict_word_to_index, from_origin=True):
 
     # load embedding matrix
     return _load_wordvec(embedding_file)
+
 
 # dict_vocab: token -> index
 def _load_vocab_vec(fname, dict_word_to_index, to_file):
@@ -84,3 +87,22 @@ def _load_wordvec(filename):
                 print("===>", line)
             vocab_embeddings.append(list(map(float, line.strip().split(" ")[1:])))
     return np.array(vocab_embeddings)
+
+
+def get_data_length(data):
+    used = tf.sign(tf.reduce_max(tf.abs(data), reduction_indices=2))
+    length = tf.reduce_sum(used, reduction_indices=1)
+    length = tf.cast(length, tf.int32)
+    length_one = tf.ones(tf.shape(length), dtype=tf.int32)
+    length = tf.maximum(length, length_one)
+    return length
+
+
+def last_relevant(output, length):
+    batch_size = tf.shape(output)[0]
+    max_length = int(output.get_shape()[1])
+    output_size = int(output.get_shape()[2])
+    index = tf.range(0, batch_size) * max_length + (length - 1)
+    flat = tf.reshape(output, [-1, output_size])
+    relevant = tf.gather(flat, index)
+    return relevant

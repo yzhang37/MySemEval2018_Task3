@@ -71,7 +71,7 @@ class Rf_Viewer(object):
 if __name__ == "__main__":
     dict_loader = Dict_loader()
     viewer = Rf_Viewer(dict=dict_loader.dict_nltk_unigram)
-    viewer.load_rf_file(rf_file=config.RF_DATA_NLTK_UNIGRAM_PATH)
+    viewer.load_rf_file(rf_file=config.RF_DATA_NLTK_UNIGRAM_TU_PATH % 2)
     # viewer.view_class_top_k(k=20)
     # viewer.print_list_rf()
     # viewer.print_word_rf("Oxford")

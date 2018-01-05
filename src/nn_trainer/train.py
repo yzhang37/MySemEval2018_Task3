@@ -8,6 +8,7 @@ import time
 import datetime
 from src.nn_trainer import data_helpers
 from src.nn_trainer.text_cnn import TextCNN
+from src.nn_trainer.text_rnn import TextRNN
 from tensorflow.contrib import learn
 from src import config
 from src.nn_trainer import nn_util
@@ -47,14 +48,14 @@ for attr, value in sorted(FLAGS.__flags.items()):
 print("")
 
 
-# Data Preparation
+# 准备数据
 # ==================================================
 
 # Load data
 print("Loading data...")
 x_text, y = data_helpers.load_data_and_labels(FLAGS.training_data_file)
 
-# Build vocabulary
+# 构建词汇表
 max_document_length = max([len(x.split(" ")) for x in x_text])
 vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
 word2idx = vocab_processor.vocabulary_._mapping # dict : {word:idx}
@@ -67,8 +68,7 @@ x = np.array(list(vocab_processor.fit_transform(x_text))) # fit_transform: retur
 #     # print("\n")
 #     if i == 10: break
 
-
-# Randomly shuffle data
+# 随机打乱数据
 np.random.seed(10)
 shuffle_indices = np.random.permutation(np.arange(len(y)))
 x_shuffled = x[shuffle_indices]
@@ -91,11 +91,15 @@ vocab_embeddings = nn_util.load_word2vec_for_vocab(word2idx, from_origin=True)
 # ==================================================
 
 with tf.Graph().as_default():
+
     session_conf = tf.ConfigProto(
       allow_soft_placement=FLAGS.allow_soft_placement, # 如果你指定的设备不存在，是否允许TF自动分配设备
       log_device_placement=FLAGS.log_device_placement) # 是否打印日志
+
     sess = tf.Session(config=session_conf)
+
     with sess.as_default():
+
         cnn = TextCNN(
             sequence_length=x_train.shape[1],
             num_classes=y_train.shape[1],

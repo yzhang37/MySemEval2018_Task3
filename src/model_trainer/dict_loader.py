@@ -10,6 +10,7 @@ from src.word2vec import Word2VecTag
 from src.word2vec import GloVe
 from src.model_trainer.dict_cacher import DictCache
 
+
 @singleton
 class Dict_loader(object):
     def __init__(self):
@@ -84,3 +85,4 @@ class Dict_loader(object):
             dict_[tuple(line[0].split(" "))] = score
 
         return dict_
+
