@@ -4,9 +4,7 @@ import json
 sys.path.append("../..")
 from src import config
 from src.model_trainer import dict_creator
-ready = True
-if ready:
-    from src.model_trainer import rf_calculate
+from src.model_trainer import rf_calculate
 
 
 def load_traindata():
@@ -16,26 +14,22 @@ def load_traindata():
 
 def create_nltk_unigram(creator, freq):
     dict_creator.create_nltk_unigram_dict(creator, freq)
-    if ready:
-        rf_calculate.create_nltk_unigram_rf(creator.texts, freq)
+    rf_calculate.create_nltk_unigram_rf(creator.texts, freq)
 
 
 def create_hashtag(creator, freq):
     dict_creator.create_hashtag_dict(creator, freq)
-    if ready:
-        rf_calculate.create_hashtag_rf(creator.texts, freq)
+    rf_calculate.create_hashtag_rf(creator.texts, freq)
 
 
 def create_nltk_bigram(creator, freq):
     dict_creator.create_nltk_bigram_dict(creator, freq)
-    if ready:
-        rf_calculate.create_nltk_bigram_rf(creator.texts, freq)
+    rf_calculate.create_nltk_bigram_rf(creator.texts, freq)
 
 
 def create_nltk_trigram(creator, freq):
     dict_creator.create_nltk_trigram_dict(creator, freq)
-    if ready:
-        rf_calculate.create_nltk_trigram_rf(creator.texts, freq)
+    rf_calculate.create_nltk_trigram_rf(creator.texts, freq)
 
 
 if __name__ == '__main__':

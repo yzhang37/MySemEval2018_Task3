@@ -62,6 +62,7 @@ FEATURE_PATH = CWD + "/feature"
 MODEL_PATH = CWD + "/model/binary_clf.model"
 RESULT_PATH = CWD + "/result/predict.txt"
 RESULT_MYDIR = os.path.join(CWD, "result")
+RELATION_FREQ_PATH = os.path.join(CWD, "RelFreq")
 
 RAW_TRAIN = DATA_PATH + "/train/SemEval2018-T4-train-task%s.txt" % __CLASS.upper()
 
@@ -141,14 +142,10 @@ GLOVE_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "glove.small.300d.txt")
 
 
 # the following is RF files
-# RF_DATA_NLTK_UNIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_unigram_%s.txt" % __CLASS.lower())
-# RF_DATA_HASHTAG_PATH = os.path.join(RESULT_MYDIR, "rf_hashtag_%s.txt" % __CLASS.lower())
-# RF_DATA_NLTK_BIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_bigram_%s.txt" % __CLASS.lower())
-# RF_DATA_NLTK_TRIGRAM_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_trigram_%s.txt" % __CLASS.lower())
-RF_DATA_NLTK_UNIGRAM_TU_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_unigram_t%%d_%s.txt" % __CLASS.lower())
-RF_DATA_HASHTAG_TU_PATH = os.path.join(RESULT_MYDIR, "rf_hashtag_t%%d_%s.txt" % __CLASS.lower())
-RF_DATA_NLTK_BIGRAM_TU_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_bigram_t%%d_%s.txt" % __CLASS.lower())
-RF_DATA_NLTK_TRIGRAM_TU_PATH = os.path.join(RESULT_MYDIR, "rf_nltk_trigram_t%%d_%s.txt" % __CLASS.lower())
+RF_DATA_NLTK_UNIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_unigram_t%%d_%s.txt" % __CLASS.lower())
+RF_DATA_HASHTAG_TU_PATH = os.path.join(RELATION_FREQ_PATH, "hashtag_t%%d_%s.txt" % __CLASS.lower())
+RF_DATA_NLTK_BIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_bigram_t%%d_%s.txt" % __CLASS.lower())
+RF_DATA_NLTK_TRIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_trigram_t%%d_%s.txt" % __CLASS.lower())
 
 RESULT_HC_DICT = os.path.join(RESULT_MYDIR, "feature_hc_dict_<uni>_%s.txt" % __CLASS.lower())
 RESULT_HC_OUTPUT = os.path.join(RESULT_MYDIR, "feature_hc_output_<uni>_%s.txt" % __CLASS.lower())

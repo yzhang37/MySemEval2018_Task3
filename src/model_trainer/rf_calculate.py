@@ -81,7 +81,7 @@ class Rf_Calculator(object):
         if len(out) > 0:
             print("==" * 40)
             print("Creating Rf files..., dumped to\n%s" % out)
-            json.dump({"rf_sorted": rf_sorted, "rf_value": rf_valueDict ,"rf_dict": rf_dict}, open(out, "w"))
+            json.dump({"rf_sorted": rf_sorted, "rf_value": rf_valueDict, "rf_dict": rf_dict}, open(out, "w"))
             print("==" * 40)
 
 
@@ -109,3 +109,4 @@ def create_nltk_bigram_rf(train_data, freq):
 
 def create_nltk_trigram_rf(train_data, freq):
     calc_rc(train_data, feature_functions.nltk_trigram_t[freq], config.RF_DATA_NLTK_TRIGRAM_TU_PATH % freq)
+

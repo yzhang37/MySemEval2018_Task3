@@ -117,7 +117,10 @@ def get_feature_by_feature_list_with_rf(dict, token_list, rf_object):
     feat_dict = {}
     for token in token_list:
         if token in dict:
-            cls, rf_v = rf_object.get_word_id_rf(dict[token])
+            ret = rf_object.get_word_id_rf(dict[token])
+            if ret is None:
+                print("发生错误")
+            cls, rf_v = ret
             feat_dict[dict[token]] = rf_v
     # print (len(dict))
     return Feature("", len(dict), feat_dict)

@@ -407,7 +407,7 @@ if __name__ == '__main__':
     print("Trainer started at", time.asctime(time.localtime(time.time())))
     print("==" * 30)
     # output_format = "hc_hashtag_NaiveBayes_%05d.txt"
-    main("hc", "liblinear_licorice_masterrun_%05d.txt")
-    # main("default")
+    # main("hc", "liblinear_licorice_masterrun_%05d.txt")
+    main("default")
 
 

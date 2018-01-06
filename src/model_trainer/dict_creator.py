@@ -13,7 +13,6 @@ class Dict_creator(object):
     def create_dict(self, dict_function, dict_path, threshold=1):
         print("=="*40)
         print("Create dict for %s ..." % (dict_function.__name__.replace("get_", "")))
-        print("=="*40)
         dictionary = {}
         self._create_dict(self.texts, dict_function, dictionary)
         # 删除频率小于threshold的键

@@ -2,6 +2,7 @@
 import sys
 import numpy
 sys.path.append("../..")
+from src.model_trainer.LazyLoader import LazyLoader
 from src.util import singleton
 from src.util import load_dict_from_file
 from src import config
@@ -11,6 +12,80 @@ from src.word2vec import GloVe
 from src.model_trainer.dict_cacher import DictCache
 
 
+@singleton
+class DictLoader(LazyLoader):
+    def __init__(self):
+        LazyLoader.__init__(self)
+        self._map_name_to_handler = {
+            "sent_BL": lambda: self.__dict_Senti_Lexi_0(config.LEXI_BL),
+            "sent_GI": lambda: self.__dict_Senti_Lexi_0(config.LEXI_GI),
+            "sent_IMDB": lambda: self.__dict_Senti_Lexi_0(config.LEXI_IMDB),
+            "sent_MPQA": lambda: self.__dict_Senti_Lexi_0(config.LEXI_MPQA),
+            "sent_NRCE": lambda: self.__dict_Senti_Lexi_0(config.LEXI_NRCEMOTION),
+            "sent_AF": lambda: self.__dict_Senti_Lexi_1(config.LEXI_AFINN),
+            "sent_NRC140_U": lambda: self.__dict_Senti_Lexi_1(config.LEXI_NRC140_U),
+            "sent_NRCH_U": lambda: self.__dict_Senti_Lexi_1(config.LEXI_NRCHASHTAG_U),
+            "sent_NRC140_B": lambda: self.__dict_Senti_Lexi_2(config.LEXI_NRC140_B),
+            "sent_NRCH_B": lambda: self.__dict_Senti_Lexi_2(config.LEXI_NRCHASHTAG_B),
+            "embed_Word2Vec": lambda: Word2Vec(config.WORD2VEC_GOOGLE),
+            "embed_GloVe": self.__get_glove_handler,
+        }
+        # GloVe is too large, make cache for it.
+
+        for freq in range(1, 6):
+            self._map_name_to_handler["nltk_unigram_t%d" % freq] = lambda: load_dict_from_file(
+                config.DICT_NLTK_UNIGRAM_TU % freq)
+            self._map_name_to_handler["nltk_bigram_t%d" % freq] = lambda: load_dict_from_file(
+                config.DICT_NLTK_BIGRAM_TU % freq)
+            self._map_name_to_handler["nltk_trigram_t%d" % freq] = lambda: load_dict_from_file(
+                config.DICT_NLTK_TRIGRAM_TU % freq)
+            self._map_name_to_handler["hashtag_t%d" % freq] = lambda: load_dict_from_file(
+                config.DICT_HASHTAG_TU % freq)
+        for k, v in self._map_name_to_handler.items():
+            try:
+                v.__name__ = "%s_handler" % k
+            except Exception:
+                pass
+
+
+    def __dict_Senti_Lexi_0(self, fLexi):
+        """Bing Liu & General Inquirer & imdb & MPQA & NRCEmotion"""
+        # format: word \t positive_score \t negative_score
+        dict_ = {}
+        f = open(fLexi, encoding="ISO-8859-1")
+        for line in f:
+            line = line.strip().split("\t")
+            score = float(line[1]) - float(line[-1])
+            dict_[line[0]] = score
+        return dict_
+
+    def __dict_Senti_Lexi_1(slef, fLexi):
+        """AFINN & NRC140_U & NRCHash_U"""
+        # format: word \t score
+        dict_ = {}
+        for line in open(fLexi,encoding="ISO-8859-1"):
+            line = line.strip().split("\t")
+            score = float(line[-1])
+            dict_[line[0]] = score
+        return dict_
+
+    def __dict_Senti_Lexi_2(slef, fLexi):
+        """NRC140_B & NRCHash_B"""
+        dict_ = {}
+        for line in open(fLexi,encoding="ISO-8859-1"):
+            line = line.strip().split("\t")
+            score = float(line[-1])
+            dict_[tuple(line[0].split(" "))] = score
+        return dict_
+
+    def __get_glove_handler(self):
+        glove_cache = DictCache(config.GLOVE_CACHE_PATH,
+                                lambda: GloVe(config.GLOVE_840B_300_PATH, self.dict_nltk_unigram_t[2].keys()).word2vec)
+        glove_vec = {k: numpy.asarray(v) for k, v in glove_cache.load_dict().items()}
+        return Word2VecTag(glove_vec)
+
+
+'''
 @singleton
 class Dict_loader(object):
     def __init__(self):
@@ -50,7 +125,7 @@ class Dict_loader(object):
         glove = GloVe(config.GLOVE_840B_300_PATH, self.dict_nltk_unigram_t[2].keys())
         return glove.word2vec
 
-    def _dict_Senti_Lexi_0(slef, fLexi):
+    def _dict_Senti_Lexi_0(self, fLexi):
         """Bing Liu & General Inquirer & imdb & MPQA & NRCEmotion"""
         # format: word \t positive_score \t negative_score
         dict_ = {}
@@ -86,3 +161,4 @@ class Dict_loader(object):
 
         return dict_
 
+'''

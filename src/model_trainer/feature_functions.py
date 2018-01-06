@@ -2,19 +2,13 @@
 import sys
 sys.path.append("../..")
 from src import util
-from src.model_trainer import dict_util
-from src.model_trainer.dict_loader import Dict_loader
-from src.model_trainer.dict_creator import Dict_creator
-from src import rf_viewer
-from src.feature import Feature
+from src.model_trainer import dict_util, rf_viewer
+from src.model_trainer.dict_loader import DictLoader
+from src.model_trainer.rf_loader import RfLoader
 from src import config
-import json
-import codecs
 import nltk
 import itertools
 import pickle
-from datetime import datetime
-from src.util import singleton
 import re
 
 punc = {".", ",", "?", "!", "...", ";"}
@@ -29,7 +23,7 @@ dict_emoticon = dict(((t.split("\t")[0], int(t.strip().split("\t")[1])) for t in
 
 def hashtag_tu(tweet, freq):
     # load dict
-    dict_hashtag = Dict_loader().dict_hashtag_t[freq]
+    dict_hashtag = DictLoader().get("hashtag_t%d" % freq)
     # feature
     hashtag = dict_util.get_hashtag(tweet)
     return util.get_feature_by_feat_list(dict_hashtag, hashtag)
@@ -37,7 +31,7 @@ def hashtag_tu(tweet, freq):
 
 def nltk_unigram_tu(tweet, freq):
     # load dict
-    dict_nltk_unigram = Dict_loader().dict_nltk_unigram_t[freq]
+    dict_nltk_unigram = DictLoader().get("nltk_unigram_t%d" % freq)
     # feature
     nltk_uni = dict_util.get_nltk_unigram(tweet)
     return util.get_feature_by_feat_list(dict_nltk_unigram, nltk_uni)
@@ -45,7 +39,7 @@ def nltk_unigram_tu(tweet, freq):
 
 def nltk_bigram_tu(tweet, freq):
     # load dict
-    dict_nltk_bigram = Dict_loader().dict_nltk_bigram_t[freq]
+    dict_nltk_bigram = DictLoader().get("nltk_bigram_t%d" % freq)
     # feature
     nltk_bi = dict_util.get_nltk_bigram(tweet)
     return util.get_feature_by_feat_list(dict_nltk_bigram, nltk_bi)
@@ -53,7 +47,7 @@ def nltk_bigram_tu(tweet, freq):
 
 def nltk_trigram_tu(tweet, freq):
     # load dict
-    dict_nltk_bigram = Dict_loader().dict_nltk_trigram_t[freq]
+    dict_nltk_bigram = DictLoader().get("nltk_trigram_t%d" % freq)
     # feature
     nltk_tri = dict_util.get_nltk_trigram(tweet)
     return util.get_feature_by_feat_list(dict_nltk_bigram, nltk_tri)
@@ -78,17 +72,6 @@ def ners_existed(tweet):
     ners_list = dict_util.get_ners_exist(tweet)
     return util.get_feature_by_list(ners_list)
 
-# all the rf values
-rfdata_nltk_unigram_t = {}
-rfdata_hashtag_t = {}
-rfdata_nltk_bigram_t = {}
-rfdata_nltk_trigram_t = {}
-for __freq in range(1, 6):
-    rfdata_nltk_unigram_t[__freq] = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_UNIGRAM_TU_PATH % __freq)
-    rfdata_hashtag_t[__freq] = rf_viewer.Rf_Viewer(None, config.RF_DATA_HASHTAG_TU_PATH % __freq)
-    rfdata_nltk_bigram_t[__freq] = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_BIGRAM_TU_PATH % __freq)
-    rfdata_nltk_trigram_t[__freq] = rf_viewer.Rf_Viewer(None, config.RF_DATA_NLTK_TRIGRAM_TU_PATH % __freq)
-
 '''
     注意，特征函数中含有 _tu 的表示是 unitag 版本，
     没有办法直接用，必须要先转换为对应的 t%d 版本
@@ -97,34 +80,38 @@ for __freq in range(1, 6):
 
 def nltk_unigram_with_tu_rf(tweet, freq):
     # load dict
-    dict_nltk_unigram = Dict_loader().dict_nltk_unigram_t[freq]
+    dict_nltk_unigram = DictLoader().get("nltk_unigram_t%d" % freq)
     # feature
     unigram = dict_util.get_nltk_unigram(tweet)
-    return util.get_feature_by_feature_list_with_rf(dict_nltk_unigram, unigram, rfdata_nltk_unigram_t[freq])
+    return util.get_feature_by_feature_list_with_rf(dict_nltk_unigram, unigram,
+                                                    RfLoader().get("nltk_unigram_withrf_t%d" % freq))
 
 
 def nltk_bigram_with_tu_rf(tweet, freq):
     # load dict
-    dict_nltk_bigram = Dict_loader().dict_nltk_bigram_t[freq]
+    dict_nltk_bigram = DictLoader().get("nltk_bigram_t%d" % freq)
     # feature
     bigram = dict_util.get_nltk_bigram(tweet)
-    return util.get_feature_by_feature_list_with_rf(dict_nltk_bigram, bigram, rfdata_nltk_bigram_t[freq])
+    return util.get_feature_by_feature_list_with_rf(dict_nltk_bigram, bigram,
+                                                    RfLoader().get("nltk_bigram_withrf_t%d" % freq))
 
 
 def nltk_trigram_with_tu_rf(tweet, freq):
     # load dict
-    dict_nltk_trigram = Dict_loader().dict_nltk_trigram_t[freq]
+    dict_nltk_trigram = DictLoader().get("nltk_trigram_t%d" % freq)
     # feature
     trigram = dict_util.get_nltk_trigram(tweet)
-    return util.get_feature_by_feature_list_with_rf(dict_nltk_trigram, trigram, rfdata_nltk_trigram_t[freq])
+    return util.get_feature_by_feature_list_with_rf(dict_nltk_trigram, trigram,
+                                                    RfLoader().get("nltk_trigram_withrf_t%d" % freq))
 
 
 def hashtag_with_tu_rf(tweet, freq):
     # load dict
-    dict_hashtag = Dict_loader().dict_hashtag_t[freq]
+    dict_hashtag = DictLoader().get("hashtag_t%d" % freq)
     # feature
     hashtag = dict_util.get_hashtag(tweet)
-    return util.get_feature_by_feature_list_with_rf(dict_hashtag, hashtag, rfdata_hashtag_t[freq])
+    return util.get_feature_by_feature_list_with_rf(dict_hashtag, hashtag,
+                                                    RfLoader().get("hashtag_withrf_t%d" % freq))
 
 
 #
@@ -145,17 +132,8 @@ for __freq in range(1, 6):
 ############################################################################
 
 
-def bigram(tweet):
-    # load dict
-    dict_bigram = Dict_loader().dict_bigram
-    # feature
-    bigram = dict_util.get_bigram(tweet)
-    # 得到unigram Feature 对象
-    return util.get_feature_by_feat_list(dict_bigram, bigram)
-
-
 def wv_google(tweet):
-    google_vec = Dict_loader().google_vec
+    google_vec = DictLoader().get("embed_Word2Vec")
     # 返回的是900 300维sum 300维max 300维min
     word2vec = dict_util.get_w2v(tweet, google_vec)
     # print("!!!!!")
@@ -163,11 +141,12 @@ def wv_google(tweet):
     return util.get_feature_by_list(word2vec)
 
 def wv_GloVe(tweet):
-    GloVe_vec = Dict_loader().dict_glove_vec
+    GloVe_vec = DictLoader().get("embed_GloVe")
 
     word2vec = dict_util.get_w2v(tweet, GloVe_vec)
 
     return util.get_feature_by_list(word2vec)
+
 
 #将否定词后的4个词加上_NEG后缀
 def reverse_neg(tweet):
@@ -200,14 +179,14 @@ def sentilexi(tweet):
     feature = []
     #dict的value值都是1维score（若字典中本来有pos_score和neg_score，则pos_score-neg_score）
     Lexicon_dict_list = [
-        Dict_loader().dict_BL,
-        Dict_loader().dict_GI,
-        Dict_loader().dict_IMDB,
-        Dict_loader().dict_MPQA,
-        Dict_loader().dict_NRCE,
-        Dict_loader().dict_AF,
-        Dict_loader().dict_NRC140_U,
-        Dict_loader().dict_NRCH_U
+        DictLoader().get("sent_BL"),
+        DictLoader().get("sent_GI"),
+        DictLoader().get("sent_IMDB"),
+        DictLoader().get("sent_MPQA"),
+        DictLoader().get("sent_NRCE"),
+        DictLoader().get("sent_AF"),
+        DictLoader().get("sent_NRC140_U"),
+        DictLoader().get("sent_NRCH_U"),
     ]
 
     # tokens = list(itertools.chain(*
@@ -271,7 +250,7 @@ def sentilexi(tweet):
             feature.append(0)
 
     #Bigram Lexicons
-    for Lexicon in [Dict_loader().dict_NRC140_B, Dict_loader().dict_NRCH_B]:
+    for Lexicon in [DictLoader().get("sent_NRC140_B"), DictLoader().get("sent_NRCH_B")]:
         score = []
 
         bigram = list(nltk.ngrams(tokens, 2))

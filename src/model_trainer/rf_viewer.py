@@ -3,11 +3,9 @@ import sys
 import os
 import re
 import json
-
 sys.path.append("..")
-
 from src import config
-from src.model_trainer.dict_loader import Dict_loader
+from src.model_trainer.dict_loader import DictLoader
 
 
 class Rf_Viewer(object):
@@ -65,12 +63,12 @@ class Rf_Viewer(object):
 
     def get_word_id_rf(self, word_id):
         rf_value = self.rf_data.get("rf_value")
-        return rf_value[str(word_id)]["cls"], rf_value[str(word_id)]["max_rf"] if str(word_id) in rf_value else None
+        return (rf_value[str(word_id)]["cls"], rf_value[str(word_id)]["max_rf"]) if str(word_id) in rf_value else None
 
 
 if __name__ == "__main__":
-    dict_loader = Dict_loader()
-    viewer = Rf_Viewer(dict=dict_loader.dict_nltk_unigram)
+    loader = DictLoader()
+    viewer = Rf_Viewer(dict=loader.get("nltk_unigram_t2"))
     viewer.load_rf_file(rf_file=config.RF_DATA_NLTK_UNIGRAM_TU_PATH % 2)
     # viewer.view_class_top_k(k=20)
     # viewer.print_list_rf()
