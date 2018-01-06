@@ -146,15 +146,15 @@ def build_cv(tweets, map_function, fold=4):
 
 
 def get_features_on_liblinear(feature: list):
-    feature += [
-        ners_existed,
-        wv_google,
-        wv_GloVe,
-        sentilexi,
-        emoticon,
-        punction,
-        elongated
-    ]
+    # feature += [
+    #     ners_existed,
+    #     wv_google,
+    #     wv_GloVe,
+    #     sentilexi,
+    #     emoticon,
+    #     punction,
+    #     elongated
+    # ]
 
     # feature.append(nltk_unigram_t_with_rf[2])
     # feature.append(nltk_bigram_t_with_rf[3])
@@ -165,10 +165,10 @@ def get_features_on_liblinear(feature: list):
         feature.append(nltk_bigram_t[__freq])
         feature.append(nltk_trigram_t[__freq])
         feature.append(hashtag_t[__freq])
-        feature.append(nltk_unigram_t_with_rf[__freq])
-        feature.append(nltk_bigram_t_with_rf[__freq])
-        feature.append(nltk_trigram_with_t_rf[__freq])
-        feature.append(hashtag_t_with_rf[__freq])
+        feature.append(nltk_unigram_withrf_t[__freq])
+        feature.append(nltk_bigram_withrf_t[__freq])
+        feature.append(nltk_trigram_withrf_t[__freq])
+        feature.append(hashtag_t_withrf_t[__freq])
     return feature
 
 
@@ -192,15 +192,15 @@ def get_features_on_AdaBoost(features: list):
 
     features.append(hashtag_t[2])
 
-    features.append(nltk_unigram_t_with_rf[2])
+    features.append(nltk_unigram_withrf_t[2])
 
-    features.append(nltk_bigram_t_with_rf[2])
+    features.append(nltk_bigram_withrf_t[2])
 
-    features.append(nltk_trigram_with_t_rf[1])
-    features.append(nltk_trigram_with_t_rf[4])
+    features.append(nltk_trigram_withrf_t[1])
+    features.append(nltk_trigram_withrf_t[4])
 
-    features.append(hashtag_t_with_rf[4])
-    features.append(hashtag_t_with_rf[5])
+    features.append(hashtag_t_withrf_t[4])
+    features.append(hashtag_t_withrf_t[5])
 
 
 def get_features_on_DecisionTree(features: list):
@@ -213,7 +213,7 @@ def get_features_on_DecisionTree(features: list):
         # features.append(nltk_unigram_t_with_rf[__freq])
         # features.append(nltk_bigram_t_with_rf[__freq])
         # features.append(nltk_trigram_with_t_rf[__freq])
-        features.append(hashtag_t_with_rf[__freq])
+        features.append(hashtag_t_withrf_t[__freq])
 
 
 def get_features_on_NaiveBayes(features: list):

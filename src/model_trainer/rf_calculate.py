@@ -110,3 +110,7 @@ def create_nltk_bigram_rf(train_data, freq):
 def create_nltk_trigram_rf(train_data, freq):
     calc_rc(train_data, feature_functions.nltk_trigram_t[freq], config.RF_DATA_NLTK_TRIGRAM_TU_PATH % freq)
 
+
+def create_hashtag_unigram_rf(train_data, freq):
+    calc_rc(train_data, feature_functions.hashtag_unigram_t[freq], config.RF_DATA_HASHTAG_UNIGRAM_TU_PATH % freq)
+

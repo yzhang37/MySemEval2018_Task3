@@ -33,14 +33,17 @@ class DictLoader(LazyLoader):
         # GloVe is too large, make cache for it.
 
         for freq in range(1, 6):
-            self._map_name_to_handler["nltk_unigram_t%d" % freq] = lambda: load_dict_from_file(
+            self._map_name_to_handler["nltk_unigram_t%d" % freq] = lambda freq=freq: load_dict_from_file(
                 config.DICT_NLTK_UNIGRAM_TU % freq)
-            self._map_name_to_handler["nltk_bigram_t%d" % freq] = lambda: load_dict_from_file(
+            self._map_name_to_handler["nltk_bigram_t%d" % freq] = lambda freq=freq: load_dict_from_file(
                 config.DICT_NLTK_BIGRAM_TU % freq)
-            self._map_name_to_handler["nltk_trigram_t%d" % freq] = lambda: load_dict_from_file(
+            self._map_name_to_handler["nltk_trigram_t%d" % freq] = lambda freq=freq: load_dict_from_file(
                 config.DICT_NLTK_TRIGRAM_TU % freq)
-            self._map_name_to_handler["hashtag_t%d" % freq] = lambda: load_dict_from_file(
+            self._map_name_to_handler["hashtag_t%d" % freq] = lambda freq=freq: load_dict_from_file(
                 config.DICT_HASHTAG_TU % freq)
+            self._map_name_to_handler["hashtag_unigram_t%d" % freq] = lambda freq=freq: \
+                load_dict_from_file(config.DICT_HASHTAG_UNIGRAM_TU % freq)
+
         for k, v in self._map_name_to_handler.items():
             try:
                 v.__name__ = "%s_handler" % k

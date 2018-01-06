@@ -130,3 +130,77 @@ AdaBoost 总体都不太好，才0.17左右。
 增加的修改：修改 DictLoader，增加了RfLoader。增强系统性能。
 
 具体内容看 /src/model_trainer中的修改内容。
+
+## 2018-01-07
+
+### 特征修改计划
+
+* 使用 **wordsegment** 包对 hashtag 中连在一起的英文单词进行分割。
+
+  hashtag之前在分割的时候存在问题。因为多个单词容易产生歧义。好在 **wordsegment** 包的语料库足够大，现在使用它来进行分词操作。
+
+  (已经完成)
+
+* 针对 tweet 中的 URL使用爬虫和 BeautifulSoup进行处理。
+
+  (On going).
+
+* ​
+
+
+## 2018-01-08
+
+今天我发现我之前使用的 lambda 函数都是错的。
+
+**lambda** 函数原来的写法走：
+
+```Python
+nltk_unigram_withrf_t = {}
+nltk_bigram_withrf_t = {}
+nltk_trigram_withrf_t = {}
+hashtag_t_withrf_t = {}
+hashtag_unigram_withrf_t = {}
+for __freq in range(1, 6):
+    nltk_unigram_withrf_t[__freq] = lambda tweet: nltk_unigram_withrf_tu(tweet, __freq)
+    nltk_unigram_withrf_t[__freq].__name__ = "nltk_unigram_withrf_t%d" % __freq
+    nltk_bigram_withrf_t[__freq] = lambda tweet: nltk_bigram_withrf_tu(tweet, __freq)
+    nltk_bigram_withrf_t[__freq].__name__ = "nltk_bigram_withrf_t%d" % __freq
+    nltk_trigram_withrf_t[__freq] = lambda tweet: nltk_trigram_withrf_tu(tweet, __freq)
+    nltk_trigram_withrf_t[__freq].__name__ = "nltk_trigram_withrf_t%d" % __freq
+    hashtag_t_withrf_t[__freq] = lambda tweet: hashtag_withrf_tu(tweet, __freq)
+    hashtag_t_withrf_t[__freq].__name__ = "hashtag_withrf_t%d" % __freq
+    hashtag_unigram_withrf_t[__freq] = lambda tweet: hashtag_unigram_tu(tweet, __freq)
+    hashtag_unigram_withrf_t[__freq].__name__ = "hashtag_unigram_withrf_t%d" % __freq
+```
+
+还有类似的写法也出现在 `src/model_loader/dict_loader.py`中。lambda中引用了外部的变量，因此这些变量在外部修改后也会跟着修改。因此所有计算出来的 Relation  Frequence 的都是基于原来的 Threshold 5 的数据计算的。
+
+现在修改如下:
+
+```Python
+nltk_unigram_withrf_t = {}
+nltk_bigram_withrf_t = {}
+nltk_trigram_withrf_t = {}
+hashtag_t_withrf_t = {}
+hashtag_unigram_withrf_t = {}
+for __freq in range(1, 6):
+    nltk_unigram_withrf_t[__freq] = lambda tweet, __freq=__freq:\
+        nltk_unigram_withrf_tu(tweet, __freq)
+    nltk_unigram_withrf_t[__freq].__name__ = "nltk_unigram_withrf_t%d" % __freq
+    nltk_bigram_withrf_t[__freq] = lambda tweet, __freq=__freq:\
+        nltk_bigram_withrf_tu(tweet, __freq)
+    nltk_bigram_withrf_t[__freq].__name__ = "nltk_bigram_withrf_t%d" % __freq
+    nltk_trigram_withrf_t[__freq] = lambda tweet, __freq=__freq:\
+        nltk_trigram_withrf_tu(tweet, __freq)
+    nltk_trigram_withrf_t[__freq].__name__ = "nltk_trigram_withrf_t%d" % __freq
+    hashtag_t_withrf_t[__freq] = lambda tweet, __freq=__freq: \
+        hashtag_withrf_tu(tweet, __freq)
+    hashtag_t_withrf_t[__freq].__name__ = "hashtag_withrf_t%d" % __freq
+    hashtag_unigram_withrf_t[__freq] = lambda tweet, __freq=__freq: \
+        hashtag_unigram_tu(tweet, __freq)
+    hashtag_unigram_withrf_t[__freq].__name__ = "hashtag_unigram_withrf_t%d" % __freq
+```
+
+对 lambda 函数增加了一个可选参数 `__freq=__freq`，这样 `__freq` 变量的作用域就变成局部的变量了。
+
+ 这样一来，所有之前跑的结果以及 *rf* 文件全部要重新计算。

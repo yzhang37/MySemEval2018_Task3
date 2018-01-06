@@ -21,12 +21,21 @@ dict_emoticon = dict(((t.split("\t")[0], int(t.strip().split("\t")[1])) for t in
     后才可以继续使用。
 '''
 
+
 def hashtag_tu(tweet, freq):
     # load dict
     dict_hashtag = DictLoader().get("hashtag_t%d" % freq)
     # feature
     hashtag = dict_util.get_hashtag(tweet)
     return util.get_feature_by_feat_list(dict_hashtag, hashtag)
+
+
+def hashtag_unigram_tu(tweet, freq):
+    # load dict
+    dict_wordseg_hashtag = DictLoader().get("hashtag_unigram_t%d" % freq)
+    # feature
+    wordseg_hashtag = dict_util.get_hashtag_unigram(tweet)
+    return util.get_feature_by_feat_list(dict_wordseg_hashtag, wordseg_hashtag)
 
 
 def nltk_unigram_tu(tweet, freq):
@@ -57,14 +66,17 @@ hashtag_t = {}
 nltk_unigram_t = {}
 nltk_bigram_t = {}
 nltk_trigram_t = {}
+hashtag_unigram_t = {}
 for __freq in range(1, 6):
-    hashtag_t[__freq] = lambda tweet: hashtag_tu(tweet, __freq)
+    hashtag_t[__freq] = lambda tweet, __freq=__freq: hashtag_tu(tweet, __freq)
     hashtag_t[__freq].__name__ = "hashtag_t%d" % __freq
-    nltk_unigram_t[__freq] = lambda tweet: nltk_unigram_tu(tweet, __freq)
+    hashtag_unigram_t[__freq] = lambda tweet, __freq=__freq: hashtag_unigram_tu(tweet, __freq)
+    hashtag_unigram_t[__freq].__name__ = "hashtag_unigram_t%d" % __freq
+    nltk_unigram_t[__freq] = lambda tweet, __freq=__freq: nltk_unigram_tu(tweet, __freq)
     nltk_unigram_t[__freq].__name__ = "nltk_unigram_t%d" % __freq
-    nltk_bigram_t[__freq] = lambda tweet: nltk_bigram_tu(tweet, __freq)
+    nltk_bigram_t[__freq] = lambda tweet, __freq=__freq: nltk_bigram_tu(tweet, __freq)
     nltk_bigram_t[__freq].__name__ = "nltk_bigram_t%d" % __freq
-    nltk_trigram_t[__freq] = lambda tweet: nltk_trigram_tu(tweet, __freq)
+    nltk_trigram_t[__freq] = lambda tweet, __freq=__freq: nltk_trigram_tu(tweet, __freq)
     nltk_trigram_t[__freq].__name__ = "nltk_trigram_t%d" % __freq
 
 
@@ -78,7 +90,7 @@ def ners_existed(tweet):
     后才可以继续使用。
 '''
 
-def nltk_unigram_with_tu_rf(tweet, freq):
+def nltk_unigram_withrf_tu(tweet, freq):
     # load dict
     dict_nltk_unigram = DictLoader().get("nltk_unigram_t%d" % freq)
     # feature
@@ -87,7 +99,7 @@ def nltk_unigram_with_tu_rf(tweet, freq):
                                                     RfLoader().get("nltk_unigram_withrf_t%d" % freq))
 
 
-def nltk_bigram_with_tu_rf(tweet, freq):
+def nltk_bigram_withrf_tu(tweet, freq):
     # load dict
     dict_nltk_bigram = DictLoader().get("nltk_bigram_t%d" % freq)
     # feature
@@ -96,7 +108,7 @@ def nltk_bigram_with_tu_rf(tweet, freq):
                                                     RfLoader().get("nltk_bigram_withrf_t%d" % freq))
 
 
-def nltk_trigram_with_tu_rf(tweet, freq):
+def nltk_trigram_withrf_tu(tweet, freq):
     # load dict
     dict_nltk_trigram = DictLoader().get("nltk_trigram_t%d" % freq)
     # feature
@@ -105,7 +117,7 @@ def nltk_trigram_with_tu_rf(tweet, freq):
                                                     RfLoader().get("nltk_trigram_withrf_t%d" % freq))
 
 
-def hashtag_with_tu_rf(tweet, freq):
+def hashtag_withrf_tu(tweet, freq):
     # load dict
     dict_hashtag = DictLoader().get("hashtag_t%d" % freq)
     # feature
@@ -114,20 +126,37 @@ def hashtag_with_tu_rf(tweet, freq):
                                                     RfLoader().get("hashtag_withrf_t%d" % freq))
 
 
+def hashtag_unigram_withrf_tu(tweet, freq):
+    # load dict
+    dict_hashtag = DictLoader().get("hashtag_unigram_t%d" % freq)
+    # feature
+    hashtag_unigram = dict_util.get_hashtag_unigram(tweet)
+    return util.get_feature_by_feature_list_with_rf(dict_hashtag, hashtag_unigram,
+                                                    RfLoader().get("hashtag_unigram_withrf_t%d" % freq))
+
+
 #
-nltk_unigram_t_with_rf = {}
-nltk_bigram_t_with_rf = {}
-nltk_trigram_with_t_rf = {}
-hashtag_t_with_rf = {}
+nltk_unigram_withrf_t = {}
+nltk_bigram_withrf_t = {}
+nltk_trigram_withrf_t = {}
+hashtag_t_withrf_t = {}
+hashtag_unigram_withrf_t = {}
 for __freq in range(1, 6):
-    nltk_unigram_t_with_rf[__freq] = lambda tweet: nltk_unigram_with_tu_rf(tweet, __freq)
-    nltk_unigram_t_with_rf[__freq].__name__ = "nltk_unigram_t%d_with_rf" % __freq
-    nltk_bigram_t_with_rf[__freq] = lambda tweet: nltk_bigram_with_tu_rf(tweet, __freq)
-    nltk_bigram_t_with_rf[__freq].__name__ = "nltk_bigram_t%d_with_rf" % __freq
-    nltk_trigram_with_t_rf[__freq] = lambda tweet: nltk_trigram_with_tu_rf(tweet, __freq)
-    nltk_trigram_with_t_rf[__freq].__name__ = "nltk_trigram_t%d_with_rf" % __freq
-    hashtag_t_with_rf[__freq] = lambda tweet: hashtag_with_tu_rf(tweet, __freq)
-    hashtag_t_with_rf[__freq].__name__ = "hashtag_t%d_with_rf" % __freq
+    nltk_unigram_withrf_t[__freq] = lambda tweet, __freq=__freq:\
+        nltk_unigram_withrf_tu(tweet, __freq)
+    nltk_unigram_withrf_t[__freq].__name__ = "nltk_unigram_withrf_t%d" % __freq
+    nltk_bigram_withrf_t[__freq] = lambda tweet, __freq=__freq:\
+        nltk_bigram_withrf_tu(tweet, __freq)
+    nltk_bigram_withrf_t[__freq].__name__ = "nltk_bigram_withrf_t%d" % __freq
+    nltk_trigram_withrf_t[__freq] = lambda tweet, __freq=__freq:\
+        nltk_trigram_withrf_tu(tweet, __freq)
+    nltk_trigram_withrf_t[__freq].__name__ = "nltk_trigram_withrf_t%d" % __freq
+    hashtag_t_withrf_t[__freq] = lambda tweet, __freq=__freq: \
+        hashtag_withrf_tu(tweet, __freq)
+    hashtag_t_withrf_t[__freq].__name__ = "hashtag_withrf_t%d" % __freq
+    hashtag_unigram_withrf_t[__freq] = lambda tweet, __freq=__freq: \
+        hashtag_unigram_tu(tweet, __freq)
+    hashtag_unigram_withrf_t[__freq].__name__ = "hashtag_unigram_withrf_t%d" % __freq
 ############################################################################
 ############################################################################
 

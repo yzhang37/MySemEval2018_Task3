@@ -2,8 +2,12 @@
 import sys
 import numpy
 import re
+import wordsegment as wordseg
 sys.path.append("../..")
 from src import util
+
+# initialize the wordseg
+wordseg.load()
 
 
 '''
@@ -112,24 +116,6 @@ def get_stem_unigram(tw):
     unigram = tw["stems_n"]
     return unigram
 
-'''
-def get_bigram(tw):
-    bigram = []
-    tokens = tw["tokens"]
-    for i in range(1, len(tokens)):
-        bigram.append("%s|%s" % (tokens[i-1], tokens[i]))
-    return bigram
-
-def get_trigram(tw):
-    trigram = []
-    tokens = tw["tokens"]
-    n = len(tokens)
-    i = 2
-    while i < n:
-        trigram.append("%s|%s|%s" % (tokens[i-2], tokens[i-1], tokens[1]))
-        i += 1
-    return trigram
-'''
 
 def get_hashtag(tw):
     all_tokens = tw["tokens"]
@@ -147,9 +133,7 @@ def get_hashtag_unigram(tw):
     hashtag_unigram_list = []
 
     for hashtag in hashtag_list:
-        hashtag_unigram_list.append(handle(hashtag))
-
-    # todo: how to split the word in hashtag?
+        hashtag_unigram_list.extend(wordseg.segment(hashtag))
 
     return hashtag_unigram_list
 

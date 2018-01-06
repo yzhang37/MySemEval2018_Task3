@@ -32,6 +32,11 @@ def create_nltk_trigram(creator, freq):
     rf_calculate.create_nltk_trigram_rf(creator.texts, freq)
 
 
+def create_hashtag_unigram(creator, freq):
+    dict_creator.create_hashtag_unigram_dict(creator, freq)
+    rf_calculate.create_hashtag_unigram_rf(creator.texts, freq)
+
+
 if __name__ == '__main__':
     train_data = load_traindata() # load training data
     d_creator = dict_creator.Dict_creator()
@@ -42,6 +47,7 @@ if __name__ == '__main__':
         create_nltk_bigram(d_creator, f)
         create_nltk_unigram(d_creator, f)
         create_nltk_trigram(d_creator, f)
+        create_hashtag_unigram(d_creator, f)
 
     # dict_creator.create_dict(dict_util.get_hashtag_unigram, config.DICT_HASHTAG_UNIGRAM_T1, threshold=1)
     # dict_creator.create_dict(dict_util.get_stem_unigram, config.DICT_UNIGRAM_STEM_T2, threshold=2)

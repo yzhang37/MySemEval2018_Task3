@@ -144,6 +144,7 @@ GLOVE_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "glove.small.300d.txt")
 # the following is RF files
 RF_DATA_NLTK_UNIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_unigram_t%%d_%s.txt" % __CLASS.lower())
 RF_DATA_HASHTAG_TU_PATH = os.path.join(RELATION_FREQ_PATH, "hashtag_t%%d_%s.txt" % __CLASS.lower())
+RF_DATA_HASHTAG_UNIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "hashtag_unigram_t%%d_%s.txt" % __CLASS.lower())
 RF_DATA_NLTK_BIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_bigram_t%%d_%s.txt" % __CLASS.lower())
 RF_DATA_NLTK_TRIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_trigram_t%%d_%s.txt" % __CLASS.lower())
 
