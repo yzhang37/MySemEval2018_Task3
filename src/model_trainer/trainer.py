@@ -146,20 +146,16 @@ def build_cv(tweets, map_function, fold=4):
 
 
 def get_features_on_liblinear(feature: list):
-    # feature += [
-    #     ners_existed,
-    #     wv_google,
-    #     wv_GloVe,
-    #     sentilexi,
-    #     emoticon,
-    #     punction,
-    #     elongated
-    # ]
+    feature += [
+        ners_existed,
+        wv_google,
+        wv_GloVe,
+        sentilexi,
+        emoticon,
+        punction,
+        elongated
+    ]
 
-    # feature.append(nltk_unigram_t_with_rf[2])
-    # feature.append(nltk_bigram_t_with_rf[3])
-    # feature.append(nltk_trigram_t[2])
-    # feature.append(hashtag_t_with_rf[3])
     for __freq in range(1, 6):
         feature.append(nltk_unigram_t[__freq])
         feature.append(nltk_bigram_t[__freq])
