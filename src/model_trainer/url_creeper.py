@@ -1,4 +1,11 @@
 # encoding: utf-8
+"""
+
+UrlCreeper 0.0.1
+@author: lacus x230-nz666
+@usage: Using selenium for data crawling
+
+"""
 import sys
 import json
 import re
@@ -61,15 +68,19 @@ class UrlCreeper(object):
             self.handle_twitter,
             self.handle_instagram,
             self.handle_youtube_watch,
+            self.handle_facebook,
             self.handle_telegraph_co,
             self.handle_independent_co,
+            # you should always put the default
+            # handler the last one.
+            self.default_handler
         ]
 
         for handle_function in handle_functions:
             if handle_function(result["current_url"], result["title"], result):
                 break
 
-        if "404" in result or "archived" in result or "protected" in result:
+        if "404" in result or "timeout" in result or "archived" in result or "protected" in result:
             result = None
 
         print("{0}: {1}".format(self.url, result))
@@ -140,50 +151,29 @@ class UrlCreeper(object):
         else:
             return False
 
-    def handle_theglobeandmail(self, new_url, title, result):
-        if len(re.findall("theglobeandmail\.com", new_url)) > 0:
-
-            return True
-        else:
-            return False
-
-    def handle_independent_co(self, new_url, title, result):
-        if len(re.findall("independent\.co\.uk", new_url)) > 0:
-            header_tag = self.get_css_item_helper("article header")
-            h1_tag = header_tag.find_element_by_css_selector("h1")
-            intro_p_tag = header_tag.find_element_by_css_selector("div.intro p")
-            result["title"] = h1_tag.text.strip()
-            main_content_tag = self.get_css_item_helper("div.main-content-column")
-            result["subtitle"] = h1_tag.text.strip()
-            result["body"] = []
-            for p_tag in main_content_tag.find_elements_by_css_selector("p"):
-                p = p_tag.text.strip()
-                if len(p) > 0:
-                    result["body"].append(p)
-            return True
-        else:
-            return False
-
-    def handle_telegraph_co(self, new_url, title, result):
-        if len(re.findall("telegraph\.co\.uk/news", new_url)) > 0:
-            h1_tag = self.get_css_item_helper("div.storyHead h1")
-            h2_tag = self.get_css_item_helper("div.storyHead h2")
-            result["title"] = h1_tag.text.strip()
-            result["subtitle"] = h2_tag.text.strip()
-            mainBodyArea_tag = self.get_css_item_helper("div#mainBodyArea")
-            para_list = mainBodyArea_tag.find_elements_by_css_selector("p")
-            result["body"] = []
-            for p_tag in para_list:
-                p = p_tag.text.strip()
-                if len(p) > 0:
-                    result["body"].append(p)
-
-            return True
-        else:
-            return False
-
     def handle_youtube_watch(self, new_url, title, result):
         if len(re.findall("www\.youtube\.com/watch", new_url)) > 0:
+            self.wait.until(self.if_load_completed_helper)
+            time.sleep(2)
+            try:
+                error_tag = self.browser.find_element_by_css_selector("#error-screen")
+                error_message = error_tag.text.strip()
+                # try to feed some reviews
+                result["review"] = []
+                # scroll down the page
+                self.auto_scrolling_down_helper()
+                try:
+                    for review_tag in self.browser.find_elements_by_css_selector("ytd-comments div#content"):
+                        review = review_tag.text.strip()
+                        if len(review) > 0:
+                            result["review"].append(review)
+                except: pass
+
+                if len(error_message) > 0 and len(result["review"]) == 0:
+                    result["404"] = 1
+                    return True
+            except: pass
+
             self.wait.until(expected_conditions.visibility_of_element_located((By.TAG_NAME, "h1")))
             result["title"] = self.browser.title.strip()
             self.wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, "div#content")))
@@ -206,14 +196,128 @@ class UrlCreeper(object):
         else:
             return False
 
-    # helpers
-    def get_css_item_helper(self, locator):
-        self.wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, locator)))
-        return self.browser.find_element_by_css_selector(locator)
+    def handle_facebook(self, new_url, title, result):
+        if len(re.findall("facebook\.com", new_url)) > 0:
+            try:
+                self.wait.until(self.if_load_completed_helper)
+            except Sel_Exceptions.TimeoutException:
+                result["timeout"] = 1
+                return True
 
-    def get_css_items_helper(self, locator):
+            if len(re.findall("facebook\.com/photo.php", new_url)) == 0 and \
+                            len(re.findall("facebook\.com/.+/posts", new_url)) == 0:
+                result["protected"] = 1
+                return True
+
+            try:
+                user_content_tag = self.browser.find_element_by_css_selector("div.userContentWrapper")
+                post_tag = user_content_tag.find_element_by_xpath("div[1]/div[2]/div[2]")
+                result["body"] = post_tag.text.strip()
+
+                time.sleep(1.5)
+
+                close_button = self.get_css_item_helper("a#expanding_cta_close_button")
+                try:
+                    self.scroll_and_click_helper(close_button)
+                except:
+                    print("failed")
+                    result["404"] = 1
+
+                try:
+                    review_button = user_content_tag.find_element_by_xpath("div[2]")
+                    a_tag = review_button.find_element_by_tag_name("a")
+                    self.scroll_and_click_helper(a_tag)
+                    result["review"] = []
+
+                    # if succeeded, then some of the reviews display.
+
+                    # find the view more button, if succeeded
+                    try:
+                        view_more_a = self.get_css_item_helper("a.UFIPagerLink", user_content_tag)
+                        self.scroll_and_click_helper(view_more_a)
+                        time.sleep(3)
+                    except:
+                        pass
+
+                    # find all the expand button, if succeeded
+                    try:
+                        for a in user_content_tag.find_elements_by_css_selector("a.fss"):
+                            self.scroll_and_click_helper(a)
+                        time.sleep(1)
+                    except: pass
+
+                    review_tags = self.get_css_items_helper("span.UFICommentBody", user_content_tag)
+                    for review_tag in review_tags:
+                        review = review_tag.text.strip()
+                        if len(review) > 0:
+                            result["review"].append(review)
+                except: pass
+
+            except Sel_Exceptions.NoSuchElementException:
+                result["404"] = 1
+
+            return True
+        else:
+            return False
+
+    def handle_independent_co(self, new_url, title, result):
+        if len(re.findall("independent\.co\.uk", new_url)) > 0:
+            try:
+                header_tag = self.get_css_item_helper("article header")
+                h1_tag = header_tag.find_element_by_css_selector("h1")
+                intro_p_tag = header_tag.find_element_by_css_selector("div.intro p")
+                result["title"] = h1_tag.text.strip()
+                main_content_tag = self.get_css_item_helper("div.main-content-column")
+                result["subtitle"] = h1_tag.text.strip()
+                result["body"] = []
+                for p_tag in main_content_tag.find_elements_by_css_selector("p"):
+                    p = p_tag.text.strip()
+                    if len(p) > 0:
+                        result["body"].append(p)
+            except Sel_Exceptions.TimeoutException:
+                result["timeout"] = 1
+            return True
+        else:
+            return False
+
+    def handle_telegraph_co(self, new_url, title, result):
+        if len(re.findall("telegraph\.co\.uk/news", new_url)) > 0:
+            try:
+                h1_tag = self.get_css_item_helper("div.storyHead h1")
+                h2_tag = self.get_css_item_helper("div.storyHead h2")
+                result["title"] = h1_tag.text.strip()
+                result["subtitle"] = h2_tag.text.strip()
+                mainBodyArea_tag = self.get_css_item_helper("div#mainBodyArea")
+                para_list = mainBodyArea_tag.find_elements_by_css_selector("p")
+                result["body"] = []
+                for p_tag in para_list:
+                    p = p_tag.text.strip()
+                    if len(p) > 0:
+                        result["body"].append(p)
+            except Sel_Exceptions.TimeoutException:
+                result["timeout"] = 1
+            return True
+        else:
+            return False
+
+    def default_handler(self, new_url, title, result):
+        self.wait.until(self.if_load_completed_helper)
+        result["default_handler"] = 1
+        result["title"] = self.browser.title
+        return True
+
+    # helpers
+    def get_css_item_helper(self, locator, parent=None):
         self.wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, locator)))
-        return self.browser.find_elements_by_css_selector(locator)
+        if parent is None:
+            parent = self.browser
+        return parent.find_element_by_css_selector(locator)
+
+    def get_css_items_helper(self, locator, parent=None):
+        self.wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, locator)))
+        if parent is None:
+            parent = self.browser
+        return parent.find_elements_by_css_selector(locator)
 
     def auto_scrolling_down_helper(self, step=40):
         complete_count = 0
@@ -224,6 +328,9 @@ class UrlCreeper(object):
             avail_top = act_height - win_height
             if avail_top > scr_top:
                 for top in range(min(scr_top + step, avail_top), avail_top, step):
+                    scr_top = self.browser.execute_script(js_Scroll_Top)
+                    if scr_top >= top:
+                        continue
                     self.browser.execute_script("window.scrollTo(0,%d)" % top)
                     time.sleep(0.2)
                 self.browser.execute_script("window.scrollTo(0,%d)" % avail_top)
@@ -232,9 +339,15 @@ class UrlCreeper(object):
                 complete_count += 1
             time.sleep(1)
 
+    def scroll_and_click_helper(self, item):
+        self.browser.execute_script("window.scrollTo(%d,%d)" % (0, item.location["y"]))
+        time.sleep(0.5)
+        item.click()
+
     @staticmethod
     def if_load_completed_helper(driver):
         return driver.execute_script("return document.readyState") == "complete"
+
 
 def get_browser():
     return webdriver.Chrome()
@@ -250,11 +363,15 @@ def main(urls):
         url_cache = dict()
 
     for url in urls:
+        if url in url_cache.keys():
+            continue
         creeper = UrlCreeper(url, browser)
         ret = creeper.crawl()
         if ret is not None:
             url_cache[url] = ret
             json.dump(url_cache, open(config.URL_CACHE_PATH, "w"), indent=4)
+
+    browser.close()
 
 
 def fetch_all_urls_map():
@@ -308,12 +425,22 @@ if __name__ == "__main__":
     url_list = list(url_dict.items())
     url_list.sort(key=lambda x: -len(x[1]))
 
-    value = url_list[2]
-    urls = value[1]
+    # creeper = UrlCreeper("http://t.co/EJaFcMsIrA")
+    # creeper.crawl()
 
-    chrome = get_browser()
-    for i, _url in enumerate(urls):
-        creeper = UrlCreeper(_url, chrome)
-        print("{0}: {1}".format(_url, creeper.crawl()))
+    # value = url_list[3]
+    # urls = value[1]
+    # br = get_browser()
+    # for i, _url in enumerate(urls):
+    #     creeper = UrlCreeper(_url, br)
+    #     creeper.crawl()
 
+    # for youtube
+    # value = url_list[3]
+    # urls = value[1]
     # main(urls)
+
+    for domain_url, urls in url_list:
+        print(domain_url)
+        print("==" * 20)
+        main(urls)
