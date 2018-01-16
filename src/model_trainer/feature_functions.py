@@ -139,7 +139,7 @@ def hashtag_unigram_withrf_tu(tweet, freq):
 nltk_unigram_withrf_t = {}
 nltk_bigram_withrf_t = {}
 nltk_trigram_withrf_t = {}
-hashtag_t_withrf_t = {}
+hashtag_withrf_t = {}
 hashtag_unigram_withrf_t = {}
 for __freq in range(1, 6):
     nltk_unigram_withrf_t[__freq] = lambda tweet, __freq=__freq:\
@@ -151,9 +151,9 @@ for __freq in range(1, 6):
     nltk_trigram_withrf_t[__freq] = lambda tweet, __freq=__freq:\
         nltk_trigram_withrf_tu(tweet, __freq)
     nltk_trigram_withrf_t[__freq].__name__ = "nltk_trigram_withrf_t%d" % __freq
-    hashtag_t_withrf_t[__freq] = lambda tweet, __freq=__freq: \
+    hashtag_withrf_t[__freq] = lambda tweet, __freq=__freq: \
         hashtag_withrf_tu(tweet, __freq)
-    hashtag_t_withrf_t[__freq].__name__ = "hashtag_withrf_t%d" % __freq
+    hashtag_withrf_t[__freq].__name__ = "hashtag_withrf_t%d" % __freq
     hashtag_unigram_withrf_t[__freq] = lambda tweet, __freq=__freq: \
         hashtag_unigram_tu(tweet, __freq)
     hashtag_unigram_withrf_t[__freq].__name__ = "hashtag_unigram_withrf_t%d" % __freq

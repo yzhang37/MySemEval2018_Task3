@@ -151,9 +151,14 @@ RF_DATA_NLTK_TRIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_trigram_t%
 RESULT_HC_DICT = os.path.join(RESULT_MYDIR, "feature_hc_dict_<uni>_%s.txt" % __CLASS.lower())
 RESULT_HC_OUTPUT = os.path.join(RESULT_MYDIR, "feature_hc_output_<uni>_%s.txt" % __CLASS.lower())
 
+
 def make_result_hc_dict():
     return __make_unique_string(RESULT_HC_DICT)
 
 
 def make_result_hc_output():
     return __make_unique_string(RESULT_HC_OUTPUT)
+
+
+# URL dumping file list
+URL_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "url_cache.json")

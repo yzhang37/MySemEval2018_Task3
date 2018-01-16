@@ -11,6 +11,12 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import TweetTokenizer
 from nltk import PorterStemmer,pos_tag
 
+# URLs
+rc_url = re.compile(r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+')
+rc_twitterUrl = re.compile(r"http[s]?://t\.co/[0-9A-Za-z]{10}")
+
+# @-replies or mentions
+rc_at = re.compile(r'(@|@ )([a-zA-Z]|[0-9]|_)+')
 
 def load_data(fp):
     '''
@@ -34,7 +40,7 @@ def load_data(fp):
 
 def replace_slang(slangs, text):
 
-    set_ = set(["'", ",", ".", " ", "!", "?"])
+    set_ = {"'", ",", ".", " ", "!", "?"}
     text = " " + text.strip() + " "
     text_lower = text.lower()
     # slang 替换
@@ -102,13 +108,13 @@ def normalise_tweet(text):
 
     normal_word = pickle.load(open(config.NORMAL_WORDS_PATH, "rb"), encoding="utf8", errors="ignore") # load normal_word dict
 
-    url_regex = r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+'          # URLs
-    at_regex = r'(@|@ )([a-zA-Z]|[0-9]|_)+'     # @-replies or mentions
+    url_regex = r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+'
+    at_regex = r'(@|@ )([a-zA-Z]|[0-9]|_)+'
     emoji_regex = r':[a-z|_|-]+:'               # description of emoji
     emoji_list = []
 
-    text = re.sub(url_regex, "http://someurl", text)
-    text = re.sub(at_regex, "@someuser", text)
+    text = rc_url.sub("http://someurl", text)
+    text = rc_at.sub("@someuser", text)
 
     for i in re.finditer(emoji_regex, text):    # extract the description of emoji and the index of emojis
         emoji_list.append((i.group(), i.span()))
@@ -166,6 +172,10 @@ def parse_tweet(nlp_server, tweet_dict):
     # return tweet_dict
 
 
+def twitterUrls(text):
+    return rc_twitterUrl.findall(text)
+
+
 def preprocess_data(tweet_list):
     server_url = 'http://precision:9000'
     nlp_server = StanfordCoreNLP(server_url)
@@ -179,6 +189,7 @@ def preprocess_data(tweet_list):
             print(idx)
         clean_tweet, emoji_list = normalise_tweet(tw_dict["raw_tweet"])
         tw_dict["clean_tweet"], tw_dict["emojis"] = clean_tweet.strip(), emoji_list
+        tw_dict["twitter_url"] = twitterUrls(tw_dict["raw_tweet"])
 
         contrast_file_in.write(tw_dict["raw_tweet"] + "\n")
         contrast_file_in.write(tw_dict["clean_tweet"] + "\n")

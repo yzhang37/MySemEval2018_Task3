@@ -160,3 +160,6 @@ def get_ners_exist(tweet):
     ners_c_set = set(tweet["ners"])
     feature = [1 if tag in ners_c_set else 0 for tag in ners_tag]
     return feature
+
+
+

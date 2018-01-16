@@ -13,4 +13,6 @@ dict
 dict_cache
 src/draft.py
 RelFreq
+url_set
+data/
 

@@ -91,11 +91,11 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
             print()
             print("--> %d/%d" % (curr_iter, num_iter), file=foutput)
             print("##" * 45, file=foutput)
-            print("Best score: %.2f%%" % best_score, file=foutput)
+            print("Best score: %.2f%%" % (best_score * 100), file=foutput)
             print("Best feature set: ", " | ".join([func.__name__ for func in best_features]), file=foutput)
             print("-" * 45, file=foutput)
             print("Current functions: %s" % cur_funcs, file=foutput)
-            print("Current score: %.2f%%" % score, file=foutput)
+            print("Current score: %.2f%%" % (score * 100), file=foutput)
             print("##" * 45, file=foutput)
             foutput.flush()
 
@@ -146,25 +146,38 @@ def build_cv(tweets, map_function, fold=4):
 
 
 def get_features_on_liblinear(feature: list):
+    # feature += [
+    #     ners_existed,
+    #     wv_google,
+    #     wv_GloVe,
+    #     sentilexi,
+    #     emoticon,
+    #     punction,
+    #     elongated
+    # ]
+    #
+    # for __freq in range(1, 6):
+    #     feature.append(nltk_unigram_t[__freq])
+    #     feature.append(nltk_bigram_t[__freq])
+    #     feature.append(nltk_trigram_t[__freq])
+    #     feature.append(hashtag_t[__freq])
+    #     feature.append(hashtag_unigram_t[__freq])
+    #     feature.append(nltk_unigram_withrf_t[__freq])
+    #     feature.append(nltk_bigram_withrf_t[__freq])
+    #     feature.append(nltk_trigram_withrf_t[__freq])
+    #     feature.append(hashtag_t_withrf_t[__freq])
+    #     feature.append(hashtag_unigram_withrf_t[__freq])
     feature += [
         ners_existed,
-        wv_google,
-        wv_GloVe,
-        sentilexi,
-        emoticon,
-        punction,
-        elongated
+        nltk_trigram_withrf_t[4],
+        nltk_bigram_withrf_t[2],
+        hashtag_withrf_t[2],
+        hashtag_unigram_t[1],
+        hashtag_withrf_t[1],
+        nltk_unigram_withrf_t[2],
+        nltk_trigram_withrf_t[2],
     ]
 
-    for __freq in range(1, 6):
-        feature.append(nltk_unigram_t[__freq])
-        feature.append(nltk_bigram_t[__freq])
-        feature.append(nltk_trigram_t[__freq])
-        feature.append(hashtag_t[__freq])
-        feature.append(nltk_unigram_withrf_t[__freq])
-        feature.append(nltk_bigram_withrf_t[__freq])
-        feature.append(nltk_trigram_withrf_t[__freq])
-        feature.append(hashtag_t_withrf_t[__freq])
     return feature
 
 
@@ -195,8 +208,8 @@ def get_features_on_AdaBoost(features: list):
     features.append(nltk_trigram_withrf_t[1])
     features.append(nltk_trigram_withrf_t[4])
 
-    features.append(hashtag_t_withrf_t[4])
-    features.append(hashtag_t_withrf_t[5])
+    features.append(hashtag_withrf_t[4])
+    features.append(hashtag_withrf_t[5])
 
 
 def get_features_on_DecisionTree(features: list):
@@ -209,7 +222,7 @@ def get_features_on_DecisionTree(features: list):
         # features.append(nltk_unigram_t_with_rf[__freq])
         # features.append(nltk_bigram_t_with_rf[__freq])
         # features.append(nltk_trigram_with_t_rf[__freq])
-        features.append(hashtag_t_withrf_t[__freq])
+        features.append(hashtag_withrf_t[__freq])
 
 
 def get_features_on_NaiveBayes(features: list):
@@ -372,7 +385,7 @@ def main(mode="default", hc_output_filename="%05d.txt"):
     elif mode.lower() == "hc":
         # execute the hc procedure several times
 
-        for exec_id in range(1):
+        for exec_id in range(5):
             print()
             print("Running hc time %d" % (exec_id + 1))
 
@@ -389,7 +402,7 @@ def main(mode="default", hc_output_filename="%05d.txt"):
                 if os.path.exists(path):
                     os.remove(path)
 
-        util.standard_hc_info_output(os.path.join(config.RESULT_MYDIR, hc_output_filename), range(1), 2)
+        util.standard_hc_info_output(os.path.join(config.RESULT_MYDIR, hc_output_filename), range(5), 2)
 
 
 def get_classifier():
@@ -405,5 +418,3 @@ if __name__ == '__main__':
     # output_format = "hc_hashtag_NaiveBayes_%05d.txt"
     # main("hc", "liblinear_licorice_masterrun_%05d.txt")
     main("default")
-
-
