@@ -8,7 +8,7 @@ import numpy as np
 
 sys.path.append("../..")
 from src import config
-from src.evaluation import *
+from src import evaluation
 from src import util
 from src.classifier import *
 from src.model_trainer.feature_functions import *
@@ -50,7 +50,7 @@ class Trainer(object):
 
     def evaluation_for_several_label(self, label):
         print("Evaluating...")
-        cm = Evaluation(self.dev_feature_path, self.result_file_path, label)
+        cm = evaluation.Evaluation(self.dev_feature_path, self.result_file_path, label)
         # cm.print_out()
         return cm
 
@@ -77,7 +77,7 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
             pending_feature_functions = current_best_features | {feature_function}
 
             cm = run(tweet_cv, pending_feature_functions)
-            p, r, f1 = cm.get_average_prf()
+            p, r, f1 = evaluation.get_cm_eval(cm)
 
             score = f1
             dict_pending[score] = pending_feature_functions
@@ -299,7 +299,7 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False):
 
     fpower.close()
     fresPower.close()
-    cm = Evaluation(power_dev_fea_path, power_result_path, config.get_label_list())
+    cm = evaluation.Evaluation(power_dev_fea_path, power_result_path, config.get_label_list())
     cm.print_out()
     if keep_pw:
         print("==" * 30)
@@ -360,28 +360,6 @@ def main(mode="default", hc_output_filename="%05d.txt"):
         cm = run(index_cv, features)
         p, r, f1 = cm.get_average_prf()
 
-        # prec_score = []
-        # recall_score = []
-        # f1_score = []
-        # for i, list_item in enumerate(index_cv):
-        #     dev = list_item
-        #     train = []
-        #     for j, list_item in enumerate(index_cv):
-        #         if i == j:
-        #             continue
-        #         else:
-        #             train += list_item
-        #     cm = single_train_algorithm(train, dev, features)
-        #     p, r, f1 = cm.get_average_prf()
-        #     # print("p:{},r:{},f1:{}".format(p, r, f1))
-        #     prec_score.append(p)
-        #     recall_score.append(r)
-        #     f1_score.append(f1)
-        #
-        # average_score = sum(f1_score) / len(f1_score)
-        # print(average_score)
-        # util.print_dedicated_mean(prec_score, recall_score, f1_score)
-        # util.print_markdown_mean_file(prec_score, recall_score, f1_score)
     elif mode.lower() == "hc":
         # execute the hc procedure several times
 

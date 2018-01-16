@@ -59,7 +59,11 @@ class UrlCreeper(object):
         # 首先尝试访问 url
         self.browser.get(self.url)
 
-        self.wait.until(expected_conditions.presence_of_element_located((By.TAG_NAME, "title")))
+        try:
+            self.wait.until(self.if_load_completed_helper)
+        except Sel_Exceptions.TimeoutException:
+            pass
+
         result["title"] = self.browser.title
         result["current_url"] = self.browser.current_url
 
@@ -301,9 +305,12 @@ class UrlCreeper(object):
             return False
 
     def default_handler(self, new_url, title, result):
-        self.wait.until(self.if_load_completed_helper)
-        result["default_handler"] = 1
-        result["title"] = self.browser.title
+        try:
+            self.wait.until(self.if_load_completed_helper)
+            result["default_handler"] = 1
+            result["title"] = self.browser.title
+        except Sel_Exceptions.TimeoutException:
+            result["timeout"] = 1
         return True
 
     # helpers

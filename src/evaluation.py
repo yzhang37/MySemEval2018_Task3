@@ -1,8 +1,19 @@
-#coding:utf8
+# encoding:utf8
+import sys
 import sklearn
 from sklearn import metrics
-
+sys.path.append("..")
 from src.confusion_matrix import Alphabet, ConfusionMatrix
+from src import config
+
+
+def get_cm_eval(matrix: ConfusionMatrix):
+    if config.get_class() == "A":
+        # as for the task A, because it only evaluate on class "1",
+        # so instead of using average f1, we use f1 of class "1".
+        return matrix.get_prf("1")
+    else:
+        return matrix.get_average_prf()
 
 
 def Evaluation(gold_file_path, predict_file_path, label):

@@ -24,6 +24,11 @@ def get_label_list():
     else:
         return [0, 1, 2, 3]
 
+
+def get_class():
+    return __CLASS.upper()
+
+
 hostname = socket.gethostname()
 cur_user = pwd.getpwuid(os.getuid())[0]
 if hostname == "precision":
