@@ -12,6 +12,7 @@ from src import evaluation
 from src import util
 from src.classifier import *
 from src.model_trainer.feature_functions import *
+from src import ensemble
 
 
 class Trainer(object):
@@ -238,7 +239,7 @@ def get_features_on_NaiveBayes(features: list):
         # features.append(hashtag_t_with_rf[__freq])
 
 
-def run(index_cv, feature_list, keep_train=False, keep_pw=False):
+def run(index_cv, feature_list, keep_train=False, keep_pw=False, ensemble_path=""):
 
     # define the power file
     power_dev_fea_path = config.make_feature_path(dev=True, dspr="power")
@@ -276,13 +277,19 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False):
                 if line[-1] != '\n':
                     fpower.write('\n')
 
+        dev_cls = []
         fpower.flush()
         with open(result_path) as fres_in:
             for line in fres_in:
+                dev_cls.append(line.strip())
                 fresPower.write(line)
                 if line[-1] != '\n':
                     fpower.write('\n')
         fresPower.flush()
+
+        ensem_list = []
+        for idx, tweet in enumerate(dev_tweets):
+            ensem_list.append((tweet["id"], dev_cls[idx]))
 
         if keep_train:
             print("--" * 30)
@@ -295,10 +302,19 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False):
             for path in [train_fea_path, dev_fea_path, model_path, result_path]:
                 if os.path.exists(path):
                     os.remove(path)
+
+        if len(ensemble_path) > 0:
+            try:
+                print("--" * 30)
+                ensemble.make_ensemble(ensem_list, ensemble_path)
+            except Exception as e:
+                print(e)
+
         print()
 
     fpower.close()
     fresPower.close()
+
     cm = evaluation.Evaluation(power_dev_fea_path, power_result_path, config.get_label_list())
     cm.print_out()
     if keep_pw:
@@ -357,8 +373,8 @@ def main(mode="default", hc_output_filename="%05d.txt"):
     print()
 
     if mode.lower() == "default":
-        cm = run(index_cv, features)
-        p, r, f1 = cm.get_average_prf()
+        cm = run(index_cv, features, ensemble_path=config.make_ensemble_path())
+        p, r, f1 = evaluation.get_cm_eval(cm)
 
     elif mode.lower() == "hc":
         # execute the hc procedure several times

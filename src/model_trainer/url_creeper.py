@@ -57,12 +57,12 @@ class UrlCreeper(object):
         result = dict()
 
         # 首先尝试访问 url
-        self.browser.get(self.url)
 
         try:
+            self.browser.get(self.url)
             self.wait.until(self.if_load_completed_helper)
         except Sel_Exceptions.TimeoutException:
-            pass
+            return None
 
         result["title"] = self.browser.title
         result["current_url"] = self.browser.current_url
@@ -372,7 +372,7 @@ def main(urls):
     for url in urls:
         if url in url_cache.keys():
             continue
-        creeper = UrlCreeper(url, browser)
+        creeper = UrlCreeper(url, browser, 60)
         ret = creeper.crawl()
         if ret is not None:
             url_cache[url] = ret

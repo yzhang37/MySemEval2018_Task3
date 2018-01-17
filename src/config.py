@@ -2,6 +2,7 @@
 import socket
 import os
 import pwd
+import time
 import uuid
 
 
@@ -123,6 +124,8 @@ def make_feature_path(dev=False, dspr=""):
     path = path + ".fea."
     if len(dspr.strip()) > 0:
         path += dspr + "."
+    else:
+        path += __make_time_string() + "."
     path = "%s<uni>.txt" % path
     return __make_unique_string(os.path.join(FEATURE_PATH, path))
 
@@ -131,6 +134,8 @@ def make_model_path(dspr=""):
     pattern = ""
     if len(dspr.strip()) > 0:
         pattern += dspr + "."
+    else:
+        pattern += __make_time_string() + "."
     pattern += "<uni>.model"
     return __make_unique_string(os.path.join(CWD, "model", pattern))
 
@@ -139,9 +144,15 @@ def make_result_path(dspr=""):
     pattern = "predict."
     if len(dspr.strip()) > 0:
         pattern += dspr + "."
+    else:
+        pattern += __make_time_string() + "."
     pattern += "<uni>.txt"
     return __make_unique_string(os.path.join(CWD, "result", pattern))
 
+
+def __make_time_string():
+    sTime = time.localtime(time.time())
+    return "%04d-%02d-%02d" % (sTime.tm_year, sTime.tm_mon, sTime.tm_mday)
 
 GLOVE_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "glove.small.300d.txt")
 
@@ -167,3 +178,18 @@ def make_result_hc_output():
 
 # URL dumping file list
 URL_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "url_cache.json")
+
+
+# ensemble directory path:
+ENSEMBLE_PATH = os.path.join(CWD, "ensemble")
+if not os.path.exists(ENSEMBLE_PATH):
+    os.makedirs(ENSEMBLE_PATH)
+def make_ensemble_path(dspr = ""):
+    name = "ensemble"
+    if len(dspr) > 0:
+        name += "." + dspr
+    else:
+        name += "." + __make_time_string()
+    name += ".<uni>.json"
+    name = __make_unique_string(name)
+    return os.path.join(ENSEMBLE_PATH, name)
