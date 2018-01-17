@@ -184,12 +184,14 @@ URL_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "url_cache.json")
 ENSEMBLE_PATH = os.path.join(CWD, "ensemble")
 if not os.path.exists(ENSEMBLE_PATH):
     os.makedirs(ENSEMBLE_PATH)
+
 def make_ensemble_path(dspr = ""):
     name = "ensemble"
+    name += "." + __make_time_string()
     if len(dspr) > 0:
         name += "." + dspr
     else:
-        name += "." + __make_time_string()
+        name += ".%s" + dspr
     name += ".<uni>.json"
     name = __make_unique_string(name)
     return os.path.join(ENSEMBLE_PATH, name)

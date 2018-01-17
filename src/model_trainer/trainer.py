@@ -239,13 +239,15 @@ def get_features_on_NaiveBayes(features: list):
         # features.append(hashtag_t_with_rf[__freq])
 
 
-def run(index_cv, feature_list, keep_train=False, keep_pw=False, ensemble_path=""):
+def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=False, ensemble_get_classifier_list=None):
 
     # define the power file
     power_dev_fea_path = config.make_feature_path(dev=True, dspr="power")
     fpower = open(power_dev_fea_path, "w+")
     power_result_path = config.make_result_path(dspr="power")
     fresPower = open(power_result_path, "w+")
+
+    current_run_ensemble_path = config.make_ensemble_path()
 
     for i, __item in enumerate(index_cv):
         dev_tweets = __item
@@ -255,62 +257,75 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, ensemble_path="
                 train_tweets += __item
 
         print("Fold %d / %d" % (i+1, len(index_cv)))
-        # get classifier
-        classifier = get_classifier()
+        # here, we use many kind of classifier
 
-        # get paths
-        train_fea_path = config.make_feature_path(dev=False)
-        dev_fea_path = config.make_feature_path(dev=True)
-        model_path = config.make_model_path()
-        result_path = config.make_result_path()
+        if ensemble_get_classifier_list is None:
+            ensemble_get_classifier_list = [get_classifier]
 
-        trainer = Trainer(train_tweets, dev_tweets, feature_list, train_fea_path, dev_fea_path, classifier,
-                          model_path, result_path)
+        # get classifier for each ensemble
+        for get_classifier_handler in ensemble_get_classifier_list:
+            # first we get the classifier
+            classifier = get_classifier_handler()
+            classifier_file_name = classifier.idname()
 
-        trainer.make_feature()
-        trainer.train_model()
-        trainer.test_model()
+            ensemble_path = current_run_ensemble_path % classifier_file_name
 
-        with open(dev_fea_path) as fdev_in:
-            for line in fdev_in:
-                fpower.write(line)
-                if line[-1] != '\n':
-                    fpower.write('\n')
+            # then make path for the current selected algorithm
+            train_fea_path = config.make_feature_path(dev=False)
+            dev_fea_path = config.make_feature_path(dev=True)
+            model_path = config.make_model_path()
+            result_path = config.make_result_path()
 
-        dev_cls = []
-        fpower.flush()
-        with open(result_path) as fres_in:
-            for line in fres_in:
-                dev_cls.append(line.strip())
-                fresPower.write(line)
-                if line[-1] != '\n':
-                    fpower.write('\n')
-        fresPower.flush()
+            # get the trainer
+            trainer = Trainer(train_tweets, dev_tweets, feature_list, train_fea_path, dev_fea_path, classifier,
+                              model_path, result_path)
 
-        ensem_list = []
-        for idx, tweet in enumerate(dev_tweets):
-            ensem_list.append((tweet["id"], dev_cls[idx]))
+            # train the modeler
+            trainer.make_feature()
+            trainer.train_model()
+            trainer.test_model()
 
-        if keep_train:
-            print("--" * 30)
-            print("current train file:")
-            print("train_feature: %s" % (train_fea_path))
-            print("dev_feature: %s" % (dev_fea_path))
-            print("model: %s" % (model_path))
-            print("result: %s" % (result_path))
-        else:
-            for path in [train_fea_path, dev_fea_path, model_path, result_path]:
-                if os.path.exists(path):
-                    os.remove(path)
+            # copy the result file to power
+            with open(dev_fea_path) as fdev_in:
+                for line in fdev_in:
+                    fpower.write(line)
+                    if line[-1] != '\n':
+                        fpower.write('\n')
 
-        if len(ensemble_path) > 0:
-            try:
+            dev_cls = []
+            fpower.flush()
+            with open(result_path) as fres_in:
+                for line in fres_in:
+                    dev_cls.append(line.strip())
+                    fresPower.write(line)
+                    if line[-1] != '\n':
+                        fpower.write('\n')
+            fresPower.flush()
+
+            ensem_list = []
+            for idx, tweet in enumerate(dev_tweets):
+                ensem_list.append((tweet["id"], dev_cls[idx]))
+
+            if keep_train:
                 print("--" * 30)
-                ensemble.make_ensemble(ensem_list, ensemble_path)
-            except Exception as e:
-                print(e)
+                print("current train file:")
+                print("train_feature: %s" % (train_fea_path))
+                print("dev_feature: %s" % (dev_fea_path))
+                print("model: %s" % (model_path))
+                print("result: %s" % (result_path))
+            else:
+                for path in [train_fea_path, dev_fea_path, model_path, result_path]:
+                    if os.path.exists(path):
+                        os.remove(path)
 
-        print()
+            if use_ensemble:
+                try:
+                    print("--" * 30)
+                    ensemble.make_ensemble(ensem_list, ensemble_path)
+                except Exception as e:
+                    print(e)
+
+            print()
 
     fpower.close()
     fresPower.close()
@@ -373,7 +388,7 @@ def main(mode="default", hc_output_filename="%05d.txt"):
     print()
 
     if mode.lower() == "default":
-        cm = run(index_cv, features, ensemble_path=config.make_ensemble_path())
+        cm = run(index_cv, features, use_ensemble=True)
         p, r, f1 = evaluation.get_cm_eval(cm)
 
     elif mode.lower() == "hc":
