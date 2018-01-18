@@ -491,3 +491,6 @@ def emoticon(microblog):
 
     return util.get_feature_by_list(feature)
 
+
+def url_crawler(tweet):
+    a = dict_util.get_tweet_related_urls(tweet)

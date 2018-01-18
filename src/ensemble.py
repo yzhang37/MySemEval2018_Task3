@@ -18,25 +18,35 @@ def make_ensemble(data_list, file_path):
         ensemble_data[idx].setdefault(cls, 0)
         ensemble_data[idx][cls] += 1
     json.dump(ensemble_data, open(file_path, "w"))
-    print("Ensemble data dumped to")
-    print(file_path)
+    print("--" * 30)
+    print("Ensemble data dumped to %s" % file_path)
     print("at %s" % time.asctime(time.localtime(time.time())) )
 
 
 def make_ensemble_from_file(file_path_list: list, output_path):
+
+    print("--" * 30)
+    print("Loading ensemble from:")
     total_data = dict()
 
-    for file_path in file_path_list:
-        data = json.load(open(file_path))
+    try:
+        for file_path in file_path_list:
 
-        for idx, cls_f in data.items():
-            total_data.setdefault(idx, dict())
-            for cls, freq in cls_f.items():
-                total_data[idx].setdefault(cls, 0)
-                total_data[idx][cls] += freq
+            data = json.load(open(file_path))
+            print(file_path)
 
-    json.dump(total_data, open(output_path, "w"))
+            for idx, cls_f in data.items():
+                total_data.setdefault(idx, dict())
+                for cls, freq in cls_f.items():
+                    total_data[idx].setdefault(cls, 0)
+                    total_data[idx][cls] += freq
 
-    print("Ensemble data dumped to")
-    print(output_path)
-    print("at %s" % time.asctime(time.localtime(time.time())))
+        json.dump(total_data, open(output_path, "w"))
+
+        print()
+        print("Ensemble data dumped to %s" % output_path)
+        print("at %s" % time.asctime(time.localtime(time.time())))
+        print()
+    except Exception as ex:
+        print("Exception: ", ex)
+

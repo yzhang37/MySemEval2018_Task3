@@ -39,6 +39,7 @@ class UrlCreeper(object):
         self.url = url
         self.browser = browser
         self.timeout = timeout
+        self.banned_domains = ["www.tsu.co", "www.seacretdirect.com"]
         self.wait = None
 
     def get_wait(self):
@@ -85,6 +86,14 @@ class UrlCreeper(object):
                 break
 
         if "404" in result or "timeout" in result or "archived" in result or "protected" in result:
+            result = None
+
+        if re.findall(regex_url_pattern, result["current_url"])[0][3] == result["title"] or \
+                      len(result["title"].strip()) == 0 or result["title"].find("404") != -1 or \
+                      len(re.findall("(?i)not found", result["title"])) > 0:
+            result = None
+
+        if (re.findall(regex_url_pattern, result["current_url"])[0][3]).lower() in self.banned_domains:
             result = None
 
         print("{0}: {1}".format(self.url, result))

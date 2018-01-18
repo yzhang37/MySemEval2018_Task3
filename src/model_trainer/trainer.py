@@ -77,8 +77,8 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
             curr_iter += 1
             pending_feature_functions = current_best_features | {feature_function}
 
-            cm = run(tweet_cv, pending_feature_functions)
-            p, r, f1 = evaluation.get_cm_eval(cm)
+            cm_list = run(tweet_cv, pending_feature_functions)
+            p, r, f1 = evaluation.get_cm_eval(cm_list[0])
 
             score = f1
             dict_pending[score] = pending_feature_functions
@@ -147,15 +147,15 @@ def build_cv(tweets, map_function, fold=4):
 
 
 def get_features_on_liblinear(feature: list):
-    # feature += [
-    #     ners_existed,
-    #     wv_google,
-    #     wv_GloVe,
-    #     sentilexi,
-    #     emoticon,
-    #     punction,
-    #     elongated
-    # ]
+    feature += [
+        ners_existed,
+        wv_google,
+        wv_GloVe,
+        sentilexi,
+        emoticon,
+        punction,
+        elongated
+    ]
     #
     # for __freq in range(1, 6):
     #     feature.append(nltk_unigram_t[__freq])
@@ -169,7 +169,7 @@ def get_features_on_liblinear(feature: list):
     #     feature.append(hashtag_t_withrf_t[__freq])
     #     feature.append(hashtag_unigram_withrf_t[__freq])
     feature += [
-        ners_existed,
+        # ners_existed,
         nltk_trigram_withrf_t[4],
         nltk_bigram_withrf_t[2],
         hashtag_withrf_t[2],
@@ -178,7 +178,6 @@ def get_features_on_liblinear(feature: list):
         nltk_unigram_withrf_t[2],
         nltk_trigram_withrf_t[2],
     ]
-
     return feature
 
 
@@ -244,8 +243,14 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
     # define the power file
     power_dev_fea_path = config.make_feature_path(dev=True, dspr="power")
     fpower = open(power_dev_fea_path, "w+")
-    power_result_path = config.make_result_path(dspr="power")
-    fresPower = open(power_result_path, "w+")
+
+    # currently, we need a lot of result file for each classifier algorithm
+
+    fresPowerList = []
+    power_result_path_List = []
+    classifier_name_list = []
+    # power_result_path = config.make_result_path(dspr="power")
+    # fresPower = open(power_result_path, "w+")
 
     current_run_ensemble_path = config.make_ensemble_path()
 
@@ -262,13 +267,25 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
         if ensemble_get_classifier_list is None:
             ensemble_get_classifier_list = [get_classifier]
 
+        if len(power_result_path_List) == 0:
+            power_result_path_List = [None] * len(ensemble_get_classifier_list)
+            fresPowerList = [None] * len(ensemble_get_classifier_list)
+            classifier_name_list = [""] * len(ensemble_get_classifier_list)
+
         # get classifier for each ensemble
-        for get_classifier_handler in ensemble_get_classifier_list:
+        for handler_idx, get_classifier_handler in enumerate(ensemble_get_classifier_list):
             # first we get the classifier
             classifier = get_classifier_handler()
             classifier_file_name = classifier.idname()
 
-            ensemble_path = current_run_ensemble_path % classifier_file_name
+
+            if power_result_path_List[handler_idx] is None:
+                filename = config.make_result_path(dspr="power.%s" % classifier_file_name)
+                power_result_path_List[handler_idx] = filename
+                fresPowerList[handler_idx] = open(filename, "w+")
+                classifier_name_list[handler_idx] = classifier.strategy.trainer
+
+            ensemble_path = (current_run_ensemble_path.replace("<algo>", "%s")) % classifier_file_name
 
             # then make path for the current selected algorithm
             train_fea_path = config.make_feature_path(dev=False)
@@ -285,22 +302,24 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
             trainer.train_model()
             trainer.test_model()
 
-            # copy the result file to power
-            with open(dev_fea_path) as fdev_in:
-                for line in fdev_in:
-                    fpower.write(line)
-                    if line[-1] != '\n':
-                        fpower.write('\n')
+            # copy the dev file to power
+            if handler_idx == 0:
+                # only in the first run, we need to copy the power predict
+                with open(dev_fea_path) as fdev_in:
+                    for line in fdev_in:
+                        fpower.write(line)
+                        if line[-1] != '\n':
+                            fpower.write('\n')
+                fpower.flush()
 
             dev_cls = []
-            fpower.flush()
             with open(result_path) as fres_in:
                 for line in fres_in:
                     dev_cls.append(line.strip())
-                    fresPower.write(line)
+                    fresPowerList[handler_idx].write(line)
                     if line[-1] != '\n':
-                        fpower.write('\n')
-            fresPower.flush()
+                        fresPowerList[handler_idx].write('\n')
+            fresPowerList[handler_idx].flush()
 
             ensem_list = []
             for idx, tweet in enumerate(dev_tweets):
@@ -320,29 +339,48 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
             if use_ensemble:
                 try:
-                    print("--" * 30)
                     ensemble.make_ensemble(ensem_list, ensemble_path)
                 except Exception as e:
                     print(e)
 
             print()
 
-    fpower.close()
-    fresPower.close()
+    if use_ensemble:
+        file_reg = current_run_ensemble_path.replace("<algo>", "*")
+        ret = os.popen("ls %s" % file_reg).read()
+        ensemble.make_ensemble_from_file(ret.strip().split('\n'),
+                                         current_run_ensemble_path.replace("<algo>", "total"))
 
-    cm = evaluation.Evaluation(power_dev_fea_path, power_result_path, config.get_label_list())
-    cm.print_out()
-    if keep_pw:
-        print("==" * 30)
-        print("Power dev_feature and result file path is:")
-        print(power_dev_fea_path)
-        print(power_result_path)
+    fpower.close()
+    for fresPower in fresPowerList:
+        if fresPower is not None:
+            fresPower.close()
+
+    print("=="*30)
+    cm_list = []
+    for idx, handler in enumerate(ensemble_get_classifier_list):
+        print("Evaluation on %s" % classifier_name_list[idx])
+        print("--"*30)
+        cm = evaluation.Evaluation(power_dev_fea_path, power_result_path_List[idx], config.get_label_list())
+        cm_list.append(cm)
+        cm.print_out()
+        print("--" * 30)
         print()
-    else:
-        for path in [power_dev_fea_path, power_result_path]:
-            if os.path.exists(path):
-                os.remove(path)
-    return cm
+        if keep_pw:
+            print("==" * 30)
+            print("Power dev_feature and result file path is:")
+            print(power_dev_fea_path)
+            print(power_result_path_List[idx])
+            print()
+        else:
+            del_list = [power_result_path_List[idx]]
+            if idx == len(ensemble_get_classifier_list) - 1:
+                del_list.append(power_dev_fea_path)
+            for path in del_list:
+                if os.path.exists(path):
+                    os.remove(path)
+
+    return cm_list
 
 
 def main(mode="default", hc_output_filename="%05d.txt"):
@@ -388,8 +426,23 @@ def main(mode="default", hc_output_filename="%05d.txt"):
     print()
 
     if mode.lower() == "default":
-        cm = run(index_cv, features, use_ensemble=True)
-        p, r, f1 = evaluation.get_cm_eval(cm)
+        classifier_list = [
+            lambda: Classifier(LibLinearSVM(0, 1)),
+            lambda: Classifier(SkLearnAdaBoostClassifier()),
+            lambda: Classifier(SkLearnDecisionTree()),
+            lambda: Classifier(SkLearnKNN()),
+            lambda: Classifier(SkLearnLogisticRegression()),
+            lambda: Classifier(SkLearnNaiveBayes()),
+            lambda: Classifier(SkLearnRandomForestClassifier()),
+            lambda: Classifier(SkLearnSGD()),
+            lambda: Classifier(SkLearnSVM()),
+            lambda: Classifier(SkLearnVotingClassifier()),
+            lambda: Classifier(SkLearnXGBoostClassifier()),
+        ]
+        cm_list = run(index_cv, features, use_ensemble=True, ensemble_get_classifier_list=classifier_list)
+
+        for cm in cm_list:
+            p, r, f1 = evaluation.get_cm_eval(cm)
 
     elif mode.lower() == "hc":
         # execute the hc procedure several times
@@ -415,10 +468,7 @@ def main(mode="default", hc_output_filename="%05d.txt"):
 
 
 def get_classifier():
-    return Classifier(LibLinear(0, 1))
-    # return Classifier(skLearn_AdaBoostClassifier())
-    # return Classifier(skLearn_DecisionTree())
-    # return Classifier(skLearn_NaiveBayes())
+    return Classifier(LibLinearSVM(0, 1))
 
 
 if __name__ == '__main__':

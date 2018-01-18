@@ -6,7 +6,7 @@ import time
 import uuid
 
 
-__CLASS = "B"
+__CLASS = "A"
 
 
 def get_label_map(x):
@@ -191,7 +191,7 @@ def make_ensemble_path(dspr = ""):
     if len(dspr) > 0:
         name += "." + dspr
     else:
-        name += ".%s" + dspr
-    name += ".<uni>.json"
+        name += ".<algo>" + dspr
+    name += ".<uni>.%s.json" % __CLASS.lower()
     name = __make_unique_string(name)
     return os.path.join(ENSEMBLE_PATH, name)

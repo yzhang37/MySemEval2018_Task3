@@ -162,4 +162,6 @@ def get_ners_exist(tweet):
     return feature
 
 
+def get_tweet_related_urls(tweet):
+    return tweet["twitter_url"]
 
