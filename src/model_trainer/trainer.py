@@ -249,6 +249,7 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
     fresPowerList = []
     power_result_path_List = []
     classifier_name_list = []
+    ensemble_file_name_list = []
     # power_result_path = config.make_result_path(dspr="power")
     # fresPower = open(power_result_path, "w+")
 
@@ -271,6 +272,7 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
             power_result_path_List = [None] * len(ensemble_get_classifier_list)
             fresPowerList = [None] * len(ensemble_get_classifier_list)
             classifier_name_list = [""] * len(ensemble_get_classifier_list)
+            ensemble_file_name_list = [""] * len(ensemble_get_classifier_list)
 
         # get classifier for each ensemble
         for handler_idx, get_classifier_handler in enumerate(ensemble_get_classifier_list):
@@ -278,14 +280,13 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
             classifier = get_classifier_handler()
             classifier_file_name = classifier.idname()
 
-
             if power_result_path_List[handler_idx] is None:
                 filename = config.make_result_path(dspr="power.%s" % classifier_file_name)
                 power_result_path_List[handler_idx] = filename
                 fresPowerList[handler_idx] = open(filename, "w+")
                 classifier_name_list[handler_idx] = classifier.strategy.trainer
-
-            ensemble_path = (current_run_ensemble_path.replace("<algo>", "%s")) % classifier_file_name
+                ensemble_file_name_list[handler_idx] = (current_run_ensemble_path.replace("<algo>", "%s")) \
+                                                       % classifier_file_name
 
             # then make path for the current selected algorithm
             train_fea_path = config.make_feature_path(dev=False)
@@ -339,28 +340,16 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
             if use_ensemble:
                 try:
-                    ensemble.make_ensemble(ensem_list, ensemble_path)
+                    ensemble.make_ensemble(ensem_list, ensemble_file_name_list[handler_idx])
                 except Exception as e:
                     print(e)
 
             print()
 
-    if use_ensemble:
-        file_reg = current_run_ensemble_path.replace("<algo>", "*")
-        ret = os.popen("ls %s" % file_reg).read()
-        ensemble.make_ensemble_from_file(ret.strip().split('\n'),
-                                         current_run_ensemble_path.replace("<algo>", "total"))
-
-    fpower.close()
-    for fresPower in fresPowerList:
-        if fresPower is not None:
-            fresPower.close()
-
-    print("=="*30)
     cm_list = []
     for idx, handler in enumerate(ensemble_get_classifier_list):
         print("Evaluation on %s" % classifier_name_list[idx])
-        print("--"*30)
+        print("--" * 30)
         cm = evaluation.Evaluation(power_dev_fea_path, power_result_path_List[idx], config.get_label_list())
         cm_list.append(cm)
         cm.print_out()
@@ -379,6 +368,50 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
             for path in del_list:
                 if os.path.exists(path):
                     os.remove(path)
+
+    # make the ensemble score files
+    if use_ensemble:
+        ensemble_score_out_path = config.make_ensemble_score_path()
+
+        ensemble_scores = []
+
+        for idx, cm in cm_list:
+            ensemble_scores.append(dict())
+            cur_score = ensemble_scores[-1]
+            cur_score["accuracy"] = cm.get_accuracy()
+            cur_score["ensemble_path"] = ensemble_file_name_list[idx]
+
+            p, r, f1 = cm.get_average_prf()
+            cur_score["avrg_score"] = {
+                "precision": p,
+                "recall": r,
+                "f1": f1
+            }
+
+            cur_score["score"] = dict()
+            for cls in config.get_label_list():
+                class_label = str(cls)
+                p, r, f1 = cm.get_prf(class_label)
+                cur_score["score"][class_label] = {
+                    "precision": p,
+                    "recall": r,
+                    "f1": f1
+                }
+
+        json.dump(ensemble_scores, open(ensemble_score_out_path, "w"), indent=4)
+
+    if use_ensemble:
+        file_reg = current_run_ensemble_path.replace("<algo>", "*")
+        ret = os.popen("ls %s" % file_reg).read()
+        ensemble.make_ensemble_from_file(ret.strip().split('\n'),
+                                         current_run_ensemble_path.replace("<algo>", "total"))
+
+    fpower.close()
+    for fresPower in fresPowerList:
+        if fresPower is not None:
+            fresPower.close()
+
+    print("=="*30)
 
     return cm_list
 

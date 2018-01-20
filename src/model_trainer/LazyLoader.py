@@ -13,8 +13,14 @@ class LazyLoader(object):
         :return: Dictionary data.
         """
         if dict_name not in self._dict_manager:
-            self._dict_manager[dict_name] = self._map_name_to_handler[dict_name]()
+            self.reload(dict_name)
         return self._dict_manager[dict_name]
+
+    def is_cached(self, dict_name):
+        return dict_name in self._dict_manager
+
+    def reload(self, dict_name):
+        self._dict_manager[dict_name] = self._map_name_to_handler[dict_name]()
 
     def get_dict_list(self):
         """

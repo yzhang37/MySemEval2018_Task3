@@ -1,10 +1,10 @@
 #coding:utf-8
 import sys
 sys.path.append("..")
-
 import json
 import re
 import pickle
+import copy
 from src import config
 from src.stanfordCoreNLP import StanfordCoreNLP
 from nltk.stem import WordNetLemmatizer
@@ -15,8 +15,13 @@ from nltk import PorterStemmer,pos_tag
 rc_url = re.compile(r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+')
 rc_twitterUrl = re.compile(r"http[s]?://t\.co/[0-9A-Za-z]{10}")
 
+rc_super_url = re.compile(r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)([^#]*)?(#(.*))?")
+
 # @-replies or mentions
 rc_at = re.compile(r'(@|@ )([a-zA-Z]|[0-9]|_)+')
+
+# elongated words compiled regex
+rc_elongated = re.compile(r'\b\S*(\w)\1{2,10}\S*\b')
 
 def load_data(fp):
     '''
@@ -55,9 +60,9 @@ def replace_slang(slangs, text):
 def elongated_words(normal_word, text): # Elongated words are words which has characters repeated for 3-11 times
 
     text = " " + text.strip() + " "
-    while re.search(r" [\S]*(\w)\1{2,10}[\S]*[ .,?!\"]", text):
+    while rc_elongated.search(text):
         # elongated_count += 1
-        comp = re.search(r" [\S]*(\w)\1{2,10}[\S]* ", text)
+        comp = rc_elongated.search(text)
         elongated = comp.group().strip()
         elongated_char = comp.groups()[0]
         elongated_1 = re.sub(elongated_char + "{3,11}", elongated_char, elongated)
@@ -180,8 +185,11 @@ def preprocess_data(tweet_list):
     server_url = 'http://precision:9000'
     nlp_server = StanfordCoreNLP(server_url)
 
+    debug = False
+
     # save a contrast file for raw_tw and clean_tw
-    contrast_file_in = open(config.DATA_PATH + "/train/contrast_file.txt", "w")
+    if debug:
+        contrast_file_in = open(config.DATA_PATH + "/train/contrast_file.txt", "w")
     nltk_tweet_tokenizer = TweetTokenizer(preserve_case=True, reduce_len=True, strip_handles=False)
 
     for idx, tw_dict in enumerate(tweet_list):
@@ -191,8 +199,9 @@ def preprocess_data(tweet_list):
         tw_dict["clean_tweet"], tw_dict["emojis"] = clean_tweet.strip(), emoji_list
         tw_dict["twitter_url"] = twitterUrls(tw_dict["raw_tweet"])
 
-        contrast_file_in.write(tw_dict["raw_tweet"] + "\n")
-        contrast_file_in.write(tw_dict["clean_tweet"] + "\n")
+        if debug:
+            contrast_file_in.write(tw_dict["raw_tweet"] + "\n")
+            contrast_file_in.write(tw_dict["clean_tweet"] + "\n")
 
         parse_tweet(nlp_server, tw_dict)
         # if idx==100: break
@@ -201,13 +210,139 @@ def preprocess_data(tweet_list):
         tw_dict["nltk_tokens"] = nltk_tweet_tokenizer.tokenize(tw_dict["raw_tweet"])
 
     json.dump(tweet_list, open(config.PROCESSED_TRAIN, "w"), indent=2)
-    contrast_file_in.close()
+    if debug:
+        contrast_file_in.close()
 
+
+def get_domain_keyword(url):
+    ret = re.findall("\w+", url)
+
+    for kw in [
+        "www",
+        "com",
+        "net",
+        "top",
+        "tech",
+        "org",
+        "gov",
+        "edu",
+        "pub",
+        "name",
+        "me",
+        "info",
+        "uk",
+        "co",
+        "jp",
+        "cn",
+        "xyz"
+    ]:
+        if kw in ret:
+            ret.remove(kw)
+
+    for word in copy.copy(ret):
+        if len(word) <= 3:
+            ret.remove(word)
+    return ret
+
+
+def get_url_domain_keywords(url):
+    domain_url = rc_super_url.findall(url)[0][3]
+    domain_keywords = get_domain_keyword(domain_url)
+    return domain_keywords
+
+
+def url_preprocess_data(raw_data):
+    import wordsegment as wordseg
+    wordseg.load()
+    debug = False
+
+    if debug:
+        contrast_file_in = open(config.DATA_PATH + "/train/contrast_file_url.txt", "w")
+
+    nltk_tweet_tokenizer = TweetTokenizer(preserve_case=True, reduce_len=True, strip_handles=False)
+
+    dump_data = dict()
+
+    idx = 0
+    for raw_t_co_url, current_url_data in raw_data.items():
+        idx += 1
+        if idx % 100 == 0:
+            print(idx)
+        # clear data
+        if "is_media" in current_url_data:
+            # 照片的 title 都是 adaptive media, 没有意义。
+            current_url_data["title"] = ""
+            del current_url_data["is_media"]
+
+        # 复制句子内容
+        sentence_list = []
+        for key, value in current_url_data.items():
+            if key == "current_url":
+                continue
+            else:
+                if isinstance(value, str):
+                    sentence_list.append(value)
+                elif isinstance(value, (list, set)):
+                    for __item in value:
+                        if isinstance(__item, str):
+                            sentence_list.append(__item)
+
+        # 域名停词。
+        domain_stopwords = get_url_domain_keywords(current_url_data["current_url"])
+        for word in domain_stopwords:
+            rc = re.compile("(?i)(?<!\w)%s(?!\w)" % word)
+            for idx in range(len(sentence_list)):
+                sentence_list[idx] = rc.sub("", sentence_list[idx])
+
+        rc = re.compile("#(\w+)")
+        hashtag_list = []
+        pure_sentence_list = []
+        emoji_list = []
+        for idx in range(len(sentence_list)):
+            sentence, emojis = normalise_tweet(sentence_list[idx])
+
+            emoji_list += emojis
+
+            # 查找所有的 hashtag，然后分割
+            current_all_tags = rc.findall(sentence)
+
+            # pure_sentence: 不包含 hashtag 的句子
+            pure_sentence = sentence
+            for hashtag in current_all_tags:
+                pure_sentence = pure_sentence.replace(("#" + hashtag), "")
+            pure_sentence_list.append(pure_sentence)
+
+            # hashtag: 所有的 hashtag
+            hashtag_list.append([])
+            for hashtag in current_all_tags:
+                split_words = wordseg.segment(hashtag)
+                hashtag_list[-1] += split_words
+                sentence = sentence.replace(("#" + hashtag), " ".join(split_words))
+
+            sentence_list[idx] = sentence
+
+        dump_data[raw_t_co_url] = {
+            "sentences": pure_sentence_list,
+            "hashtags": hashtag_list,
+            "sentences_with_hashtag": sentence_list,
+            "emojis": emoji_list,
+        }
+        json.dump(dump_data, open(config.PROCESSED_URL_DATA, "w"), indent=4)
+
+    if debug:
+        contrast_file_in.close()
 
 if __name__ == '__main__':
-    fp = config.RAW_TRAIN
-    tweet_list = load_data(fp)
-    preprocess_data(tweet_list)
+    handle = "url"
+    if handle == "tweet":
+        fp = config.RAW_TRAIN
+        tweet_list = load_data(fp)
+        preprocess_data(tweet_list)
+    elif handle == "url":
+        fp = config.URL_CACHE_PATH
+        raw_url_data = json.load(open(fp))
+        url_preprocess_data(raw_url_data)
+        pass
 
 #
 # if __name__ == "__main__":
@@ -217,3 +352,4 @@ if __name__ == '__main__':
 #         tw["nltk_tokens"] = nltk_tweet_tokenizer.tokenize(tw["clean_tweet"])
 #     json.dump(data, open(config.PROCESSED_TRAIN_B, "w"), indent=2)
 #
+

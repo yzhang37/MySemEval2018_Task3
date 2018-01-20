@@ -8,7 +8,6 @@ import uuid
 
 __CLASS = "A"
 
-
 def get_label_map(x):
     if __CLASS == "A":
         if x == "0":
@@ -47,6 +46,12 @@ if hostname == "precision":
         LIB_LINEAR_PATH = "/home/feixiang/tools/liblinear-multicore-2.11-1"
         GLOVE_TWITTER_PATH = "/home/zhenghang/dict/GloVe"
         GLOVE_PATH = "/home/junfeng/GloVe"
+elif hostname == "tembusu":
+    if cur_user.lower() == "feixiang":
+        assert False, "没有设置启动路径。"
+    elif cur_user.lower() == "zhenghang":
+        CWD = "/home/zhenghang/projects/python/SemEval2018_T3"
+        assert False, "没有设置启动路径。"
 elif hostname.lower().startswith("l-mbookpro") or hostname.startswith("192.168"):
     CWD = "/Users/l/Projects/Python/MySemEval2018_Task3"
     PCCMD = "/Users/l/Projects/External/feixiang/pyCharmSpace"
@@ -55,13 +60,13 @@ elif hostname.lower().startswith("l-mbookpro") or hostname.startswith("192.168")
     GLOVE_TWITTER_PATH = "/Users/l/Projects/External/zhenghang/dict/GloVe"
     GLOVE_PATH = "/Users/l/Projects/External/junfeng/GloVe"
 else:
-    assert False, "没有设置启动路径。"
+    raise NotImplementedError("Required path not implemented.")
 
 SLANGS_PATH = PCCMD + "/data/slangs"
 NORMAL_WORDS_PATH = PCCMD + "/data/normal_word.pkl"
 EMOTICON = PCCMD + "/data/Emoticon.txt"
 
-DATA_PATH = CWD + "/data"
+DATA_PATH = os.path.join(CWD, "data")
 DICT_PATH = CWD + "/dict"
 DICT_CACHE_PATH = os.path.join(CWD, "dict_cache")
 FEATURE_PATH = CWD + "/feature"
@@ -73,6 +78,10 @@ RELATION_FREQ_PATH = os.path.join(CWD, "RelFreq")
 RAW_TRAIN = DATA_PATH + "/train/SemEval2018-T4-train-task%s.txt" % __CLASS.upper()
 
 PROCESSED_TRAIN = DATA_PATH + "/train/processed_train_%s.json" % "b"
+PROCESSED_URL_DATA = os.path.join(DATA_PATH, "processed_url_%s.json" % "b")
+
+GOLDEN_TRAIN_LABEL_FILE = os.path.join(DATA_PATH, "train", "golden_label_%s.txt" % __CLASS.lower())
+ENSEMBLE_RESULT_PATH = os.path.join(RESULT_MYDIR, "ensemble_result.txt")
 
 DICT_UNIGRAM_T2 = os.path.join(DICT_PATH, "unigram_t2.txt")
 DICT_UNIGRAM_T1 = os.path.join(DICT_PATH, "unigram_t1.txt")
@@ -185,6 +194,11 @@ ENSEMBLE_PATH = os.path.join(CWD, "ensemble")
 if not os.path.exists(ENSEMBLE_PATH):
     os.makedirs(ENSEMBLE_PATH)
 
+ENSEMBLE_SCORE_PATH = os.path.join(CWD, "ensemble_score")
+if not os.path.exists(ENSEMBLE_SCORE_PATH):
+    os.makedirs(ENSEMBLE_SCORE_PATH)
+
+
 def make_ensemble_path(dspr = ""):
     name = "ensemble"
     name += "." + __make_time_string()
@@ -195,3 +209,11 @@ def make_ensemble_path(dspr = ""):
     name += ".<uni>.%s.json" % __CLASS.lower()
     name = __make_unique_string(name)
     return os.path.join(ENSEMBLE_PATH, name)
+
+
+def make_ensemble_score_path():
+    name = "score"
+    name += "." + __make_time_string()
+    name += ".<uni>.%s.json" % __CLASS.lower()
+    name = __make_unique_string(name)
+    return os.path.join(ENSEMBLE_SCORE_PATH, name)

@@ -492,5 +492,11 @@ def emoticon(microblog):
     return util.get_feature_by_list(feature)
 
 
-def url_crawler(tweet):
-    a = dict_util.get_tweet_related_urls(tweet)
+# this function is used for fetch the urls according to each tweet
+def url_info(tweet):
+    urls = dict_util.get_tweet_related_urls(tweet)
+    url_cached_data = DictLoader().get("url_crawled_data")
+
+    for url in urls:
+        if url in url_cached_data:
+            current_data = url_cached_data[url]
