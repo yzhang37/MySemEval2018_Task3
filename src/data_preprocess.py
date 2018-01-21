@@ -1,10 +1,10 @@
 #coding:utf-8
 import sys
-sys.path.append("..")
 import json
 import re
 import pickle
 import copy
+sys.path.append("..")
 from src import config
 from src.stanfordCoreNLP import StanfordCoreNLP
 from nltk.stem import WordNetLemmatizer
@@ -22,6 +22,10 @@ rc_at = re.compile(r'(@|@ )([a-zA-Z]|[0-9]|_)+')
 
 # elongated words compiled regex
 rc_elongated = re.compile(r'\b\S*(\w)\1{2,10}\S*\b')
+
+# elongated spaces
+
+rc_space = re.compile(r" +([\s])")
 
 def load_data(fp):
     '''
@@ -274,6 +278,12 @@ def url_preprocess_data(raw_data):
             current_url_data["title"] = ""
             del current_url_data["is_media"]
 
+        url = rc_super_url.findall(current_url_data["current_url"])[0][3]
+        print(url)
+        if url == "www.instagram.com":
+            print("OK")
+            current_url_data["title"] = ""
+
         # 复制句子内容
         sentence_list = []
         for key, value in current_url_data.items():
@@ -295,38 +305,42 @@ def url_preprocess_data(raw_data):
                 sentence_list[idx] = rc.sub("", sentence_list[idx])
 
         rc = re.compile("#(\w+)")
-        hashtag_list = []
-        pure_sentence_list = []
-        emoji_list = []
-        for idx in range(len(sentence_list)):
-            sentence, emojis = normalise_tweet(sentence_list[idx])
 
-            emoji_list += emojis
+        dump_data[raw_t_co_url] = []
+        for idx in range(len(sentence_list)):
+            __cur_sent_dict = dict()
+
+            original = rc_space.sub("\g<1>", sentence_list[idx].strip())
+            if len(original) == 0:
+                continue
+            __cur_sent_dict["original_content"] = original
+            sentence, emojis = normalise_tweet(original)
+            __cur_sent_dict["emojis"] = emojis
 
             # 查找所有的 hashtag，然后分割
-            current_all_tags = rc.findall(sentence)
+            __cur_all_tags = rc.findall(sentence)
 
             # pure_sentence: 不包含 hashtag 的句子
             pure_sentence = sentence
-            for hashtag in current_all_tags:
+            for hashtag in __cur_all_tags:
                 pure_sentence = pure_sentence.replace(("#" + hashtag), "")
-            pure_sentence_list.append(pure_sentence)
+            __cur_sent_dict["pure_sentence"] = rc_space.sub("\g<1>", pure_sentence.strip())
 
             # hashtag: 所有的 hashtag
-            hashtag_list.append([])
-            for hashtag in current_all_tags:
+            __cur_split_hashtag_words = []
+            for hashtag in __cur_all_tags:
                 split_words = wordseg.segment(hashtag)
-                hashtag_list[-1] += split_words
+                __cur_split_hashtag_words += split_words
                 sentence = sentence.replace(("#" + hashtag), " ".join(split_words))
+            __cur_sent_dict["hashtags"] = ["#" + tag for tag in __cur_all_tags]
+            __cur_sent_dict["split_hashtag_words"] = __cur_split_hashtag_words
+            __cur_sent_dict["sentence_with_hashtag"] = sentence.strip()
 
-            sentence_list[idx] = sentence
+            __cur_sent_dict["token_pure_sentence"] = nltk_tweet_tokenizer.tokenize(__cur_sent_dict["pure_sentence"])
+            __cur_sent_dict["token_sentence_with_hashtag"] = nltk_tweet_tokenizer.tokenize(__cur_sent_dict["sentence_with_hashtag"])
 
-        dump_data[raw_t_co_url] = {
-            "sentences": pure_sentence_list,
-            "hashtags": hashtag_list,
-            "sentences_with_hashtag": sentence_list,
-            "emojis": emoji_list,
-        }
+            dump_data[raw_t_co_url].append(__cur_sent_dict)
+
         json.dump(dump_data, open(config.PROCESSED_URL_DATA, "w"), indent=4)
 
     if debug:
