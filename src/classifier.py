@@ -37,6 +37,7 @@ class Strategy(object):
 class Classifier(object):
     def __init__(self, strategy):
         self.strategy = strategy
+        self.is_test = False
     def idname(self):
         return self.strategy.idname
     def train_model(self, train_feature_path, model_path):
@@ -44,7 +45,7 @@ class Classifier(object):
     def test_model(self, test_feature_path, model_path, result_file_path):
         self.strategy.test_model(test_feature_path, model_path, result_file_path)
     def make_feature(self, tweets, feature_function_list, to_file):
-        self.strategy.make_feature_handler(tweets, feature_function_list, to_file)
+        self.strategy.make_feature_handler(tweets, feature_function_list, to_file, is_test=self.is_test)
 
 
 ''' skLearn '''
@@ -114,7 +115,6 @@ class SkLearnSVM(Strategy):
         self.trainer = "Scikit-Learn Support Vector Machine"
         self.idname = "sklearn_svm"
         self.clf = svm.LinearSVC()
-        self.make_feature_handler = make_feature_file.make_feature_for_sklearn
         print("Using %s Classifier" % (self.trainer))
 
     def train_model(self, train_file_path, model_path):

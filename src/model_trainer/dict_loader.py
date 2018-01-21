@@ -46,6 +46,9 @@ class DictLoader(LazyLoader):
             self._map_name_to_handler["hashtag_unigram_t%d" % freq] = lambda freq=freq: \
                 load_dict_from_file(config.DICT_HASHTAG_UNIGRAM_TU % freq)
 
+            self._map_name_to_handler["nltk_unigram_for_test_t%d" % freq] = lambda freq=freq: \
+                load_dict_from_file(config.DICT_NLTK_UNIGRAM_TU_TEST % freq)
+
         for k, v in self._map_name_to_handler.items():
             try:
                 v.__name__ = "%s_handler" % k
@@ -84,8 +87,14 @@ class DictLoader(LazyLoader):
         return dict_
 
     def __get_glove_handler(self):
+
+        def get_train_n_test_small_dict():
+            train_small_dict = self.get("nltk_unigram_t2").keys()
+            test_small_dict = self.get("nltk_unigram_for_test_t2").keys()
+            return train_small_dict | test_small_dict
+
         glove_cache = DictCache(config.GLOVE_CACHE_PATH,
-                                lambda: GloVe(config.GLOVE_840B_300_PATH, self.dict_nltk_unigram_t[2].keys()).word2vec)
+                                lambda: GloVe(config.GLOVE_840B_300_PATH, get_train_n_test_small_dict()).word2vec)
         glove_vec = {k: numpy.asarray(v) for k, v in glove_cache.load_dict().items()}
         return Word2VecTag(glove_vec)
 

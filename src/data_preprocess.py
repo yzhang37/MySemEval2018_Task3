@@ -27,13 +27,15 @@ rc_elongated = re.compile(r'\b\S*(\w)\1{2,10}\S*\b')
 
 rc_space = re.compile(r" +([\s])")
 
-def load_data(fp):
-    '''
-        load raw data
-        :return:
-            tweet_list:[{'id':'1', 'label':'0', 'text':'...'},{...},...]
-    '''
 
+def load_data(fp, is_test=False, debug=False):
+    """
+        load raw data
+    :param fp: file_path
+    :param is_test: if False, then try to fetch label data in the file. If True, then label would be skipped.
+    :param debug: Print debug information if True
+    :return: tweet_list:[{'id':'1', 'label':'0', 'text':'...'},{...},...]
+    """
     tweet_list = []
 
     with open(fp, "r", encoding="utf8") as data_in:
@@ -41,11 +43,22 @@ def load_data(fp):
             tweet_dict = {}
             if not line.lower().startswith("tweet index"): #discard first line
                 line = line.strip()
-                id, label, raw_tweet = line.split("\t")
-                tweet_dict["id"], tweet_dict["label"], tweet_dict["raw_tweet"] = id, label, raw_tweet
+                if is_test:
+                    id, raw_tweet = line.split("\t")
+                    tweet_dict["id"], tweet_dict["raw_tweet"] = id, raw_tweet
+
+                    if debug:
+                        print("%s %s" % (id, raw_tweet))
+                else:
+                    id, label, raw_tweet = line.split("\t")
+                    tweet_dict["id"], tweet_dict["label"], tweet_dict["raw_tweet"] = id, label, raw_tweet
+
+                    if debug:
+                        print("%s %s %s" % (id, label, raw_tweet))
                 tweet_list.append(tweet_dict)
-                # print("%s %s %s" % (id, label, raw_tweet))
+
     return tweet_list
+
 
 def replace_slang(slangs, text):
 
@@ -61,8 +74,14 @@ def replace_slang(slangs, text):
             text_lower = text.lower()
     return text.strip()
 
-def elongated_words(normal_word, text): # Elongated words are words which has characters repeated for 3-11 times
 
+def elongated_words(normal_word, text):
+    """
+    Elongated words are words which has characters repeated for 3-11 times
+    :param normal_word:
+    :param text:
+    :return:
+    """
     text = " " + text.strip() + " "
     while rc_elongated.search(text):
         # elongated_count += 1
@@ -76,6 +95,7 @@ def elongated_words(normal_word, text): # Elongated words are words which has ch
         else:
             text = re.sub(elongated_char + "{3,11}", elongated_char * 2, text)
     return text
+
 
 def changePosTag(pos):
 
@@ -98,6 +118,7 @@ def changePosTag(pos):
         POStag="\\"
     # sent[i]=(word,POStag)
     return POStag
+
 
 def normalise_tweet(text):
     '''
@@ -185,7 +206,7 @@ def twitterUrls(text):
     return rc_twitterUrl.findall(text)
 
 
-def preprocess_data(tweet_list):
+def preprocess_data(tweet_list, dump_path, is_test=False):
     server_url = 'http://precision:9000'
     nlp_server = StanfordCoreNLP(server_url)
 
@@ -193,7 +214,7 @@ def preprocess_data(tweet_list):
 
     # save a contrast file for raw_tw and clean_tw
     if debug:
-        contrast_file_in = open(config.DATA_PATH + "/train/contrast_file.txt", "w")
+        contrast_file_in = open(config.DATA_PATH + "/contrast_file.txt", "w")
     nltk_tweet_tokenizer = TweetTokenizer(preserve_case=True, reduce_len=True, strip_handles=False)
 
     for idx, tw_dict in enumerate(tweet_list):
@@ -213,7 +234,7 @@ def preprocess_data(tweet_list):
         # break
         tw_dict["nltk_tokens"] = nltk_tweet_tokenizer.tokenize(tw_dict["raw_tweet"])
 
-    json.dump(tweet_list, open(config.PROCESSED_TRAIN, "w"), indent=2)
+    json.dump(tweet_list, open(dump_path, "w"), indent=2)
     if debug:
         contrast_file_in.close()
 
@@ -346,12 +367,20 @@ def url_preprocess_data(raw_data):
     if debug:
         contrast_file_in.close()
 
+
 if __name__ == '__main__':
-    handle = "url"
+    handle = "tweet-test"
+
     if handle == "tweet":
         fp = config.RAW_TRAIN
         tweet_list = load_data(fp)
-        preprocess_data(tweet_list)
+        preprocess_data(tweet_list, config.PROCESSED_TRAIN)
+
+    elif handle == "tweet-test":
+        fp = config.RAW_TEST
+        tweet_list = load_data(fp, is_test=True)
+        preprocess_data(tweet_list, config.PROCESSED_TEST, is_test=True)
+
     elif handle == "url":
         fp = config.URL_CACHE_PATH
         raw_url_data = json.load(open(fp))

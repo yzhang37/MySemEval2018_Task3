@@ -88,12 +88,12 @@ class UrlCreeper(object):
         if "404" in result or "timeout" in result or "archived" in result or "protected" in result:
             result = None
 
-        if re.findall(regex_url_pattern, result["current_url"])[0][3] == result["title"] or \
+        elif re.findall(regex_url_pattern, result["current_url"])[0][3] == result["title"] or \
                       len(result["title"].strip()) == 0 or result["title"].find("404") != -1 or \
                       len(re.findall("(?i)not found", result["title"])) > 0:
             result = None
 
-        if (re.findall(regex_url_pattern, result["current_url"])[0][3]).lower() in self.banned_domains:
+        elif (re.findall(regex_url_pattern, result["current_url"])[0][3]).lower() in self.banned_domains:
             result = None
 
         print("{0}: {1}".format(self.url, result))
@@ -392,9 +392,9 @@ def main(urls):
 
 def fetch_all_urls_map():
     """
-    For all the compressed urls into its real urls.
+    Convert all the compressed urls into its real urls.
 
-    Browser may time out unexpectedly, so you must run this program
+    Browser may time out unexpectedly, so you must run this program multiple times.
     :return: None
     """
     file_path = os.path.join(config.CWD, "url_set")
@@ -411,7 +411,7 @@ def fetch_all_urls_map():
             del url_dict["t.co"]
     except: pass
     chrome = get_browser()
-    tweets = json.load(open(config.PROCESSED_TRAIN, "r"))
+    tweets = json.load(open(config.PROCESSED_TEST, "r"))
     rc = re.compile(regex_url_pattern)
     for idx, tweet in enumerate(tweets):
         url_list = tweet["twitter_url"]
@@ -436,27 +436,32 @@ def fetch_all_urls_map():
 
 
 if __name__ == "__main__":
-    file_path = os.path.join(config.CWD, "url_set")
-    url_dict = json.load(open(file_path, "r"), encoding="utf-8")
-    url_list = list(url_dict.items())
-    url_list.sort(key=lambda x: -len(x[1]))
+    task = "url"
 
-    # creeper = UrlCreeper("http://t.co/EJaFcMsIrA")
-    # creeper.crawl()
+    if task == "url":
+        file_path = os.path.join(config.CWD, "url_set")
+        url_dict = json.load(open(file_path, "r"), encoding="utf-8")
+        url_list = list(url_dict.items())
+        url_list.sort(key=lambda x: -len(x[1]))
 
-    # value = url_list[3]
-    # urls = value[1]
-    # br = get_browser()
-    # for i, _url in enumerate(urls):
-    #     creeper = UrlCreeper(_url, br)
-    #     creeper.crawl()
+        # creeper = UrlCreeper("http://t.co/EJaFcMsIrA")
+        # creeper.crawl()
 
-    # for youtube
-    # value = url_list[3]
-    # urls = value[1]
-    # main(urls)
+        # value = url_list[3]
+        # urls = value[1]
+        # br = get_browser()
+        # for i, _url in enumerate(urls):
+        #     creeper = UrlCreeper(_url, br)
+        #     creeper.crawl()
 
-    for domain_url, urls in url_list:
-        print(domain_url)
-        print("==" * 20)
-        main(urls)
+        # for youtube
+        # value = url_list[3]
+        # urls = value[1]
+        # main(urls)
+
+        for domain_url, urls in url_list:
+            print(domain_url)
+            print("==" * 20)
+            main(urls)
+    elif task == "convert":
+        fetch_all_urls_map()

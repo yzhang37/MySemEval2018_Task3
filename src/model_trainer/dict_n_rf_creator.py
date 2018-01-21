@@ -8,7 +8,12 @@ from src.model_trainer import rf_calculate
 
 
 def load_traindata():
-    data = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
+    data = json.load(open(config.PROCESSED_TRAIN), encoding="utf-8")
+    return data
+
+
+def load_testdata():
+    data = json.load(open(config.PROCESSED_TEST), encoding="utf-8")
     return data
 
 
@@ -37,17 +42,34 @@ def create_hashtag_unigram(creator, freq):
     rf_calculate.create_hashtag_unigram_rf(creator.texts, freq)
 
 
-if __name__ == '__main__':
-    train_data = load_traindata() # load training data
-    d_creator = dict_creator.Dict_creator()
-    d_creator.texts = train_data
+def create_nltk_unigram_for_test(creator, freq):
+    dict_creator.create_nltk_unigram_dict_for_test(creator, freq)
 
-    for f in range(1, 6):
-        create_hashtag(d_creator, f)
-        create_nltk_bigram(d_creator, f)
-        create_nltk_unigram(d_creator, f)
-        create_nltk_trigram(d_creator, f)
-        create_hashtag_unigram(d_creator, f)
+
+if __name__ == '__main__':
+    task = "test"
+
+    if task == "train":
+        print("Make train dictionary...")
+        # load training data
+        train_data = load_traindata()
+        d_creator = dict_creator.Dict_creator()
+        d_creator.texts = train_data
+
+        for f in range(1, 6):
+            create_hashtag(d_creator, f)
+            create_nltk_bigram(d_creator, f)
+            create_nltk_unigram(d_creator, f)
+            create_nltk_trigram(d_creator, f)
+            create_hashtag_unigram(d_creator, f)
+    elif task == "test":
+        print("Make test dictionary...")
+        test_data = load_testdata()
+        d_creator = dict_creator.Dict_creator()
+        d_creator.texts = test_data
+
+        for f in range(1, 6):
+            create_nltk_unigram_for_test(d_creator, f)
 
     # dict_creator.create_dict(dict_util.get_hashtag_unigram, config.DICT_HASHTAG_UNIGRAM_T1, threshold=1)
     # dict_creator.create_dict(dict_util.get_stem_unigram, config.DICT_UNIGRAM_STEM_T2, threshold=2)

@@ -117,33 +117,43 @@ def write_to_file(tuple, file_path):
         file_out.write("\n".join(["s:%s c:%s :%s" % (str(t[0][0]), str(t[0][1]), str(t[1])) for t in tuple]))
 
 
-def load_data():
-    tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
+def load_data(is_test=False):
+    if is_test:
+        tweets = json.load(open(config.PROCESSED_TEST, 'r'), encoding="utf-8")
+    else:
+        tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
     return tweets
 
 
-def build_cv(tweets, map_function, fold=4):
-    data_dict = {}
+def build_cv(tweets, map_function, fold=4, is_test=False):
 
-    for tw in tweets:
-        new_label = map_function(tw["label"])
-        data_dict.setdefault(new_label, [])
-        data_dict[new_label].append(tw)
+    if not is_test:
+        data_dict = {}
 
-    data_len_dict = {}
-    for label in data_dict.keys():
-        data_len_dict[label] = len(data_dict[label])
-        random.shuffle(data_dict[label])
+        for tw in tweets:
+            new_label = map_function(tw["label"])
+            data_dict.setdefault(new_label, [])
+            data_dict[new_label].append(tw)
 
-    cv = fold
-    index_cv = []
-    for i in range(cv):
-        curCV = []
-        for label, data in data_dict.items():
-            curCV += data[i * data_len_dict[label] // cv: (i + 1) * data_len_dict[label] // cv]
-        index_cv.append(curCV)
+        data_len_dict = {}
+        for label in data_dict.keys():
+            data_len_dict[label] = len(data_dict[label])
+            random.shuffle(data_dict[label])
 
-    return index_cv
+        cv = fold
+        index_cv = []
+        for i in range(cv):
+            curCV = []
+            for label, data in data_dict.items():
+                curCV += data[i * data_len_dict[label] // cv: (i + 1) * data_len_dict[label] // cv]
+            index_cv.append(curCV)
+
+        return index_cv
+
+    else:
+        # because there's no label, since there's no need to cross validation
+        index_cv = [tweets]
+        return index_cv
 
 
 def get_features_on_liblinear(feature: list):
@@ -238,8 +248,19 @@ def get_features_on_NaiveBayes(features: list):
         # features.append(hashtag_t_with_rf[__freq])
 
 
-def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=False, ensemble_get_classifier_list=None):
-
+def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=False, ensemble_get_classifier_list=None,
+        is_test=False):
+    """
+    运行评估
+    :param index_cv: 交叉验证集。如果是测试集，则所有内容放在一个 [] 中使用。
+    :param feature_list:
+    :param keep_train:
+    :param keep_pw:
+    :param use_ensemble:
+    :param ensemble_get_classifier_list:
+    :param is_test: 为测试评估提供优化
+    :return:
+    """
     # define the power file
     power_dev_fea_path = config.make_feature_path(dev=True, dspr="power")
     fpower = open(power_dev_fea_path, "w+")
@@ -250,16 +271,20 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
     power_result_path_List = []
     classifier_name_list = []
     ensemble_file_name_list = []
-    # power_result_path = config.make_result_path(dspr="power")
-    # fresPower = open(power_result_path, "w+")
 
     current_run_ensemble_path = config.make_ensemble_path()
 
     for i, __item in enumerate(index_cv):
         dev_tweets = __item
+
         train_tweets = []
-        for j, __item in enumerate(index_cv):
-            if i != j:
+
+        if not is_test:
+            for j, __item in enumerate(index_cv):
+                if i != j:
+                    train_tweets += __item
+        else:
+            for __item in index_cv:
                 train_tweets += __item
 
         print("Fold %d / %d" % (i+1, len(index_cv)))
@@ -278,6 +303,8 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
         for handler_idx, get_classifier_handler in enumerate(ensemble_get_classifier_list):
             # first we get the classifier
             classifier = get_classifier_handler()
+            classifier.is_test = is_test
+
             classifier_file_name = classifier.idname()
 
             if power_result_path_List[handler_idx] is None:
@@ -346,82 +373,86 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
             print()
 
+    fpower.close()
+    for fresPower in fresPowerList:
+        if fresPower is not None:
+            fresPower.close()
+
     cm_list = []
-    for idx, handler in enumerate(ensemble_get_classifier_list):
-        print("Evaluation on %s" % classifier_name_list[idx])
-        print("--" * 30)
-        cm = evaluation.Evaluation(power_dev_fea_path, power_result_path_List[idx], config.get_label_list())
-        cm_list.append(cm)
-        cm.print_out()
-        print("--" * 30)
-        print()
-        if keep_pw:
-            print("==" * 30)
-            print("Power dev_feature and result file path is:")
-            print(power_dev_fea_path)
-            print(power_result_path_List[idx])
+
+    if not is_test:
+        # for test file, evaluation is not available.
+
+        for idx, handler in enumerate(ensemble_get_classifier_list):
+            print("Evaluation on %s" % classifier_name_list[idx])
+            print("--" * 30)
+            cm = evaluation.Evaluation(power_dev_fea_path, power_result_path_List[idx], config.get_label_list())
+            cm_list.append(cm)
+            cm.print_out()
+            print("--" * 30)
             print()
-        else:
-            del_list = [power_result_path_List[idx]]
-            if idx == len(ensemble_get_classifier_list) - 1:
-                del_list.append(power_dev_fea_path)
-            for path in del_list:
-                if os.path.exists(path):
-                    os.remove(path)
+            if keep_pw:
+                print("==" * 30)
+                print("Power dev_feature and result file path is:")
+                print(power_dev_fea_path)
+                print(power_result_path_List[idx])
+                print()
+            else:
+                del_list = [power_result_path_List[idx]]
+                if idx == len(ensemble_get_classifier_list) - 1:
+                    del_list.append(power_dev_fea_path)
+                for path in del_list:
+                    if os.path.exists(path):
+                        os.remove(path)
 
-    # make the ensemble score files
-    if use_ensemble:
-        ensemble_score_out_path = config.make_ensemble_score_path()
+        # make the ensemble score files
+        if use_ensemble:
+            ensemble_score_out_path = config.make_ensemble_score_path()
 
-        ensemble_scores = []
+            ensemble_scores = []
 
-        for idx, cm in cm_list:
-            ensemble_scores.append(dict())
-            cur_score = ensemble_scores[-1]
-            cur_score["accuracy"] = cm.get_accuracy()
-            cur_score["ensemble_path"] = ensemble_file_name_list[idx]
+            for idx, cm in cm_list:
+                ensemble_scores.append(dict())
+                cur_score = ensemble_scores[-1]
+                cur_score["accuracy"] = cm.get_accuracy()
+                cur_score["ensemble_path"] = ensemble_file_name_list[idx]
 
-            p, r, f1 = cm.get_average_prf()
-            cur_score["avrg_score"] = {
-                "precision": p,
-                "recall": r,
-                "f1": f1
-            }
-
-            cur_score["score"] = dict()
-            for cls in config.get_label_list():
-                class_label = str(cls)
-                p, r, f1 = cm.get_prf(class_label)
-                cur_score["score"][class_label] = {
+                p, r, f1 = cm.get_average_prf()
+                cur_score["avrg_score"] = {
                     "precision": p,
                     "recall": r,
                     "f1": f1
                 }
 
-        json.dump(ensemble_scores, open(ensemble_score_out_path, "w"), indent=4)
+                cur_score["score"] = dict()
+                for cls in config.get_label_list():
+                    class_label = str(cls)
+                    p, r, f1 = cm.get_prf(class_label)
+                    cur_score["score"][class_label] = {
+                        "precision": p,
+                        "recall": r,
+                        "f1": f1
+                    }
 
-    if use_ensemble:
-        file_reg = current_run_ensemble_path.replace("<algo>", "*")
-        ret = os.popen("ls %s" % file_reg).read()
-        ensemble.make_ensemble_from_file(ret.strip().split('\n'),
-                                         current_run_ensemble_path.replace("<algo>", "total"))
+            json.dump(ensemble_scores, open(ensemble_score_out_path, "w"), indent=4)
 
-    fpower.close()
-    for fresPower in fresPowerList:
-        if fresPower is not None:
-            fresPower.close()
+        if use_ensemble:
+            file_reg = current_run_ensemble_path.replace("<algo>", "*")
+            ret = os.popen("ls %s" % file_reg).read()
+            ensemble.make_ensemble_from_file(ret.strip().split('\n'),
+                                             current_run_ensemble_path.replace("<algo>", "total"))
 
     print("=="*30)
 
     return cm_list
 
 
-def main(mode="default", hc_output_filename="%05d.txt"):
+def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     '''load data'''
-    tweets = load_data()
+    tweets = load_data(is_test=is_test)
 
     '''build_cv'''
-    index_cv = build_cv(tweets, config.get_label_map, 10)
+    index_cv = build_cv(tweets, config.get_label_map, 10, is_test=is_test)
 
     '''feature_function'''
     features = []
@@ -472,7 +503,8 @@ def main(mode="default", hc_output_filename="%05d.txt"):
             lambda: Classifier(SkLearnVotingClassifier()),
             lambda: Classifier(SkLearnXGBoostClassifier()),
         ]
-        cm_list = run(index_cv, features, use_ensemble=True, ensemble_get_classifier_list=classifier_list)
+        cm_list = run(index_cv, features, use_ensemble=True, ensemble_get_classifier_list=classifier_list,
+                      is_test=is_test)
 
         for cm in cm_list:
             p, r, f1 = evaluation.get_cm_eval(cm)
@@ -509,4 +541,4 @@ if __name__ == '__main__':
     print("==" * 30)
     # output_format = "hc_hashtag_NaiveBayes_%05d.txt"
     # main("hc", "liblinear_licorice_masterrun_%05d.txt")
-    main("default")
+    main("default", is_test=True)

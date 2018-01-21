@@ -49,3 +49,8 @@ def create_nltk_trigram_dict(dict_creator, freq):
 
 def create_hashtag_unigram_dict(dict_creator, freq):
     dict_creator.create_dict(dict_util.get_hashtag_unigram, config.DICT_HASHTAG_UNIGRAM_TU % freq, threshold=freq)
+
+
+def create_nltk_unigram_dict_for_test(dict_creator, freq):
+    dict_creator.create_dict(dict_util.get_nltk_unigram, config.DICT_NLTK_UNIGRAM_TU_TEST % freq, threshold=freq)
+

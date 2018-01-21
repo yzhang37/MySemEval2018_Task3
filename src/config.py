@@ -75,9 +75,11 @@ RESULT_PATH = CWD + "/result/predict.txt"
 RESULT_MYDIR = os.path.join(CWD, "result")
 RELATION_FREQ_PATH = os.path.join(CWD, "RelFreq")
 
-RAW_TRAIN = DATA_PATH + "/train/SemEval2018-T4-train-task%s.txt" % __CLASS.upper()
+RAW_TRAIN = os.path.join(DATA_PATH, "train", "SemEval2018-T4-train-task%s.txt" % __CLASS.upper())
+RAW_TEST = os.path.join(DATA_PATH, "test", "SemEval2018-T3_input_test_task%s.txt" % __CLASS.upper())
 
-PROCESSED_TRAIN = DATA_PATH + "/train/processed_train_%s.json" % "b"
+PROCESSED_TRAIN = os.path.join(DATA_PATH, "train", "processed_train_%s.json" % "b")
+PROCESSED_TEST = os.path.join(DATA_PATH, "test", "processed_test_%s.json" % __CLASS.lower())
 PROCESSED_URL_DATA = os.path.join(DATA_PATH, "processed_url_%s.json" % "b")
 
 GOLDEN_TRAIN_LABEL_FILE = os.path.join(DATA_PATH, "train", "golden_label_%s.txt" % __CLASS.lower())
@@ -96,6 +98,7 @@ DICT_TRIGRAM_T5 = DICT_PATH + "/trigram_t5.txt"
 DICT_HASHTAG_UNIGRAM_TU = os.path.join(DICT_PATH, "hashtag_unigram_t%d.txt")
 DICT_HASHTAG_TU = os.path.join(DICT_PATH, "hashtag_t%d.txt")
 DICT_NLTK_UNIGRAM_TU = os.path.join(DICT_PATH, "nltk_unigram_t%d.txt")
+DICT_NLTK_UNIGRAM_TU_TEST = os.path.join(DICT_PATH, "nltk_unigram_for_test_t%d.txt")
 DICT_NLTK_BIGRAM_TU = os.path.join(DICT_PATH, "nltk_bigram_t%d.txt")
 DICT_NLTK_TRIGRAM_TU = os.path.join(DICT_PATH, "nltk_trigram_t%d.txt")
 
