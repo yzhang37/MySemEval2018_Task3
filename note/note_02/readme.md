@@ -388,4 +388,11 @@ Facebook 爬取方式较为繁琐。首先，网站中部分内容的 class 使�
 
 ## 2018-01-17
 
-增加 LSTM 等神经网络算法
+Tasks
+
+* Add LSTM neural network algortithms.
+* Add Ensemble visual helpers.
+
+### 任务1.增加 LSTM 等神经网络算法
+
+### 任务2. 添加 Ensemble 可视化工具

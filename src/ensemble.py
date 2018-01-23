@@ -132,18 +132,56 @@ def make_result_from_ensemble(json_path, result_path):
     print(result_path)
 
 
-OUTPUT_LIST_JSON = os.path.join(config.ENSEMBLE_SCORE_PATH, "output.json")
+def make_partly_result_from_ensemble(json_path, original_golden_path, result_path, target_golden_path):
+    with open(original_golden_path) as fopen:
+        golden_file_data = fopen.readlines()
+
+    golden_data = [int(line.strip()) for line in golden_file_data]
+    new_golden_data = []
+    ensemble_data = json.load(open(json_path))
+    line_data = []
+    for str_idx, data in sorted(ensemble_data.items(), key=lambda x: int(x[0])):
+        dat = sorted(data.items(), key=lambda x: -x[1])
+        line_data.append(dat[0][0])
+        new_golden_data.append(golden_data[int(str_idx)-1])
+    with open(result_path, "w") as fout:
+        for line in line_data:
+            fout.write(line)
+            fout.write('\n')
+    print("Result file saved to:")
+    print(result_path)
+
+    with open(target_golden_path, "w") as fout:
+        for line in new_golden_data:
+            fout.write(str(line))
+            fout.write('\n')
+    print("Part golden file saved to:")
+    print(target_golden_path)
+
+
+EXCEL_NAME = "6841_no_drop"
+OUTPUT_LIST_JSON = os.path.join(config.ENSEMBLE_SCORE_PATH, "output2.json")
 TOP_LIST_JSON = os.path.join(config.ENSEMBLE_SCORE_PATH, "top.json")
-NN_PATH = os.path.join(config.ENSEMBLE_PATH, "nn_ali_%s.json" % config.get_class().lower())
+NN_PATH = os.path.join(config.ENSEMBLE_PATH, "nn_ali_%s_%s.json" % (EXCEL_NAME, config.get_class().lower()))
+NN_VALID_PATH = os.path.join(config.ENSEMBLE_PATH, "nn_ali_valid_%s_%s.json" % (EXCEL_NAME, config.get_class().lower()))
+NN_TEST_PATH = os.path.join(config.ENSEMBLE_PATH, "nn_ali_test_%s_%s.json" % (EXCEL_NAME, config.get_class().lower()))
+PARTLY_GOLDEN = os.path.join(config.CWD, "golden.txt")
 FINAL_PATH = os.path.join(config.ENSEMBLE_PATH, "all.json")
 RESULT_PATH = os.path.join(config.RESULT_MYDIR, "ensemble_result.txt")
 
 
 def main(task):
-    if task == "1":
+    if task == "0":
+        build_top_ensemble_score_json(OUTPUT_LIST_JSON, TOP_LIST_JSON, top=5)
+        path_list = get_ensemble_path_list_from_score_json(TOP_LIST_JSON, top=5)
+        make_ensemble_from_file(path_list, FINAL_PATH)
+        make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
+
+        from src import evaluation
+        cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
+        cm.print_out()
+    elif task == "1":
         path_list = []
-        # build_top_ensemble_score_json(OUTPUT_LIST_JSON, TOP_LIST_JSON, top=5)
-        # path_list = get_ensemble_path_list_from_score_json(TOP_LIST_JSON, top=5)
         path_list.append(NN_PATH)
         make_ensemble_from_file(path_list, FINAL_PATH)
         make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
@@ -213,10 +251,48 @@ def main(task):
         from src import evaluation
         cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
         cm.print_out()
+    elif task == "4":
+        make_partly_result_from_ensemble(NN_VALID_PATH, config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, PARTLY_GOLDEN)
+
+        from src import evaluation
+        cm = evaluation.Evaluation(PARTLY_GOLDEN, RESULT_PATH, config.get_label_list())
+        cm.print_out()
+    elif task == "5":
+        if config.get_class() != 'A':
+            raise Exception("不允许使用 B 分类")
+        final_result = dict()
+
+        ali_result = json.load(open(NN_TEST_PATH))
+        for key, value in ali_result.items():
+            if len(value) == 1:
+                clsid = str(list(value.keys())[0])
+                if clsid == "1":
+                    final_result[key] = {clsid: 1}
+
+        print(len(final_result))
+
+        build_top_ensemble_score_json(OUTPUT_LIST_JSON, TOP_LIST_JSON, top=4)
+        path_list = get_ensemble_path_list_from_score_json(TOP_LIST_JSON, top=4)
+        make_ensemble_from_file(path_list, FINAL_PATH)
+
+        top_four_result = json.load(open(FINAL_PATH))
+
+        for key, value in top_four_result.items():
+            if key not in final_result:
+                value.setdefault("0", 0)
+                value["0"] += 1
+                final_result[key] = value
+
+        json.dump(final_result, open(FINAL_PATH, "w"))
+        make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
+
+        from src import evaluation
+        cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
+        cm.print_out()
 
 
 if __name__ == "__main__":
-    main("1")
+    main("5")
     # build_top_ensemble_score_json(os.path.join(config.ENSEMBLE_SCORE_PATH, "output.json"),
     #                               os.path.join(config.ENSEMBLE_SCORE_PATH, "top.json"),
     #                               top=4)

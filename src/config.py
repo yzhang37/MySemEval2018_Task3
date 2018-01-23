@@ -51,7 +51,11 @@ elif hostname == "tembusu":
         assert False, "没有设置启动路径。"
     elif cur_user.lower() == "zhenghang":
         CWD = "/home/zhenghang/projects/python/SemEval2018_T3"
-        assert False, "没有设置启动路径。"
+        PCCMD = "/home/zhenghang/External/feixiang"
+        YXPCCMD = "/home/zhenghang/External/yunxiao/SemEval2017_T4"
+        LIB_LINEAR_PATH = "/home/feixiang/tools/liblinear-multicore-2.11-1"
+        GLOVE_TWITTER_PATH = "/home/zhenghang/dict/GloVe"
+        GLOVE_PATH = "/home/zhenghang/dict/GloVe"
 elif hostname.lower().startswith("l-mbookpro") or hostname.startswith("192.168"):
     CWD = "/Users/l/Projects/Python/MySemEval2018_Task3"
     PCCMD = "/Users/l/Projects/External/feixiang/pyCharmSpace"
@@ -62,6 +66,13 @@ elif hostname.lower().startswith("l-mbookpro") or hostname.startswith("192.168")
 else:
     raise NotImplementedError("Required path not implemented.")
 
+
+def __chkfold(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
+
+
 SLANGS_PATH = PCCMD + "/data/slangs"
 NORMAL_WORDS_PATH = PCCMD + "/data/normal_word.pkl"
 EMOTICON = PCCMD + "/data/Emoticon.txt"
@@ -69,11 +80,12 @@ EMOTICON = PCCMD + "/data/Emoticon.txt"
 DATA_PATH = os.path.join(CWD, "data")
 DICT_PATH = CWD + "/dict"
 DICT_CACHE_PATH = os.path.join(CWD, "dict_cache")
-FEATURE_PATH = CWD + "/feature"
 MODEL_PATH = CWD + "/model/binary_clf.model"
-RESULT_PATH = CWD + "/result/predict.txt"
-RESULT_MYDIR = os.path.join(CWD, "result")
-RELATION_FREQ_PATH = os.path.join(CWD, "RelFreq")
+
+FEATURE_PATH = __chkfold(os.path.join(CWD, "feature"))
+RESULT_EXCEL_PATH = __chkfold(os.path.join(CWD, "result_excel"))
+RESULT_MYDIR = __chkfold(os.path.join(CWD, "result"))
+RELATION_FREQ_PATH = __chkfold(os.path.join(CWD, "RelFreq"))
 
 RAW_TRAIN = os.path.join(DATA_PATH, "train", "SemEval2018-T4-train-task%s.txt" % __CLASS.upper())
 RAW_TEST = os.path.join(DATA_PATH, "test", "SemEval2018-T3_input_test_task%s.txt" % __CLASS.upper())
@@ -106,7 +118,7 @@ WORD2VEC_GOOGLE = os.path.join(PCCMD, "SemEval2017_T8/data_new/Google.txt")
 VOCABULARY_PATH = os.path.join(YXPCCMD, "vocabulary")
 NEGATION_PATH = VOCABULARY_PATH + "/negation terms.txt"
 
-LEXI_SOURCE = os.path.join(YXPCCMD, "data/Senti_Lexi")
+LEXI_SOURCE = os.path.join(YXPCCMD, "data", "Senti_Lexi")
 LEXI_BL = LEXI_SOURCE + "/Bing Liu/BL.lexi"
 LEXI_AFINN = LEXI_SOURCE + "/AFINN/AFINN-111.lexi"
 LEXI_GI = LEXI_SOURCE + "/General Inquirer/GI.lexi"
@@ -131,34 +143,40 @@ def __make_unique_string(pattern: str):
     return pattern.replace("<uni>", str(uuid.uuid1()))
 
 
-def make_feature_path(dev=False, dspr=""):
+def make_feature_path(dev=False, dspr="", unique=True):
     path = "dev" if dev else "train"
     path = path + ".fea."
     if len(dspr.strip()) > 0:
         path += dspr + "."
     else:
         path += __make_time_string() + "."
-    path = "%s<uni>.txt" % path
+    if unique:
+        path += "<uni>."
+    path += "txt"
     return __make_unique_string(os.path.join(FEATURE_PATH, path))
 
 
-def make_model_path(dspr=""):
+def make_model_path(dspr="", unique=True):
     pattern = ""
     if len(dspr.strip()) > 0:
         pattern += dspr + "."
     else:
         pattern += __make_time_string() + "."
-    pattern += "<uni>.model"
+    if unique:
+        pattern += "<uni>."
+    pattern += "model"
     return __make_unique_string(os.path.join(CWD, "model", pattern))
 
 
-def make_result_path(dspr=""):
+def make_result_path(dspr="", unique=True):
     pattern = "predict."
     if len(dspr.strip()) > 0:
         pattern += dspr + "."
     else:
         pattern += __make_time_string() + "."
-    pattern += "<uni>.txt"
+    if unique:
+        pattern += "<uni>."
+    pattern += "txt"
     return __make_unique_string(os.path.join(CWD, "result", pattern))
 
 
@@ -202,21 +220,26 @@ if not os.path.exists(ENSEMBLE_SCORE_PATH):
     os.makedirs(ENSEMBLE_SCORE_PATH)
 
 
-def make_ensemble_path(dspr = ""):
+def make_ensemble_path(dspr = "", unique=True):
     name = "ensemble"
     name += "." + __make_time_string()
     if len(dspr) > 0:
         name += "." + dspr
     else:
         name += ".<algo>" + dspr
-    name += ".<uni>.%s.json" % __CLASS.lower()
+
+    if unique:
+        name += ".<uni>"
+    name += ".%s.json" % __CLASS.lower()
     name = __make_unique_string(name)
     return os.path.join(ENSEMBLE_PATH, name)
 
 
-def make_ensemble_score_path():
+def make_ensemble_score_path(unique=True):
     name = "score"
     name += "." + __make_time_string()
-    name += ".<uni>.%s.json" % __CLASS.lower()
+    if unique:
+        name += ".<uni>"
+    name += ".%s.json" % __CLASS.lower()
     name = __make_unique_string(name)
     return os.path.join(ENSEMBLE_SCORE_PATH, name)
