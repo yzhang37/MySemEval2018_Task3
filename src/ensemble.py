@@ -160,8 +160,8 @@ def make_partly_result_from_ensemble(json_path, original_golden_path, result_pat
 
 
 EXCEL_NAME = "6841_no_drop"
-OUTPUT_LIST_JSON = os.path.join(config.ENSEMBLE_SCORE_PATH, "output2.json")
-TOP_LIST_JSON = os.path.join(config.ENSEMBLE_SCORE_PATH, "top.json")
+OUTPUT_LIST_JSON = config.make_ensemble_score_path(dspr="test", unique=False)
+TOP_LIST_JSON = config.make_ensemble_score_path(dspr="test_top", unique=False)
 NN_PATH = os.path.join(config.ENSEMBLE_PATH, "nn_ali_%s_%s.json" % (EXCEL_NAME, config.get_class().lower()))
 NN_VALID_PATH = os.path.join(config.ENSEMBLE_PATH, "nn_ali_valid_%s_%s.json" % (EXCEL_NAME, config.get_class().lower()))
 NN_TEST_PATH = os.path.join(config.ENSEMBLE_PATH, "nn_ali_test_%s_%s.json" % (EXCEL_NAME, config.get_class().lower()))
@@ -170,31 +170,30 @@ FINAL_PATH = os.path.join(config.ENSEMBLE_PATH, "all.json")
 RESULT_PATH = os.path.join(config.RESULT_MYDIR, "ensemble_result.txt")
 
 
-def main(task):
-    if task == "0":
+def main(task, is_test=False):
+    if task == "0": # 取 top_5 的结果，然后 ensemble (所有的数据)
         build_top_ensemble_score_json(OUTPUT_LIST_JSON, TOP_LIST_JSON, top=5)
         path_list = get_ensemble_path_list_from_score_json(TOP_LIST_JSON, top=5)
         make_ensemble_from_file(path_list, FINAL_PATH)
         make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
 
-        from src import evaluation
-        cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
-        cm.print_out()
-    elif task == "1":
-        path_list = []
-        path_list.append(NN_PATH)
-        make_ensemble_from_file(path_list, FINAL_PATH)
-        make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
+        if not is_test:
+            from src import evaluation
+            cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
+            cm.print_out()
+    elif task == "1": # 仅生成阿里的训练结果的数据，然后进行验证 （只能使用阿里的valid，test是无效的）
+        make_partly_result_from_ensemble(NN_VALID_PATH, config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, PARTLY_GOLDEN)
 
-        from src import evaluation
-        cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
-        cm.print_out()
+        if not is_test:
+            from src import evaluation
+            cm = evaluation.Evaluation(PARTLY_GOLDEN, RESULT_PATH, config.get_label_list())
+            cm.print_out()
     elif task == "2": # 飞翔的建议：因为阿里的效果较好，则1分类全部使用来自阿里的效果，阿里分类为0 的，则使用剩下来的
         if config.get_class() != 'A':
             raise Exception("不允许使用 B 分类")
         final_result = dict()
 
-        ali_result = json.load(open(NN_PATH))
+        ali_result = json.load(open(NN_TEST_PATH))
         for key, value in ali_result.items():
             if len(value) == 1:
                 clsid = str(list(value.keys())[0])
@@ -216,48 +215,11 @@ def main(task):
         json.dump(final_result, open(FINAL_PATH, "w"))
         make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
 
-        from src import evaluation
-        cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
-        cm.print_out()
-    elif task == "3":
-        if config.get_class() != 'A':
-            raise Exception("不允许使用 B 分类")
-        final_result = dict()
-
-        ali_result = json.load(open(NN_PATH))
-        for key, value in ali_result.items():
-            if len(value) == 1:
-                clsid = str(list(value.keys())[0])
-                if clsid == "1":
-                    final_result[key] = {clsid: 1}
-
-        print(len(final_result))
-
-        build_top_ensemble_score_json(OUTPUT_LIST_JSON, TOP_LIST_JSON, top=4)
-        path_list = get_ensemble_path_list_from_score_json(TOP_LIST_JSON, top=4)
-        make_ensemble_from_file(path_list, FINAL_PATH)
-
-        top_four_result = json.load(open(FINAL_PATH))
-
-        for key, value in top_four_result.items():
-            if key not in final_result:
-                value.setdefault("0", 0)
-                value["0"] += 1
-                final_result[key] = value
-
-        json.dump(final_result, open(FINAL_PATH, "w"))
-        make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
-
-        from src import evaluation
-        cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
-        cm.print_out()
-    elif task == "4":
-        make_partly_result_from_ensemble(NN_VALID_PATH, config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, PARTLY_GOLDEN)
-
-        from src import evaluation
-        cm = evaluation.Evaluation(PARTLY_GOLDEN, RESULT_PATH, config.get_label_list())
-        cm.print_out()
-    elif task == "5":
+        if not is_test:
+            from src import evaluation
+            cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
+            cm.print_out()
+    elif task == "3": #飞翔的建议2
         if config.get_class() != 'A':
             raise Exception("不允许使用 B 分类")
         final_result = dict()
@@ -286,13 +248,25 @@ def main(task):
         json.dump(final_result, open(FINAL_PATH, "w"))
         make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
 
-        from src import evaluation
-        cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
-        cm.print_out()
+        if not is_test:
+            from src import evaluation
+            cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
+            cm.print_out()
+    elif task == "4":
+        # 使用 TOP4 和 NN_ALI 的结果
+
+        build_top_ensemble_score_json(OUTPUT_LIST_JSON, TOP_LIST_JSON, top=4)
+        path_list = get_ensemble_path_list_from_score_json(TOP_LIST_JSON, top=4)
+
+        path_list += [NN_TEST_PATH]
+        make_ensemble_from_file(path_list, FINAL_PATH)
+        make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
+
+
 
 
 if __name__ == "__main__":
-    main("5")
+    main("0", is_test=True)
     # build_top_ensemble_score_json(os.path.join(config.ENSEMBLE_SCORE_PATH, "output.json"),
     #                               os.path.join(config.ENSEMBLE_SCORE_PATH, "top.json"),
     #                               top=4)

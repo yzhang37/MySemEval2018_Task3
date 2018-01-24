@@ -220,7 +220,7 @@ if not os.path.exists(ENSEMBLE_SCORE_PATH):
     os.makedirs(ENSEMBLE_SCORE_PATH)
 
 
-def make_ensemble_path(dspr = "", unique=True):
+def make_ensemble_path(dspr= "", unique=True):
     name = "ensemble"
     name += "." + __make_time_string()
     if len(dspr) > 0:
@@ -235,9 +235,11 @@ def make_ensemble_path(dspr = "", unique=True):
     return os.path.join(ENSEMBLE_PATH, name)
 
 
-def make_ensemble_score_path(unique=True):
+def make_ensemble_score_path(dspr="", unique=True):
     name = "score"
     name += "." + __make_time_string()
+    if len(dspr) > 0:
+        name += "." + dspr
     if unique:
         name += ".<uni>"
     name += ".%s.json" % __CLASS.lower()

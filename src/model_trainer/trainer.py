@@ -118,42 +118,36 @@ def write_to_file(tuple, file_path):
 
 
 def load_data(is_test=False):
+    tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
     if is_test:
-        tweets = json.load(open(config.PROCESSED_TEST, 'r'), encoding="utf-8")
+        test_tweets = json.load(open(config.PROCESSED_TEST, 'r'), encoding="utf-8")
+        return tweets, test_tweets
     else:
-        tweets = json.load(open(config.PROCESSED_TRAIN, "r"), encoding="utf-8")
-    return tweets
+        return tweets
 
 
-def build_cv(tweets, map_function, fold=4, is_test=False):
+def build_cv(tweets, map_function, fold=4):
+    data_dict = {}
 
-    if not is_test:
-        data_dict = {}
+    for tw in tweets:
+        new_label = map_function(tw["label"])
+        data_dict.setdefault(new_label, [])
+        data_dict[new_label].append(tw)
 
-        for tw in tweets:
-            new_label = map_function(tw["label"])
-            data_dict.setdefault(new_label, [])
-            data_dict[new_label].append(tw)
+    data_len_dict = {}
+    for label in data_dict.keys():
+        data_len_dict[label] = len(data_dict[label])
+        random.shuffle(data_dict[label])
 
-        data_len_dict = {}
-        for label in data_dict.keys():
-            data_len_dict[label] = len(data_dict[label])
-            random.shuffle(data_dict[label])
+    cv = fold
+    index_cv = []
+    for i in range(cv):
+        curCV = []
+        for label, data in data_dict.items():
+            curCV += data[i * data_len_dict[label] // cv: (i + 1) * data_len_dict[label] // cv]
+        index_cv.append(curCV)
 
-        cv = fold
-        index_cv = []
-        for i in range(cv):
-            curCV = []
-            for label, data in data_dict.items():
-                curCV += data[i * data_len_dict[label] // cv: (i + 1) * data_len_dict[label] // cv]
-            index_cv.append(curCV)
-
-        return index_cv
-
-    else:
-        # because there's no label, since there's no need to cross validation
-        index_cv = [tweets]
-        return index_cv
+    return index_cv
 
 
 def get_features_on_liblinear(feature: list):
@@ -271,23 +265,43 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
     power_result_path_List = []
     classifier_name_list = []
     ensemble_file_name_list = []
+    train_feature_path_list = []
+    dev_feature_path_list = []
+
+    if not is_test:
+        train_feature_path_list = [""] * len(index_cv)
+        dev_feature_path_list = [""] * len(index_cv)
+    else:
+        train_feature_path_list.append("")
+        dev_feature_path_list.append("")
 
     current_run_ensemble_path = config.make_ensemble_path()
 
     for i, __item in enumerate(index_cv):
-        dev_tweets = __item
+
+        if is_test and i > 0:
+            break
 
         train_tweets = []
-
         if not is_test:
+            dev_tweets = __item
+
             for j, __item in enumerate(index_cv):
                 if i != j:
                     train_tweets += __item
-        else:
-            for __item in index_cv:
-                train_tweets += __item
 
-        print("Fold %d / %d" % (i+1, len(index_cv)))
+            print("Fold %d / %d" % (i + 1, len(index_cv)))
+            train_feature_path_list[i] = config.make_feature_path(dspr="fold%d_of%d" % (i+1, len(index_cv)), dev=False)
+            dev_feature_path_list[i] = config.make_feature_path(dspr="fold%d_of%d" % (i+1, len(index_cv)), dev=True)
+        else:
+            dev_tweets = index_cv[1]
+
+            train_tweets = index_cv[0]
+
+            print("Test Fold")
+            train_feature_path_list[i] = config.make_feature_path(dspr="testfold", dev=False)
+            dev_feature_path_list[i] = config.make_feature_path(dspr="testfold", dev=True)
+
         # here, we use many kind of classifier
 
         if ensemble_get_classifier_list is None:
@@ -307,33 +321,36 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
             classifier_file_name = classifier.idname()
 
+            if is_test:
+                classifier_file_name = "test_" + classifier_file_name
+
             if power_result_path_List[handler_idx] is None:
                 filename = config.make_result_path(dspr="power.%s" % classifier_file_name)
                 power_result_path_List[handler_idx] = filename
                 fresPowerList[handler_idx] = open(filename, "w+")
                 classifier_name_list[handler_idx] = classifier.strategy.trainer
-                ensemble_file_name_list[handler_idx] = (current_run_ensemble_path.replace("<algo>", "%s")) \
-                                                       % classifier_file_name
+                ensemble_file_name_list[handler_idx] = \
+                    (current_run_ensemble_path.replace("<algo>", "%s")) % classifier_file_name
 
             # then make path for the current selected algorithm
-            train_fea_path = config.make_feature_path(dev=False)
-            dev_fea_path = config.make_feature_path(dev=True)
-            model_path = config.make_model_path()
+            model_path = config.make_model_path(dspr=classifier_file_name)
             result_path = config.make_result_path()
 
             # get the trainer
-            trainer = Trainer(train_tweets, dev_tweets, feature_list, train_fea_path, dev_fea_path, classifier,
-                              model_path, result_path)
+            trainer = Trainer(train_tweets, dev_tweets, feature_list, train_feature_path_list[i],
+                              dev_feature_path_list[i], classifier, model_path, result_path)
 
             # train the modeler
-            trainer.make_feature()
+            if handler_idx == 0:
+                trainer.make_feature()
+
             trainer.train_model()
             trainer.test_model()
 
             # copy the dev file to power
             if handler_idx == 0:
                 # only in the first run, we need to copy the power predict
-                with open(dev_fea_path) as fdev_in:
+                with open(dev_feature_path_list[i]) as fdev_in:
                     for line in fdev_in:
                         fpower.write(line)
                         if line[-1] != '\n':
@@ -356,12 +373,12 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
             if keep_train:
                 print("--" * 30)
                 print("current train file:")
-                print("train_feature: %s" % (train_fea_path))
-                print("dev_feature: %s" % (dev_fea_path))
+                print("train_feature: %s" % (train_feature_path_list[i]))
+                print("dev_feature: %s" % (dev_feature_path_list[i]))
                 print("model: %s" % (model_path))
                 print("result: %s" % (result_path))
             else:
-                for path in [train_fea_path, dev_fea_path, model_path, result_path]:
+                for path in [model_path, result_path]:
                     if os.path.exists(path):
                         os.remove(path)
 
@@ -372,6 +389,11 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
                     print(e)
 
             print()
+
+        if not keep_train:
+            for path in [train_feature_path_list[i], dev_feature_path_list[i]]:
+                if os.path.exists(path):
+                    os.remove(path)
 
     fpower.close()
     for fresPower in fresPowerList:
@@ -407,13 +429,13 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
         # make the ensemble score files
         if use_ensemble:
-            ensemble_score_out_path = config.make_ensemble_score_path()
-
+            ensemble_score_out_path = config.make_ensemble_score_path(dspr="train", unique=False)
             ensemble_scores = []
 
-            for idx, cm in cm_list:
+            for idx, cm in enumerate(cm_list):
                 ensemble_scores.append(dict())
                 cur_score = ensemble_scores[-1]
+                cur_score["name"] = classifier_name_list[idx]
                 cur_score["accuracy"] = cm.get_accuracy()
                 cur_score["ensemble_path"] = ensemble_file_name_list[idx]
 
@@ -436,11 +458,33 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
             json.dump(ensemble_scores, open(ensemble_score_out_path, "w"), indent=4)
 
+        # if use_ensemble:
+        #     file_reg = current_run_ensemble_path.replace("<algo>", "*")
+        #     ret = os.popen("ls %s" % file_reg).read()
+        #     ensemble.make_ensemble_from_file(ret.strip().split('\n'),
+        #                                      current_run_ensemble_path.replace("<algo>", "total"))
+    else:
         if use_ensemble:
-            file_reg = current_run_ensemble_path.replace("<algo>", "*")
-            ret = os.popen("ls %s" % file_reg).read()
-            ensemble.make_ensemble_from_file(ret.strip().split('\n'),
-                                             current_run_ensemble_path.replace("<algo>", "total"))
+            ensemble_score_in_path = config.make_ensemble_score_path(dspr="train", unique=False)
+            ensemble_score_out_path = config.make_ensemble_score_path(dspr="test", unique=False)
+            ensemble_scores = json.load(open(ensemble_score_in_path))
+
+            print("Copying ensemble scores from Training files: %s" % ensemble_score_in_path)
+            print("To Test files: %s" % ensemble_score_out_path)
+
+            handled_id = set()
+            for idx in range(len(ensemble_scores)):
+                algo_name = ensemble_scores[idx]['name']
+
+                if algo_name not in classifier_name_list:
+                    print("Algorithm %s not found." % algo_name)
+                else:
+                    _id = classifier_name_list.index(algo_name)
+                    ensemble_scores[idx]["ensemble_path"] = ensemble_file_name_list[_id]
+                    handled_id.add(_id)
+            print("%d algorithm score copied." % len(handled_id))
+
+            json.dump(ensemble_scores, open(ensemble_score_out_path, "w"), indent=4)
 
     print("=="*30)
 
@@ -448,11 +492,13 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
 
 def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
-    '''load data'''
-    tweets = load_data(is_test=is_test)
-
-    '''build_cv'''
-    index_cv = build_cv(tweets, config.get_label_map, 10, is_test=is_test)
+    # load data and build cv
+    if not is_test:
+        tweets = load_data(is_test=is_test)
+        index_cv = build_cv(tweets, config.get_label_map, 10)
+    else:
+        tweets, test_tweets = load_data(is_test=is_test)
+        index_cv = [tweets, test_tweets]
 
     '''feature_function'''
     features = []

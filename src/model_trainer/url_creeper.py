@@ -159,7 +159,6 @@ class UrlCreeper(object):
                         if idx == 0:
                             result["title"] = p
             except: pass
-            print("haha")
             return True
         else:
             return False
