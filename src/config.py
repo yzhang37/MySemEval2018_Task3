@@ -6,7 +6,7 @@ import time
 import uuid
 
 
-__CLASS = "A"
+__CLASS = "B"
 
 def get_label_map(x):
     if __CLASS == "A":
@@ -90,8 +90,11 @@ RELATION_FREQ_PATH = __chkfold(os.path.join(CWD, "RelFreq"))
 RAW_TRAIN = os.path.join(DATA_PATH, "train", "SemEval2018-T4-train-task%s.txt" % __CLASS.upper())
 RAW_TEST = os.path.join(DATA_PATH, "test", "SemEval2018-T3_input_test_task%s.txt" % __CLASS.upper())
 
+# here, we can use config.get_class_map to convert class b to class a.
 PROCESSED_TRAIN = os.path.join(DATA_PATH, "train", "processed_train_%s.json" % "b")
-PROCESSED_TEST = os.path.join(DATA_PATH, "test", "processed_test_%s.json" % __CLASS.lower())
+# due to the unknown of class label, a and b processed file is identical.
+PROCESSED_TEST = os.path.join(DATA_PATH, "test", "processed_test_%s.json" % "b")
+
 PROCESSED_URL_DATA = os.path.join(DATA_PATH, "processed_url_%s.json" % "b")
 
 GOLDEN_TRAIN_LABEL_FILE = os.path.join(DATA_PATH, "train", "golden_label_%s.txt" % __CLASS.lower())
@@ -113,6 +116,7 @@ DICT_NLTK_UNIGRAM_TU = os.path.join(DICT_PATH, "nltk_unigram_t%d.txt")
 DICT_NLTK_UNIGRAM_TU_TEST = os.path.join(DICT_PATH, "nltk_unigram_for_test_t%d.txt")
 DICT_NLTK_BIGRAM_TU = os.path.join(DICT_PATH, "nltk_bigram_t%d.txt")
 DICT_NLTK_TRIGRAM_TU = os.path.join(DICT_PATH, "nltk_trigram_t%d.txt")
+DICT_URL_UNIGRAM_TU = os.path.join(DICT_PATH, "url_unigram_t%d.txt")
 
 WORD2VEC_GOOGLE = os.path.join(PCCMD, "SemEval2017_T8/data_new/Google.txt")
 VOCABULARY_PATH = os.path.join(YXPCCMD, "vocabulary")

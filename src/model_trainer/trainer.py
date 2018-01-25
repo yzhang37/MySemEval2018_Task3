@@ -181,65 +181,9 @@ def get_features_on_liblinear(feature: list):
         hashtag_withrf_t[1],
         nltk_unigram_withrf_t[2],
         nltk_trigram_withrf_t[2],
+        url_unigram_t[2]
     ]
     return feature
-
-
-def get_features_on_AdaBoost(features: list):
-    print("!!!!! uncleared !!!!!")
-    features.extend([
-        ners_existed,
-        wv_google,
-        wv_GloVe,
-        sentilexi,
-        emoticon,
-        punction,
-        elongated
-    ])
-
-    features.append(nltk_unigram_t[2])
-
-    # features.append(nltk_bigram_t[__freq])
-
-    features.append(nltk_trigram_t[2])
-
-    features.append(hashtag_t[2])
-
-    features.append(nltk_unigram_withrf_t[2])
-
-    features.append(nltk_bigram_withrf_t[2])
-
-    features.append(nltk_trigram_withrf_t[1])
-    features.append(nltk_trigram_withrf_t[4])
-
-    features.append(hashtag_withrf_t[4])
-    features.append(hashtag_withrf_t[5])
-
-
-def get_features_on_DecisionTree(features: list):
-    print("!!!!! uncleared !!!!!")
-    for __freq in range(1, 6):
-        # features.append(nltk_unigram_t[__freq])
-        # features.append(nltk_bigram_t[__freq])
-        # features.append(nltk_trigram_t[__freq])
-        # features.append(hashtag_t[__freq])
-        # features.append(nltk_unigram_t_with_rf[__freq])
-        # features.append(nltk_bigram_t_with_rf[__freq])
-        # features.append(nltk_trigram_with_t_rf[__freq])
-        features.append(hashtag_withrf_t[__freq])
-
-
-def get_features_on_NaiveBayes(features: list):
-    print("!!!!! uncleared !!!!!")
-    for __freq in range(1, 6):
-        # features.append(nltk_unigram_t[__freq])
-        # features.append(nltk_bigram_t[__freq])
-        # features.append(nltk_trigram_t[__freq])
-        features.append(hashtag_t[__freq])
-        # features.append(nltk_unigram_t_with_rf[__freq])
-        # features.append(nltk_bigram_t_with_rf[__freq])
-        # features.append(nltk_trigram_with_t_rf[__freq])
-        # features.append(hashtag_t_with_rf[__freq])
 
 
 def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=False, ensemble_get_classifier_list=None,
@@ -538,18 +482,18 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     if mode.lower() == "default":
         classifier_list = [
             lambda: Classifier(LibLinearSVM(0, 1)),
-            lambda: Classifier(SkLearnAdaBoostClassifier()),
-            lambda: Classifier(SkLearnDecisionTree()),
-            lambda: Classifier(SkLearnKNN()),
-            lambda: Classifier(SkLearnLogisticRegression()),
-            lambda: Classifier(SkLearnNaiveBayes()),
-            lambda: Classifier(SkLearnRandomForestClassifier()),
-            lambda: Classifier(SkLearnSGD()),
-            lambda: Classifier(SkLearnSVM()),
-            lambda: Classifier(SkLearnVotingClassifier()),
-            lambda: Classifier(SkLearnXGBoostClassifier()),
+            # lambda: Classifier(SkLearnAdaBoostClassifier()),
+            # lambda: Classifier(SkLearnDecisionTree()),
+            # lambda: Classifier(SkLearnKNN()),
+            # lambda: Classifier(SkLearnLogisticRegression()),
+            # lambda: Classifier(SkLearnNaiveBayes()),
+            # lambda: Classifier(SkLearnRandomForestClassifier()),
+            # lambda: Classifier(SkLearnSGD()),
+            # lambda: Classifier(SkLearnSVM()),
+            # lambda: Classifier(SkLearnVotingClassifier()),
+            # lambda: Classifier(SkLearnXGBoostClassifier()),
         ]
-        cm_list = run(index_cv, features, use_ensemble=True, ensemble_get_classifier_list=classifier_list,
+        cm_list = run(index_cv, features, use_ensemble=False, ensemble_get_classifier_list=classifier_list,
                       is_test=is_test)
 
         for cm in cm_list:
@@ -587,4 +531,4 @@ if __name__ == '__main__':
     print("==" * 30)
     # output_format = "hc_hashtag_NaiveBayes_%05d.txt"
     # main("hc", "liblinear_licorice_masterrun_%05d.txt")
-    main("default", is_test=True)
+    main("default", is_test=False)

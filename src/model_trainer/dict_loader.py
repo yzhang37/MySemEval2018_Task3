@@ -16,7 +16,7 @@ from src.model_trainer.dict_cacher import DictCache
 @singleton
 class DictLoader(LazyLoader):
     def __init__(self):
-        LazyLoader.__init__(self)
+        super().__init__()
         self._map_name_to_handler = {
             "sent_BL": lambda: self.__dict_Senti_Lexi_0(config.LEXI_BL),
             "sent_GI": lambda: self.__dict_Senti_Lexi_0(config.LEXI_GI),
@@ -45,6 +45,9 @@ class DictLoader(LazyLoader):
                 config.DICT_HASHTAG_TU % freq)
             self._map_name_to_handler["hashtag_unigram_t%d" % freq] = lambda freq=freq: \
                 load_dict_from_file(config.DICT_HASHTAG_UNIGRAM_TU % freq)
+            self._map_name_to_handler["url_unigram_t%d" % freq] = lambda freq=freq: load_dict_from_file(
+                config.DICT_URL_UNIGRAM_TU % freq)
+
 
             self._map_name_to_handler["nltk_unigram_for_test_t%d" % freq] = lambda freq=freq: \
                 load_dict_from_file(config.DICT_NLTK_UNIGRAM_TU_TEST % freq)
@@ -107,3 +110,10 @@ class DictLoader(LazyLoader):
         return creep_data
 
 
+@singleton
+class UrlCrawledLoader(LazyLoader):
+    def __init__(self):
+        super().__init__()
+        self._map_name_to_handler = {
+            "url_cache": lambda :json.load(open(config.PROCESSED_URL_DATA))
+        }

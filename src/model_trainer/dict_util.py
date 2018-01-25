@@ -162,6 +162,60 @@ def get_ners_exist(tweet):
     return feature
 
 
-def get_tweet_related_urls(tweet):
-    return tweet["twitter_url"]
+def get_url_unigram(tweet, url_data_cache):
+    related_urls = tweet["twitter_url"]
 
+    url_unigram = []
+
+    for t_co_url in related_urls:
+        if t_co_url in url_data_cache:
+            url_data_list = url_data_cache[t_co_url]
+
+            for current_url_data in url_data_list:
+                current_tokens = current_url_data["token_pure_sentence"]
+
+                # splitting...
+                split_reg_list = [
+                    (r"^(.+) +(.+)$", ["\g<1>", "\g<2>"]),
+                    (r"(-?)(\d+)([-,/])(\d+)(-?)", ["\g<1>", "\g<2>", "\g<3>", "\g<4>", "\g<5>"]),
+                    (r"(-)(\d+[.,:]\d+)(-)", ["\g<1>", "\g<2>", "\g<3>"]),
+                    (r"(-)(\d+[.,:]\d+)", ["\g<1>", "\g<2>"]),
+                    (r"(\d+[.,:]\d+)(-)", ["\g<1>", "\g<2>"]),
+                    (r"^(\d+)([A-Za-z]+)$", ["\g<1>", "\g<2>"])
+                ]
+                util.split_reg_tokens(current_tokens, split_reg_list)
+
+                # pruning...
+                prune_reg_list = [
+                    "^#.*$",
+                ]
+                util.delete_reg_tokens(current_tokens, prune_reg_list)
+
+                # rewriting...
+                rewrite_reg_list = [
+                    (r"\d+:\d+", "<TIME>"),
+                    (r"(.)( )(?:\1\2)+(?:\1?)", ".."),
+                    ("^[+-]?\d+.*$", "<NUMBER>"),
+                ]
+                util.rewrite_reg_tokens(current_tokens, rewrite_reg_list)
+
+                util.clear_empty_tokens(current_tokens)
+
+                url_unigram += current_tokens
+
+    return url_unigram
+
+
+def get_url_hashtag(tweet, url_data_cache):
+    related_urls = tweet["twitter_url"]
+
+    url_hashtag = []
+
+    for t_co_url in related_urls:
+        if t_co_url in url_data_cache:
+            url_data_list = url_data_cache[t_co_url]
+
+            for current_url_data in url_data_list:
+                current_hashtags = current_url_data["hashtags"]
+                url_hashtag += current_hashtags
+    return url_hashtag

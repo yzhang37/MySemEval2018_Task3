@@ -3,7 +3,7 @@ import sys
 sys.path.append("../..")
 from src import util
 from src.model_trainer import dict_util, rf_viewer
-from src.model_trainer.dict_loader import DictLoader
+from src.model_trainer.dict_loader import *
 from src.model_trainer.rf_loader import RfLoader
 from src import config
 import nltk
@@ -500,3 +500,20 @@ def url_info(tweet):
     for url in urls:
         if url in url_cached_data:
             current_data = url_cached_data[url]
+
+
+def url_unigram_tu(tweet, freq):
+    # load url_cache_data
+    url_cache = UrlCrawledLoader().get("url_cache")
+
+    # load dict
+    dict_url_unigram = DictLoader().get("url_unigram_t%d" % freq)
+    tweet_url_unigram = dict_util.get_url_unigram(tweet, url_cache)
+    return util.get_feature_by_feat_list(dict_url_unigram, tweet_url_unigram)
+
+
+url_unigram_t = {}
+
+for __freq in range(1, 6):
+    url_unigram_t[__freq] = lambda tweet, __freq=__freq: url_unigram_tu(tweet, __freq)
+    url_unigram_t[__freq].__name__ = "url_unigram_t%d" % __freq

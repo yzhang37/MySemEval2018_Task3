@@ -46,8 +46,12 @@ def create_nltk_unigram_for_test(creator, freq):
     dict_creator.create_nltk_unigram_dict_for_test(creator, freq)
 
 
+def create_url_unigram(creator, freq):
+    dict_creator.create_url_unigram(creator, freq)
+
+
 if __name__ == '__main__':
-    task = "test"
+    task = "train"
 
     if task == "train":
         print("Make train dictionary...")
@@ -57,11 +61,13 @@ if __name__ == '__main__':
         d_creator.texts = train_data
 
         for f in range(1, 6):
-            create_hashtag(d_creator, f)
-            create_nltk_bigram(d_creator, f)
-            create_nltk_unigram(d_creator, f)
-            create_nltk_trigram(d_creator, f)
-            create_hashtag_unigram(d_creator, f)
+            # create_hashtag(d_creator, f)
+            # create_nltk_bigram(d_creator, f)
+            # create_nltk_unigram(d_creator, f)
+            # create_nltk_trigram(d_creator, f)
+            # create_hashtag_unigram(d_creator, f)
+            create_url_unigram(d_creator, f)
+
     elif task == "test":
         print("Make test dictionary...")
         test_data = load_testdata()

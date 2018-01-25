@@ -3,6 +3,7 @@ import sys
 sys.path.append("../..")
 from src import config
 from src import util
+from src.model_trainer.dict_loader import UrlCrawledLoader
 from src.model_trainer import dict_util
 
 
@@ -54,3 +55,9 @@ def create_hashtag_unigram_dict(dict_creator, freq):
 def create_nltk_unigram_dict_for_test(dict_creator, freq):
     dict_creator.create_dict(dict_util.get_nltk_unigram, config.DICT_NLTK_UNIGRAM_TU_TEST % freq, threshold=freq)
 
+
+def create_url_unigram(dict_creator, freq):
+    def get_url_unigram(tweet):
+        return dict_util.get_url_unigram(tweet, UrlCrawledLoader().get("url_cache"))
+
+    dict_creator.create_dict(get_url_unigram, config.DICT_URL_UNIGRAM_TU % freq, threshold=freq)

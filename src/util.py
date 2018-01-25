@@ -150,6 +150,16 @@ def mergeFeatures(feature_list, name = ""):
     return merged_feature
 
 
+def clear_empty_tokens(data_list):
+    i = 0
+    while i < len(data_list):
+        data_list[i] = data_list[i].strip()
+        if len(data_list[i]) == 0:
+            del data_list[i]
+        else:
+            i += 1
+
+
 def split_reg_tokens(data_list, split_reg_list):
     assert(isinstance(data_list, list))
     assert(len(split_reg_list) < 1 or (isinstance(split_reg_list[0], tuple) and len(split_reg_list[0]) == 2))
