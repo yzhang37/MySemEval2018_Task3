@@ -56,28 +56,48 @@ class Trainer(object):
         return cm
 
 
-def classification_hc(train_feature_path, dev_feature_path, model_path,
-                      result_file_path, feature_functions, get_classifier_function, tweet_cv, output_file_name):
+# Hill Climbing is only used for evaluation on train sets.
+#
+# Due to this, there's no need for it to handle test datasets.
+#
+def classification_hc(feature_function_list, tweet_cv, output_file_name, classifier_handler, init_function_set=None):
+    # the place for storing the best features
+    if init_function_set is None:
+        current_best_features = set([])
+    elif isinstance(init_function_set, set):
+        current_best_features = init_function_set
+    else:
+        raise TypeError("[init_function_set] only accept an instance of set.")
+
+    # all the function iterated.
+    dict_all = {}
+    feature_functions = set(feature_function_list)
+
+    if len(current_best_features - feature_functions) > 0:
+        raise ValueError("[init_function_set] should be a subset of feature_function_list.")
+    feature_functions -= current_best_features
+
+    best_score = -1
+    best_features = set([])
+
     num_iter = (len(feature_functions) + 1) * len(feature_functions) // 2
     curr_iter = 0
 
+    # make the path, where the hc output will be written here.
     filePath = config.make_result_hc_output()
     foutput = open(filePath, "w+")
     print("Hill Climbing file dumping to %s." % filePath)
     print("", file=foutput)
     print("Trainer started at", time.asctime(time.localtime(time.time())), file=foutput)
-    current_best_features = set([])
-    dict_all = {}
-    feature_functions = set(feature_functions)
-    best_score = -1
-    best_features = set([])
+
+
     while len(feature_functions) > 0:
         dict_pending = {}
         for feature_function in feature_functions:
             curr_iter += 1
             pending_feature_functions = current_best_features | {feature_function}
 
-            cm_list = run(tweet_cv, pending_feature_functions)
+            cm_list = run(tweet_cv, pending_feature_functions, ensemble_get_classifier_list=[classifier_handler])
             p, r, f1 = evaluation.get_cm_eval(cm_list[0])
 
             score = f1
@@ -108,7 +128,7 @@ def classification_hc(train_feature_path, dev_feature_path, model_path,
 
         feature_functions -= current_best_features
     print("Hill Climbing file dumped to %s." % filePath)
-    util.write_dict_to_file(dict_all, os.path.join(config.RESULT_MYDIR, output_file_name))
+    util.write_dict_to_file(dict_all, output_file_name)
 
 
 def write_to_file(tuple, file_path):
@@ -150,7 +170,7 @@ def build_cv(tweets, map_function, fold=4):
     return index_cv
 
 
-def get_features_on_liblinear(feature: list):
+def get_Master_Features(feature: list):
     feature += [
         ners_existed,
         wv_google,
@@ -173,7 +193,6 @@ def get_features_on_liblinear(feature: list):
     #     feature.append(hashtag_t_withrf_t[__freq])
     #     feature.append(hashtag_unigram_withrf_t[__freq])
     feature += [
-        # ners_existed,
         nltk_trigram_withrf_t[4],
         nltk_bigram_withrf_t[2],
         hashtag_withrf_t[2],
@@ -182,6 +201,19 @@ def get_features_on_liblinear(feature: list):
         nltk_unigram_withrf_t[2],
         nltk_trigram_withrf_t[2],
         url_unigram_t[2]
+    ]
+    return feature
+
+
+def get_selected_features():
+    feature = [
+        ners_existed,
+        wv_google,
+        wv_GloVe,
+        sentilexi,
+        emoticon,
+        punction,
+        elongated
     ]
     return feature
 
@@ -248,9 +280,6 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
         # here, we use many kind of classifier
 
-        if ensemble_get_classifier_list is None:
-            ensemble_get_classifier_list = [get_classifier]
-
         if len(power_result_path_List) == 0:
             power_result_path_List = [None] * len(ensemble_get_classifier_list)
             fresPowerList = [None] * len(ensemble_get_classifier_list)
@@ -310,9 +339,12 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
                         fresPowerList[handler_idx].write('\n')
             fresPowerList[handler_idx].flush()
 
-            ensem_list = []
-            for idx, tweet in enumerate(dev_tweets):
-                ensem_list.append((tweet["id"], dev_cls[idx]))
+            try:
+                ensem_list = []
+                for idx, tweet in enumerate(dev_tweets):
+                    ensem_list.append((tweet["id"], dev_cls[idx]))
+            except Exception as e:
+                print(e)
 
             if keep_train:
                 print("--" * 30)
@@ -447,7 +479,7 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     '''feature_function'''
     features = []
     # feature_func = get_features_on_NaiveBayes
-    feature_func = get_features_on_liblinear
+    feature_func = get_Master_Features
 
     print(feature_func.__name__.replace("_", " ").replace("get", "Using"))
     feature_func(features)
@@ -479,20 +511,22 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     print("=" * 30)
     print()
 
+    classifier_list = [
+        lambda: Classifier(LibLinearSVM(0, 1)),
+        lambda: Classifier(SkLearnAdaBoostClassifier()),
+        lambda: Classifier(SkLearnDecisionTree()),
+        lambda: Classifier(SkLearnKNN()),
+        lambda: Classifier(SkLearnLogisticRegression()),
+        lambda: Classifier(SkLearnNaiveBayes()),
+        lambda: Classifier(SkLearnRandomForestClassifier()),
+        lambda: Classifier(SkLearnSGD()),
+        lambda: Classifier(SkLearnSVM()),
+        lambda: Classifier(SkLearnVotingClassifier()),
+        lambda: Classifier(SkLearnXGBoostClassifier()),
+    ]
+
     if mode.lower() == "default":
-        classifier_list = [
-            lambda: Classifier(LibLinearSVM(0, 1)),
-            # lambda: Classifier(SkLearnAdaBoostClassifier()),
-            # lambda: Classifier(SkLearnDecisionTree()),
-            # lambda: Classifier(SkLearnKNN()),
-            # lambda: Classifier(SkLearnLogisticRegression()),
-            # lambda: Classifier(SkLearnNaiveBayes()),
-            # lambda: Classifier(SkLearnRandomForestClassifier()),
-            # lambda: Classifier(SkLearnSGD()),
-            # lambda: Classifier(SkLearnSVM()),
-            # lambda: Classifier(SkLearnVotingClassifier()),
-            # lambda: Classifier(SkLearnXGBoostClassifier()),
-        ]
+
         cm_list = run(index_cv, features, use_ensemble=False, ensemble_get_classifier_list=classifier_list,
                       is_test=is_test)
 
@@ -500,35 +534,43 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
             p, r, f1 = evaluation.get_cm_eval(cm)
 
     elif mode.lower() == "hc":
-        # execute the hc procedure several times
 
-        for exec_id in range(5):
-            print()
-            print("Running hc time %d" % (exec_id + 1))
+        init_feature_set = set(get_selected_features())
 
-            train_fea_path = config.make_feature_path(dev=False)
-            dev_fea_path = config.make_feature_path(dev=True)
-            model_path = config.make_model_path()
-            result_path = config.make_result_path()
+        for get_classifier in classifier_list:
+            cls = get_classifier()
 
-            classification_hc(train_fea_path, dev_fea_path,
-                              model_path, result_path, features,
-                              get_classifier, index_cv, hc_output_filename % (exec_id + 1))
+            current_classifier_hc_filename = hc_output_filename.replace("<algo>", cls.strategy.idname)
+            # execute the hc procedure several times
+            hc_execute_times = 5
 
-            for path in [train_fea_path, dev_fea_path, model_path, result_path]:
-                if os.path.exists(path):
-                    os.remove(path)
+            for exec_id in range(hc_execute_times):
+                print()
+                print("Running Hill Climbing: %d" % (exec_id + 1))
 
-        util.standard_hc_info_output(os.path.join(config.RESULT_MYDIR, hc_output_filename), range(5), 2)
+                train_fea_path = config.make_feature_path(dev=False)
+                dev_fea_path = config.make_feature_path(dev=True)
+                model_path = config.make_model_path()
+                result_path = config.make_result_path()
 
+                classification_hc(features, index_cv, current_classifier_hc_filename % (exec_id + 1),
+                                  classifier_handler=get_classifier, init_function_set=init_feature_set)
 
-def get_classifier():
-    return Classifier(LibLinearSVM(0, 1))
+                for path in [train_fea_path, dev_fea_path, model_path, result_path]:
+                    if os.path.exists(path):
+                        os.remove(path)
+
+            util.standard_hc_info_output(current_classifier_hc_filename, range(hc_execute_times), 2)
 
 
 if __name__ == '__main__':
+    task = "hc"
+
     print("Trainer started at", time.asctime(time.localtime(time.time())))
     print("==" * 30)
-    # output_format = "hc_hashtag_NaiveBayes_%05d.txt"
-    # main("hc", "liblinear_licorice_masterrun_%05d.txt")
-    main("default", is_test=False)
+
+    if task == "default":
+        main("default", is_test=False)
+    elif task == "hc":
+        main("hc", hc_output_filename=config.make_result_hc_dict(dspr="licorice"))
+

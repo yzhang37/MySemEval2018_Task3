@@ -16,6 +16,7 @@ import xgboost as xgb
 from src import config
 from src.model_trainer import make_feature_file
 
+__DEBUG = False
 
 class Strategy(object):
     def __init__(self):
@@ -398,12 +399,14 @@ class LibLinearSVM(Strategy):
         # cmd = config.LIB_LINEAR_PATH + "/train -s 0 -n 8 -c 0.9 " + train_feature_path + " " + model_path + " 1> " + config.DATA_PATH + "/tmp1.txt" + " 2> " + config.DATA_PATH + "/tmp2.txt"
         cmd = config.LIB_LINEAR_PATH + "/train -s " + str(self.s) + " -n 8 -c " + str(self.c) + " " + train_feature_path + " " + model_path + " 1> " + config.DATA_PATH + "/tmp1.txt" + " 2> " + config.DATA_PATH + "/tmp2.txt"
         # cmd = config.LIB_LINEAR_PATH + "/train -s 0 -n 8 -c 1 -w0 9 -w1 1" + train_feature_path + " " + model_path + " 1> " + config.DATA_PATH + "/tmp1.txt" + " 2> " + config.DATA_PATH + "/tmp2.txt"
-        # print(cmd)
+        if __DEBUG:
+            print(cmd)
         os.system(cmd)
 
     def test_model(self, test_feature_path, model_path, result_file_path):
         cmd = config.LIB_LINEAR_PATH + "/predict " + test_feature_path + " " + model_path + " " + result_file_path
-        # print(cmd)
+        if __DEBUG:
+            print(cmd)
         os.system(cmd)
 
     # def test_model(self, test_feature_path, model_path, result_file_path):
