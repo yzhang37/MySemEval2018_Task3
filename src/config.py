@@ -7,26 +7,45 @@ import uuid
 
 
 __CLASS = "B"
+__MULTIBIN = True
 
-def get_label_map(x):
-    if __CLASS == "A":
-        if x == "0":
-            return "0"
-        else:
-            return "1"
-    else:
+
+if __CLASS == "B" and __MULTIBIN:
+    def get_binary_label_map(cur_label, x):
+        return "1" if str(cur_label) == str(x) else "0"
+
+    def get_label_map(x):
         return x
 
-
-def get_label_list():
-    if __CLASS == "A":
+    def get_label_list():
         return [0, 1]
-    else:
+
+    def get_all_label_list():
         return [0, 1, 2, 3]
+
+else:
+    def get_label_map(x):
+        if __CLASS == "A":
+            if x == "0":
+                return "0"
+            else:
+                return "1"
+        else:
+            return x
+
+    def get_label_list():
+        if __CLASS == "A":
+            return [0, 1]
+        else:
+            return [0, 1, 2, 3]
 
 
 def get_class():
     return __CLASS.upper()
+
+
+def if_multi_binary():
+    return __CLASS == "B" and __MULTIBIN
 
 
 hostname = socket.gethostname()
@@ -73,6 +92,9 @@ def __chkfold(path):
     return path
 
 
+if if_multi_binary():
+    MULTI_BINARY_ROOT = __chkfold(os.path.join(CWD, "multi_binary"))
+
 SLANGS_PATH = PCCMD + "/data/slangs"
 NORMAL_WORDS_PATH = PCCMD + "/data/normal_word.pkl"
 EMOTICON = PCCMD + "/data/Emoticon.txt"
@@ -82,9 +104,23 @@ DICT_PATH = CWD + "/dict"
 DICT_CACHE_PATH = os.path.join(CWD, "dict_cache")
 MODEL_PATH = CWD + "/model/binary_clf.model"
 
-FEATURE_PATH = __chkfold(os.path.join(CWD, "feature"))
+if if_multi_binary():
+    FEATURE_PATH = __chkfold(os.path.join(MULTI_BINARY_ROOT, "feature"))
+    RESULT_MYDIR = __chkfold(os.path.join(MULTI_BINARY_ROOT, "result"))
+    HILLCLIMB_ROOT_PATH = __chkfold(os.path.join(MULTI_BINARY_ROOT, "hill_climb"))
+    ENSEMBLE_SCORE_PATH = __chkfold(os.path.join(MULTI_BINARY_ROOT, "ensemble_score"))
+    ENSEMBLE_PATH = __chkfold(os.path.join(MULTI_BINARY_ROOT, "ensemble"))
+    MODEL_MYDIR = __chkfold(os.path.join(MULTI_BINARY_ROOT, "model"))
+else:
+    FEATURE_PATH = __chkfold(os.path.join(CWD, "feature"))
+    RESULT_MYDIR = __chkfold(os.path.join(CWD, "result"))
+    HILLCLIMB_ROOT_PATH = __chkfold(os.path.join(CWD, "hill_climb"))
+    ENSEMBLE_SCORE_PATH = __chkfold(os.path.join(CWD, "ensemble_score"))
+    ENSEMBLE_PATH = __chkfold(os.path.join(CWD, "ensemble"))
+    MODEL_MYDIR = __chkfold(os.path.join(CWD, "model"))
+
 RESULT_EXCEL_PATH = __chkfold(os.path.join(CWD, "result_excel"))
-RESULT_MYDIR = __chkfold(os.path.join(CWD, "result"))
+
 RELATION_FREQ_PATH = __chkfold(os.path.join(CWD, "RelFreq"))
 
 RAW_TRAIN = os.path.join(DATA_PATH, "train", "SemEval2018-T4-train-task%s.txt" % __CLASS.upper())
@@ -98,6 +134,8 @@ PROCESSED_TEST = os.path.join(DATA_PATH, "test", "processed_test_%s.json" % "b")
 PROCESSED_URL_DATA = os.path.join(DATA_PATH, "processed_url_%s.json" % "b")
 
 GOLDEN_TRAIN_LABEL_FILE = os.path.join(DATA_PATH, "train", "golden_label_%s.txt" % __CLASS.lower())
+if if_multi_binary():
+    GOLDEN_TRAIN_LABEL_BINARY_FILE = os.path.join(DATA_PATH, "train", "golden_label_binary%%d_%s.txt" % __CLASS.lower())
 ENSEMBLE_RESULT_PATH = os.path.join(RESULT_MYDIR, "ensemble_result.txt")
 
 DICT_UNIGRAM_T2 = os.path.join(DICT_PATH, "unigram_t2.txt")
@@ -139,9 +177,6 @@ GLOVE_TWITTER_27B_25_PATH = os.path.join(GLOVE_TWITTER_PATH, "glove.twitter.27B.
 
 GLOVE_840B_300_PATH = os.path.join(GLOVE_PATH, "glove.840B.300d.txt")
 
-TRAIN_FEATURE_PATH = FEATURE_PATH + "/train.fea.txt"
-DEV_FEATURE_PATH = FEATURE_PATH + "/dev.fea.txt"
-
 
 def __make_unique_string(pattern: str):
     return pattern.replace("<uni>", str(uuid.uuid1()))
@@ -156,7 +191,7 @@ def make_feature_path(dev=False, dspr="", unique=True):
         path += __make_time_string() + "."
     if unique:
         path += "<uni>."
-    path += "txt"
+    path += "feature"
     return __make_unique_string(os.path.join(FEATURE_PATH, path))
 
 
@@ -169,7 +204,7 @@ def make_model_path(dspr="", unique=True):
     if unique:
         pattern += "<uni>."
     pattern += "model"
-    return __make_unique_string(os.path.join(CWD, "model", pattern))
+    return __make_unique_string(os.path.join(MODEL_MYDIR, pattern))
 
 
 def make_result_path(dspr="", unique=True):
@@ -181,7 +216,7 @@ def make_result_path(dspr="", unique=True):
     if unique:
         pattern += "<uni>."
     pattern += "txt"
-    return __make_unique_string(os.path.join(CWD, "result", pattern))
+    return __make_unique_string(os.path.join(RESULT_MYDIR, pattern))
 
 
 def __make_time_string():
@@ -199,15 +234,47 @@ RF_DATA_NLTK_BIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_bigram_t%%d
 RF_DATA_NLTK_TRIGRAM_TU_PATH = os.path.join(RELATION_FREQ_PATH, "nltk_trigram_t%%d_%s.txt" % __CLASS.lower())
 
 RESULT_HC_DICT = os.path.join(RESULT_MYDIR, "feature_hc_dict_<uni>_%s.txt" % __CLASS.lower())
-RESULT_HC_OUTPUT = os.path.join(RESULT_MYDIR, "feature_hc_output_<uni>_%s.txt" % __CLASS.lower())
 
 
-def make_result_hc_dict():
-    return __make_unique_string(RESULT_HC_DICT)
+def make_result_hc_output(dspr="", unique=True):
+    filename = "hc"
+
+    if len(dspr) > 0:
+        filename += ("_" + dspr)
+
+    filename += "_" + __make_time_string()
+
+    if unique:
+        filename += "_<uni>"
+
+    filename += "_%s.log" % __CLASS.lower()
+    filename = __make_unique_string(filename)
+
+    return os.path.join(HILLCLIMB_ROOT_PATH, filename)
 
 
-def make_result_hc_output():
-    return __make_unique_string(RESULT_HC_OUTPUT)
+def make_result_hc_dict(classifier_name="", dspr="", digit=3, unique=False):
+    filename = "hcdict_"
+
+    if len(classifier_name) > 0:
+        filename += classifier_name
+    else:
+        filename += "<algo>"
+
+    if len(dspr) > 0:
+        filename += ("_" + dspr)
+
+    filename += "_" + __make_time_string()
+
+    filename += "_%%0%dd" % digit
+
+    if unique:
+        filename += "_<uni>"
+
+    filename += "_%s.dict" % __CLASS.lower()
+    filename = __make_unique_string(filename)
+
+    return os.path.join(HILLCLIMB_ROOT_PATH, filename)
 
 
 # URL dumping file list
@@ -215,13 +282,6 @@ URL_CACHE_PATH = os.path.join(DICT_CACHE_PATH, "url_cache.json")
 
 
 # ensemble directory path:
-ENSEMBLE_PATH = os.path.join(CWD, "ensemble")
-if not os.path.exists(ENSEMBLE_PATH):
-    os.makedirs(ENSEMBLE_PATH)
-
-ENSEMBLE_SCORE_PATH = os.path.join(CWD, "ensemble_score")
-if not os.path.exists(ENSEMBLE_SCORE_PATH):
-    os.makedirs(ENSEMBLE_SCORE_PATH)
 
 
 def make_ensemble_path(dspr= "", unique=True):

@@ -18,7 +18,6 @@ def make_feature_for_liblinear(tweets, feature_function_list, to_file, is_test=F
             target = int(config.get_label_map(tw["label"]))
         else:
             # 测试文件，label 是无效的。
-
             target = random.choice(config.get_label_list())
 
         comment = str(tw["id"])
