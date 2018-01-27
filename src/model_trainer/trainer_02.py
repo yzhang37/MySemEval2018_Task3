@@ -221,7 +221,7 @@ def get_selected_features():
 
 
 def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=False, ensemble_get_classifier_list=None,
-        is_test=False, classifier_name_affix=""):
+        is_test=False, classifier_name_affix="", use_proba=False):
     """
     运行评估
     :param index_cv: 交叉验证集。如果是测试集，则所有内容放在一个 [] 中使用。
@@ -293,6 +293,7 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
             # first we get the classifier
             classifier = get_classifier_handler()
             classifier.is_test = is_test
+            classifier.use_proba = use_proba
 
             classifier_file_name = classifier.idname()
             classifier_file_name += classifier_name_affix
@@ -334,20 +335,32 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
                 fpower.flush()
 
             dev_cls = []
-            with open(result_path) as fres_in:
-                for line in fres_in:
-                    dev_cls.append(line.strip())
-                    fresPowerList[handler_idx].write(line)
-                    if line[-1] != '\n':
-                        fresPowerList[handler_idx].write('\n')
+
+            if not use_proba:
+                with open(result_path) as fres_in:
+                    for line in fres_in:
+                        dev_cls.append(line.strip())
+                        fresPowerList[handler_idx].write(line)
+                        if line[-1] != '\n':
+                            fresPowerList[handler_idx].write('\n')
+
+            else:
+                with open(result_path) as fres_in:
+                    line_id = 0
+                    for line in fres_in:
+                        line = line.strip()
+                        if line_id > 0:
+                            line_data = line.split()
+                            dev_cls.append([float(__item) for __item in line_data[1:]])
+                            fresPowerList[handler_idx].write(line_data[0])
+                            fresPowerList[handler_idx].write('\n')
+                        line_id += 1
+
             fresPowerList[handler_idx].flush()
 
-            try:
-                ensem_list = []
-                for idx, tweet in enumerate(dev_tweets):
-                    ensem_list.append((tweet["id"], dev_cls[idx]))
-            except Exception as e:
-                print(e)
+            ensem_list = []
+            for idx, tweet in enumerate(dev_tweets):
+                ensem_list.append((tweet["id"], dev_cls[idx]))
 
             if keep_train:
                 print("--" * 30)
@@ -363,7 +376,10 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
             if use_ensemble:
                 try:
-                    ensemble.make_ensemble(ensem_list, ensemble_file_name_list[handler_idx])
+                    if not use_proba:
+                        ensemble.make_ensemble(ensem_list, ensemble_file_name_list[handler_idx])
+                    else:
+                        ensemble.make_ensemble_with_proba(ensem_list, ensemble_file_name_list[handler_idx])
                 except Exception as e:
                     print(e)
 
@@ -410,7 +426,7 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
         if use_ensemble:
             ensemble_score_out_path = ""
             if config.if_multi_binary():
-                ensemble_score_out_path = config.make_ensemble_score_path(dspr="train", unique=False)
+                ensemble_score_out_path = config.make_ensemble_score_path(dspr="train" + classifier_name_affix, unique=False)
             else:
                 ensemble_score_out_path = config.make_ensemble_score_path(dspr="train", unique=False)
             ensemble_scores = []
@@ -516,12 +532,12 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     print()
 
     classifier_list = [
-        lambda: Classifier(LibLinearSVM(0, 1)),
+        # lambda: Classifier(LibLinearSVM(0, 1)),
         # lambda: Classifier(SkLearnAdaBoostClassifier()),
         # lambda: Classifier(SkLearnDecisionTree()),
         # lambda: Classifier(SkLearnKNN()),
         # lambda: Classifier(SkLearnLogisticRegression()),
-        # lambda: Classifier(SkLearnNaiveBayes()),
+        lambda: Classifier(SkLearnNaiveBayes()),
         # lambda: Classifier(SkLearnRandomForestClassifier()),
         # lambda: Classifier(SkLearnSGD()),
         # lambda: Classifier(SkLearnSVM()),
@@ -535,11 +551,11 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
         if config.if_multi_binary():
             for cur_idx, cur_index_cv in enumerate(binary_index_cv):
 
-                cm_list = run(cur_index_cv, features, use_ensemble=True,
+                cm_list = run(cur_index_cv, features, use_ensemble=True, keep_pw=True,
                               ensemble_get_classifier_list=classifier_list, is_test=is_test,
-                              classifier_name_affix="_binary%d" % cur_idx)
+                              classifier_name_affix="_binary%d" % cur_idx, use_proba=True)
                 for cm in cm_list:
-                    p, r, f1 = evaluation.get_cm_eval(cm)
+                    p, r, f1 = cm.get_prf("1")
         else:
             cm_list = run(index_cv, features, use_ensemble=False, ensemble_get_classifier_list=classifier_list,
                           is_test=is_test)
