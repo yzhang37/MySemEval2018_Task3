@@ -522,12 +522,12 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
         lambda: Classifier(SkLearnSGD()),
         lambda: Classifier(SkLearnSVM()),
         lambda: Classifier(SkLearnVotingClassifier()),
-        lambda: Classifier(SkLearnXGBoostClassifier()),
+        lambda: Classifier(XGBoost()),
     ]
 
     if mode.lower() == "default":
 
-        cm_list = run(index_cv, features, use_ensemble=False, ensemble_get_classifier_list=classifier_list,
+        cm_list = run(index_cv, features, use_ensemble=True, ensemble_get_classifier_list=classifier_list,
                       is_test=is_test)
 
         for cm in cm_list:
@@ -564,13 +564,13 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
 
 
 if __name__ == '__main__':
-    task = "hc"
+    task = "default"
 
     print("Trainer started at", time.asctime(time.localtime(time.time())))
     print("==" * 30)
 
     if task == "default":
-        main("default", is_test=False)
+        main("default", is_test=True)
     elif task == "hc":
         main("hc", hc_output_filename=config.make_result_hc_dict(dspr="licorice"))
 

@@ -18,34 +18,38 @@ from src.model_trainer import make_feature_file
 
 DEBUG = False
 
+
 class Strategy(object):
     def __init__(self):
         self.make_feature_handler = make_feature_file.make_feature_for_liblinear
         self.idname = "noname"
+        self.use_proba = False
+
     def train_model(self, train_feature_path, model_path):
         return None
+
     def test_model(self, test_feature_path, model_path, result_file_path):
         return None
-
-    # We no longer need this static method, because scikit contains a function
-    # to convert liblinear format to its own data format.
-    #
-    # @staticmethod
-    # def make_feature_handler(tweets, feature_function_list, to_file):
-    #     assert False, "Make feature function not yet implemented."
 
 
 class Classifier(object):
     def __init__(self, strategy):
         self.strategy = strategy
+        self.use_proba = False
         self.is_test = False
+
     def idname(self):
         return self.strategy.idname
+
     def train_model(self, train_feature_path, model_path):
         self.strategy.train_model(train_feature_path, model_path)
+
     def test_model(self, test_feature_path, model_path, result_file_path):
         self.strategy.test_model(test_feature_path, model_path, result_file_path)
+
     def make_feature(self, tweets, feature_function_list, to_file):
+        if self.use_proba:
+            self.strategy.use_proba = True
         self.strategy.make_feature_handler(tweets, feature_function_list, to_file, is_test=self.is_test)
 
 
@@ -74,7 +78,11 @@ class SkLearnDecisionTree(Strategy):
 
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
-        pred_y = self.clf.predict(test_X)
+
+        if self.use_proba:
+            pred_y = self.clf.predict_proba(test_X)
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
@@ -102,7 +110,11 @@ class SkLearnNaiveBayes(Strategy):
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
         test_X = test_X.toarray()
-        pred_y = self.clf.predict(test_X)
+
+        if self.use_proba:
+            pred_y = self.clf.predict_proba(test_X)
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
@@ -127,7 +139,11 @@ class SkLearnSVM(Strategy):
     def test_model(self, test_file_path, model_path, result_file_path):
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
-        pred_y = self.clf.predict(test_X)
+
+        if self.use_proba:
+            raise NotImplementedError("Sklearn SVM didn't support probability output.")
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
@@ -151,7 +167,11 @@ class SkLearnSGD(Strategy):
     def test_model(self, test_file_path, model_path, result_file_path):
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
-        pred_y = self.clf.predict(test_X)
+
+        if self.use_proba:
+            pred_y = self.clf.predict_proba(test_X)
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
@@ -175,7 +195,11 @@ class SkLearnLogisticRegression(Strategy):
     def test_model(self, test_file_path, model_path, result_file_path):
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
-        pred_y = self.clf.predict(test_X)
+
+        if self.use_proba:
+            pred_y = self.clf.predict_proba(test_X)
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
@@ -198,7 +222,11 @@ class SkLearnKNN(Strategy):
     def test_model(self, test_file_path, model_path, result_file_path):
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
-        pred_y = self.clf.predict(test_X)
+
+        if self.use_proba:
+            pred_y = self.clf.predict_proba(test_X)
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
@@ -224,30 +252,13 @@ class SkLearnAdaBoostClassifier(Strategy):
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
         self.clf = pickle.load(open(model_path, 'rb'))
-        pred_y = self.clf.predict(test_X.toarray())
 
-        # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        test_X = test_X.toarray()
 
-
-class SkLearnXGBoostClassifier(Strategy):
-    def __init__(self):
-        super().__init__()
-        self.trainer = "Scikit-Learn XGBoost"
-        self.idname = "sklearn_xgboost"
-        self.clf = KNeighborsClassifier(n_neighbors=3)
-        print("Using %s Classifier" % (self.trainer))
-
-    def train_model(self, train_file_path, model_path):
-        train_X, train_y = load_svmlight_file(train_file_path)
-        # print("==> Train the model ...")
-        self.clf.fit(train_X, train_y)
-
-    def test_model(self, test_file_path, model_path, result_file_path):
-        # print("==> Test the model ...")
-        test_X, test_y = load_svmlight_file(test_file_path)
-        pred_y = self.clf.predict(test_X)
+        if self.use_proba:
+            pred_y = self.clf.predict_proba(test_X)
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
@@ -271,7 +282,11 @@ class SkLearnRandomForestClassifier(Strategy):
     def test_model(self, test_file_path, model_path, result_file_path):
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
-        pred_y = self.clf.predict(test_X)
+
+        if self.use_proba:
+            pred_y = self.clf.predict_proba(test_X)
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
@@ -301,18 +316,21 @@ class SkLearnVotingClassifier(Strategy):
     def test_model(self, test_file_path, model_path, result_file_path):
         # print("==> Test the model ...")
         test_X, test_y = load_svmlight_file(test_file_path)
-        pred_y = self.clf.predict(test_X)
+
+        if self.use_proba:
+            pred_y = self.clf.predict_proba(test_X)
+        else:
+            pred_y = self.clf.predict(test_X)
 
         # write prediction to file
         with open(result_file_path, 'w') as fout:
             fout.write("\n".join(map(str, map(int, pred_y))))
 
 
-'''XgBoost'''
-class XGBOOST(Strategy):
+class XGBoost(Strategy):
     def __init__(self):
         super().__init__()
-        self.trainer = "XGBOOST"
+        self.trainer = "XGBoost"
         self.idname = "xgboost"
         print("Using %s Classifier" % self.trainer)
 
@@ -363,9 +381,11 @@ class XGBOOST(Strategy):
             fout.write("\n".join(new_lines))
 
         dtest = xgb.DMatrix(test_file_path + ".tmp")
-        y_pred = bst.predict(dtest)
+        pred_y = bst.predict(dtest)
         # print("==> Save the result ...")
 
+        with open(result_file_path, 'w') as fout:
+            fout.write("\n".join(map(str, map(int, pred_y))))
 
 '''liblinear'''
 
@@ -404,7 +424,10 @@ class LibLinearSVM(Strategy):
         os.system(cmd)
 
     def test_model(self, test_feature_path, model_path, result_file_path):
-        cmd = config.LIB_LINEAR_PATH + "/predict " + test_feature_path + " " + model_path + " " + result_file_path
+        cmd = config.LIB_LINEAR_PATH + "/predict "
+        if self.use_proba:
+            cmd += "-b 1 "
+        cmd += test_feature_path + " " + model_path + " " + result_file_path
         if DEBUG:
             print(cmd)
         os.system(cmd)

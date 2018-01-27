@@ -20,7 +20,24 @@ def make_ensemble(data_list, file_path):
     json.dump(ensemble_data, open(file_path, "w"))
     print("--" * 30)
     print("Ensemble data dumped to %s" % file_path)
-    print("at %s" % time.asctime(time.localtime(time.time())) )
+    print("at %s" % time.asctime(time.localtime(time.time())))
+
+
+def make_ensemble_with_proba(data_list, file_path):
+    try:
+        ensemble_data = json.load(open(file_path))
+    except:
+        ensemble_data = dict()
+    for idx, cls_proba in data_list:
+        ensemble_data.setdefault(idx, dict())
+        for cls, proba in enumerate(cls_proba):
+            cls = str(cls)
+            ensemble_data[idx].setdefault(cls, 0)
+            ensemble_data[idx][cls] += proba
+    json.dump(ensemble_data, open(file_path, "w"))
+    print("--" * 30)
+    print("Ensemble data with probability dumped to %s" % file_path)
+    print("at %s" % time.asctime(time.localtime(time.time())))
 
 
 def make_ensemble_from_file(file_path_list: list, output_path):
@@ -68,7 +85,7 @@ def build_top_ensemble_score_json(old_json_path, new_json_path, threshold=None, 
     if config.get_class() == "A":
         ensemble_data_list.sort(key=lambda x: -x["score"]["1"]["f1"])
     else:
-        raise NotImplementedError("排序算法尚未实现。")
+        ensemble_data_list.sort(key=lambda x: -x["avrg_score"]["f1"])
 
     new_ensemble_data_list = []
     for ensemble_data in ensemble_data_list:
@@ -79,7 +96,9 @@ def build_top_ensemble_score_json(old_json_path, new_json_path, threshold=None, 
                 break
             new_ensemble_data_list.append(ensemble_data)
         else:
-            raise NotImplementedError("尚未实现。")
+            if threshold is not None and ensemble_data["avrg_score"]["f1"] < threshold:
+                break
+            new_ensemble_data_list.append(ensemble_data)
 
     json.dump(new_ensemble_data_list, open(new_json_path, "w"), indent=4)
     print("New ensemble data built at:")
@@ -105,7 +124,17 @@ def get_ensemble_path_list_from_score_json(json_path, threshold=None, top=None):
             print(ensemble_data["ensemble_path"])
             ensemble_file_path_list.append(ensemble_data["ensemble_path"])
         elif config.get_class() == "B":
-            raise NotImplementedError()
+            f1_macro_score = ensemble_data["avrg_score"]["f1"]
+            if threshold is not None and f1_macro_score < threshold:
+                continue
+            print("Ensemble on %s" % ensemble_data["name"])
+            print("--" * 30)
+            print("Average score: ", end="")
+            __print_score_helper(ensemble_data["avrg_score"])
+
+            print("Ensemble file loaded from:")
+            print(ensemble_data["ensemble_path"])
+            ensemble_file_path_list.append(ensemble_data["ensemble_path"])
         print()
     return ensemble_file_path_list
 
@@ -262,11 +291,25 @@ def main(task, is_test=False):
         make_ensemble_from_file(path_list, FINAL_PATH)
         make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
 
+    elif task == "5":
+        # for Task B, method 1
+        print(OUTPUT_LIST_JSON)
+        build_top_ensemble_score_json(OUTPUT_LIST_JSON, TOP_LIST_JSON, top=3)
+        path_list = get_ensemble_path_list_from_score_json(TOP_LIST_JSON)
+        print(path_list)
+        _ = input("请按 Enter或Return 继续")
+        make_ensemble_from_file(path_list, FINAL_PATH)
 
+        make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
+
+        if not is_test:
+            from src import evaluation
+            cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
+            cm.print_out()
 
 
 if __name__ == "__main__":
-    main("0", is_test=True)
+    main("5", is_test=True)
     # build_top_ensemble_score_json(os.path.join(config.ENSEMBLE_SCORE_PATH, "output.json"),
     #                               os.path.join(config.ENSEMBLE_SCORE_PATH, "top.json"),
     #                               top=4)

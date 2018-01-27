@@ -7,7 +7,7 @@ import uuid
 
 
 __CLASS = "B"
-__MULTIBIN = True
+__MULTIBIN = False
 
 
 if __CLASS == "B" and __MULTIBIN:
