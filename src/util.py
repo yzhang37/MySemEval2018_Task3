@@ -328,6 +328,16 @@ def write_dict_to_file(dict, file_path):
         file_out.write("\n".join(["%s %s" % (str(key), str(dict[key])) for key in sorted(dict.keys(),reverse=True)]))
 
 
+def write_result_with_proba(predict_y_tuple_list, result_file_path):
+    if isinstance(predict_y_tuple_list, np.ndarray):
+        if len(predict_y_tuple_list.shape) == 2:
+            predict_y_tuple_list = predict_y_tuple_list.tolist()
+        else:
+            raise ValueError("Numpy.Ndarray shape wrong.")
+    with open(result_file_path, 'w') as fout:
+        tuple_count = len(predict_y_tuple_list[0])
+        fout.write(" ".join(["label"] + [str(i) for i in range(tuple_count)]) + "\n")
+        fout.write("\n".join(map(lambda x: " ".join([str(x.index(max(x)))] + [str(i) for i in x]), predict_y_tuple_list)))
 
 
 def standard_hc_info_output(filepath_wildcard, scope, tier=1, sort_idx = 0, sign = 1):

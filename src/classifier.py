@@ -15,6 +15,7 @@ import xgboost as xgb
 
 from src import config
 from src.model_trainer import make_feature_file
+from src import util
 
 DEBUG = False
 
@@ -42,9 +43,13 @@ class Classifier(object):
         return self.strategy.idname
 
     def train_model(self, train_feature_path, model_path):
+        if self.use_proba:
+            self.strategy.use_proba = True
         self.strategy.train_model(train_feature_path, model_path)
 
     def test_model(self, test_feature_path, model_path, result_file_path):
+        if self.use_proba:
+            self.strategy.use_proba = True
         self.strategy.test_model(test_feature_path, model_path, result_file_path)
 
     def make_feature(self, tweets, feature_function_list, to_file):
@@ -85,8 +90,11 @@ class SkLearnDecisionTree(Strategy):
             pred_y = self.clf.predict(test_X)
 
         # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        if not self.use_proba:
+            with open(result_file_path, 'w') as fout:
+                fout.write("\n".join(map(str, map(int, pred_y))))
+        else:
+            util.write_result_with_proba(pred_y, result_file_path)
 
 
 # 朴素贝叶斯算法
@@ -117,8 +125,11 @@ class SkLearnNaiveBayes(Strategy):
             pred_y = self.clf.predict(test_X)
 
         # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        if not self.use_proba:
+            with open(result_file_path, 'w') as fout:
+                fout.write("\n".join(map(str, map(int, pred_y))))
+        else:
+            util.write_result_with_proba(pred_y, result_file_path)
 
 
 # Sklearn 支持向量机
@@ -154,9 +165,10 @@ class SkLearnSVM(Strategy):
 class SkLearnSGD(Strategy):
     def __init__(self):
         super().__init__()
-        self.trainer = "Scikit-Learn Stochastic Gradient Descent (hinge)"
-        self.idname = "sklearn_sgd_hinge"
-        self.clf = SGDClassifier(loss='hinge')
+        self.trainer = "Scikit-Learn Stochastic Gradient Descent (log)"
+        self.idname = "sklearn_sgd_log"
+        # only log and modified_huber support
+        self.clf = SGDClassifier(loss='log')
         print("Using %s Classifier" % self.trainer)
 
     def train_model(self, train_file_path, model_path):
@@ -174,8 +186,11 @@ class SkLearnSGD(Strategy):
             pred_y = self.clf.predict(test_X)
 
         # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        if not self.use_proba:
+            with open(result_file_path, 'w') as fout:
+                fout.write("\n".join(map(str, map(int, pred_y))))
+        else:
+            util.write_result_with_proba(pred_y, result_file_path)
 
 
 # 逻辑回归
@@ -202,8 +217,12 @@ class SkLearnLogisticRegression(Strategy):
             pred_y = self.clf.predict(test_X)
 
         # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        if not self.use_proba:
+            with open(result_file_path, 'w') as fout:
+                fout.write("\n".join(map(str, map(int, pred_y))))
+        else:
+            util.write_result_with_proba(pred_y, result_file_path)
+
 
 # KNN
 class SkLearnKNN(Strategy):
@@ -229,8 +248,11 @@ class SkLearnKNN(Strategy):
             pred_y = self.clf.predict(test_X)
 
         # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        if not self.use_proba:
+            with open(result_file_path, 'w') as fout:
+                fout.write("\n".join(map(str, map(int, pred_y))))
+        else:
+            util.write_result_with_proba(pred_y, result_file_path)
 
 
 # AdaBoost
@@ -261,8 +283,11 @@ class SkLearnAdaBoostClassifier(Strategy):
             pred_y = self.clf.predict(test_X)
 
         # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        if not self.use_proba:
+            with open(result_file_path, 'w') as fout:
+                fout.write("\n".join(map(str, map(int, pred_y))))
+        else:
+            util.write_result_with_proba(pred_y, result_file_path)
 
 
 # 随机森林
@@ -289,8 +314,11 @@ class SkLearnRandomForestClassifier(Strategy):
             pred_y = self.clf.predict(test_X)
 
         # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        if not self.use_proba:
+            with open(result_file_path, 'w') as fout:
+                fout.write("\n".join(map(str, map(int, pred_y))))
+        else:
+            util.write_result_with_proba(pred_y, result_file_path)
 
 
 # Voting 分类器
@@ -323,8 +351,11 @@ class SkLearnVotingClassifier(Strategy):
             pred_y = self.clf.predict(test_X)
 
         # write prediction to file
-        with open(result_file_path, 'w') as fout:
-            fout.write("\n".join(map(str, map(int, pred_y))))
+        if not self.use_proba:
+            with open(result_file_path, 'w') as fout:
+                fout.write("\n".join(map(str, map(int, pred_y))))
+        else:
+            util.write_result_with_proba(pred_y, result_file_path)
 
 
 class XGBoost(Strategy):
@@ -387,6 +418,7 @@ class XGBoost(Strategy):
         with open(result_file_path, 'w') as fout:
             fout.write("\n".join(map(str, map(int, pred_y))))
 
+
 '''liblinear'''
 
 class LibLinearSVM(Strategy):
@@ -417,7 +449,7 @@ class LibLinearSVM(Strategy):
         #   -c cost : set the parameter C (default 1)
 
         # cmd = config.LIB_LINEAR_PATH + "/train -s 0 -n 8 -c 0.9 " + train_feature_path + " " + model_path + " 1> " + config.DATA_PATH + "/tmp1.txt" + " 2> " + config.DATA_PATH + "/tmp2.txt"
-        cmd = config.LIB_LINEAR_PATH + "/train -s " + str(self.s) + " -n 8 -c " + str(self.c) + " " + train_feature_path + " " + model_path + " 1> " + config.DATA_PATH + "/tmp1.txt" + " 2> " + config.DATA_PATH + "/tmp2.txt"
+        cmd = config.LIB_LINEAR_PATH + "/train -s " + str(self.s) + " -n 8 -c " + str(self.c) + " " + train_feature_path + " " + model_path + " 1> " + config.DATA_PATH + "/lib_out.txt" + " 2> " + config.DATA_PATH + "/lib_last_error.txt"
         # cmd = config.LIB_LINEAR_PATH + "/train -s 0 -n 8 -c 1 -w0 9 -w1 1" + train_feature_path + " " + model_path + " 1> " + config.DATA_PATH + "/tmp1.txt" + " 2> " + config.DATA_PATH + "/tmp2.txt"
         if DEBUG:
             print(cmd)

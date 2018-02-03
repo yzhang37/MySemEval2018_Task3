@@ -93,7 +93,7 @@ def __chkfold(path):
 
 
 if if_multi_binary():
-    MULTI_BINARY_ROOT = __chkfold(os.path.join(CWD, "multi_binary"))
+    MULTI_BINARY_ROOT = __chkfold(os.path.join(CWD, "multi_binary_24"))
 
 SLANGS_PATH = PCCMD + "/data/slangs"
 NORMAL_WORDS_PATH = PCCMD + "/data/normal_word.pkl"

@@ -8,6 +8,14 @@ from src import config
 
 
 if config.if_multi_binary():
+    def remap_class_label(tweets: list, current_binary_label):
+        for idx in range(len(tweets)):
+            if 'label' in tweets[idx]:
+                old_label = tweets[idx]['label']
+                new_label = config.get_binary_label_map(current_binary_label, old_label)
+                tweets[idx]['label'] = new_label
+
+
     def build_binary_tweets_from_multi(original_tweets):
         print("Building Binary Classifiers from Multi-class Classifiers")
         label_count = len(config.get_all_label_list())
@@ -16,12 +24,7 @@ if config.if_multi_binary():
         try:
             for cur_label_idx in range(len(ret)):
                 cur_tweets = ret[cur_label_idx]
-                for idx in range(len(cur_tweets)):
-                    if 'label' in cur_tweets[idx]:
-                        old_label = cur_tweets[idx]['label']
-                        new_label = config.get_binary_label_map(cur_label_idx, old_label)
-                        cur_tweets[idx]['label'] = new_label
-
+                remap_class_label(cur_tweets)
             return ret
 
         except Exception as e:
@@ -29,7 +32,7 @@ if config.if_multi_binary():
             raise e
 
 
-    def duplicate_class_data(tweets_data, label=None, num=None):
+    def duplicate_class_data(tweets_data, label=None, num=None, deep_mode=False):
         """
         Duplicate the train data.
         :param [in/out] tweets_data: A list contain tweet data.
@@ -54,6 +57,12 @@ if config.if_multi_binary():
         if isinstance(label, list) and isinstance(num, list) and len(label) != len(num):
             raise TypeError("Num and label should have the same size.")
 
+        def _copy_helper(_data, _label_data):
+            if deep_mode:
+                _data += copy.deepcopy(_label_data)
+            else:
+                _data += _label_data
+
         print("=="*30)
         if isinstance(label, str):
             print("Duplicate data of class \"%s\" %d times." % (label, num))
@@ -64,9 +73,9 @@ if config.if_multi_binary():
                 if 'label' in item and item['label'] == label:
                     label_data.append(item)
             print("Label \"%s\" Count: %d, after duplicated: %d x %d = %d" % (label, len(label_data), len(label_data), num, len(label_data) * (num + 1)))
-            calc_str += " + %d" % (len(label_data) * (num + 1))
+            calc_str += " + %d" % (len(label_data) * num)
             for i in range(num):
-                tweets_data += label_data
+                _copy_helper(tweets_data, label_data)
             print()
             print("After duplicate, " + calc_str + " =")
             print("Count: %d" % len(tweets_data))
@@ -85,20 +94,20 @@ if config.if_multi_binary():
                     for item in tweets_data:
                         if 'label' in item and item['label'] == __label:
                             label_data.append(item)
-                    print("Label \"%s\" Count: %d, after duplicated: %d x %d = %d" % (__label, len(label_data), len(label_data), num, len(label_data) * (num + 1)))
-                    calc_str += " + %d" % (len(label_data) * (num + 1))
+                    print("Label \"%s\" Count: %d, after duplicated: %d x (%d + 1) = %d" % (__label, len(label_data), len(label_data), num, len(label_data) * (num + 1)))
+                    calc_str += " + %d" % (len(label_data) * num)
                     for i in range(num):
-                        tweets_data += label_data
+                        _copy_helper(tweets_data, label_data)
             else:
                 for __label, __num in zip(label, num):
                     label_data = []
                     for item in tweets_data:
                         if 'label' in item and item['label'] == __label:
                             label_data.append(item)
-                    print("Label \"%s\" Count: %d, after duplicated: %d x %d = %d" % (__label, len(label_data), len(label_data), __num, len(label_data) * (__num + 1)))
-                    calc_str += " + %d" % (len(label_data) * (__num + 1))
+                    print("Label \"%s\" Count: %d, after duplicated: %d x (%d + 1) = %d" % (__label, len(label_data), len(label_data), __num, len(label_data) * (__num + 1)))
+                    calc_str += " + %d" % (len(label_data) * __num)
                     for i in range(__num):
-                        tweets_data += label_data
+                        _copy_helper(tweets_data, label_data)
             print()
             print("After duplicate, " + calc_str + " =")
             print("Count: %d" % len(tweets_data))

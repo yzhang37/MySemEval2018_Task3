@@ -292,7 +292,7 @@ def main(task, is_test=False):
         make_result_from_ensemble(FINAL_PATH, RESULT_PATH)
 
     elif task == "5":
-        # for Task B, method 1
+        # for Task B, 直接 4分类的算法
         print(OUTPUT_LIST_JSON)
         build_top_ensemble_score_json(OUTPUT_LIST_JSON, TOP_LIST_JSON, top=3)
         path_list = get_ensemble_path_list_from_score_json(TOP_LIST_JSON)
@@ -307,9 +307,148 @@ def main(task, is_test=False):
             cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
             cm.print_out()
 
+    elif task == "6" or task == "7":
+        import random
+
+        def select_iteration(ensemble_score_class_list):
+            def make_selection(id_list):
+                selection_list = []
+
+                for idx, id in enumerate(id_list):
+                    sel_ensemble = ensemble_score_class_list[idx][id]
+                    selection_list.append({"path": sel_ensemble["ensemble_path"],
+                                           "name": sel_ensemble["name"],
+                                           "f1": sel_ensemble["score"]["1"]["f1"]})
+                return selection_list
+
+            selection_id_list = [0] * len(ensemble_score_class_list)
+            while selection_id_list[0] < len(ensemble_score_class_list[0]):
+                yield make_selection(selection_id_list)
+                id = len(selection_id_list) - 1
+                selection_id_list[id] += 1
+
+                while id >= 1:
+                    if selection_id_list[id] >= len(ensemble_score_class_list[id]):
+                        selection_id_list[id - 1] += 1
+                        selection_id_list[id] = 0
+                        id -= 1
+                    else:
+                        break
+
+        def select_ui(ensemble_score_class_list):
+            selection_list = []
+            for idx, ensemble_score_data in enumerate(ensemble_score_class_list):
+                print("Choose algorithm for label \"%d\"" % idx)
+                print("==" * 30)
+                print("\n".join(["%d: %s, f1 = %.2f%%" % (i, algorithm["name"], algorithm["score"]["1"]["f1"] * 100)
+                                 for i, algorithm in enumerate(ensemble_score_data)]))
+                sel = input("Which one do you want?")
+                try:
+                    sel_idx = int(sel)
+                    sel_ensemble = ensemble_score_data[sel_idx]
+
+                    print("Algorithm %d: \'%s\' selected for label \'%s\'." % (sel_idx, sel_ensemble["name"], idx))
+
+                    selection_list.append({"path": sel_ensemble["ensemble_path"],
+                                           "name": sel_ensemble["name"],
+                                           "f1": sel_ensemble["score"]["1"]["f1"]})
+                    print("")
+                except Exception as e:
+                    raise e
+            return selection_list
+
+        def list_selection(selection_list):
+            print("Using " + ", ".join(
+                [sel["name"] + " for label \'%d\'" % idx for idx, sel in enumerate(selection_list)]))
+
+        def run(selection_list):
+            handle_replica = 0
+            result_dict = dict()
+            for idx, selection in enumerate(selection_list):
+                dat = json.load(open(selection["path"]))
+                dat = sorted(dat.items(), key=lambda x: int(x[0]))
+
+                for dat_idx, dic in dat:
+                    result_dict.setdefault(dat_idx, dict())
+                    result_dict[dat_idx][idx] = dic["1"]
+
+            for key in result_dict.keys():
+                result_dict[key] = sorted(result_dict[key].items(), key=lambda x: -x[1])
+            result_list = sorted(result_dict.items(), key=lambda x: int(x[0]))
+
+            ensemble_result = []
+            for idx, data in result_list:
+                max_f1 = data[0][1]
+                max_count = [item[1] for item in data].count(max_f1)
+                if max_count > 1:
+                    if handle_replica == 0:
+                        ret = input("How to handle replica label? Do you want to use random? (y/s)").lower().strip()
+                        if ret == "y":
+                            handle_replica = 1
+                        elif ret == "n":
+                            handle_replica = 2
+                        else:
+                            raise ValueError("You must enter y or n.")
+
+                    if handle_replica == 1:
+                        ensemble_result.append(data[random.randint(0, max_count - 1)][0])
+                    elif handle_replica == 2:
+                        ensemble_result.append(data[0][0])
+                else:
+                    ensemble_result.append(data[0][0])
+
+            # print(result_list)
+            print(ensemble_result)
+            with open(RESULT_PATH, 'w') as fout:
+                fout.write('\n'.join(map(str, ensemble_result)))
+
+            if not is_test:
+                from src import evaluation
+                cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_all_label_list())
+                p, r, f1 = cm.get_average_prf()
+                return f1, cm
+
+        def make_my_path(id):
+            return config.make_ensemble_score_path(dspr="train_binary%d" % id, unique=False)
+
+        if task == "6":
+            CLASS_PATH_LIST = list(map(make_my_path, list(range(4))))
+            ensemble_score_class_list = list(map(json.load, map(open, CLASS_PATH_LIST)))
+
+            if not is_test:
+                max_f1 = 1E-99
+                best_sel = None
+                best_cm = None
+                for selection_list in select_iteration(ensemble_score_class_list):
+                    f1, cm = run(selection_list)
+                    if f1 > max_f1:
+                        best_sel = selection_list
+                        max_f1 = f1
+                        best_cm = cm
+                if best_sel is not None:
+                    list_selection(best_sel)
+                    best_cm.print_out()
+
+            else:
+                selection_list = select_ui(ensemble_score_class_list)
+                f1, cm = run(selection_list)
+                list_selection(selection_list)
+                cm.print_out()
+        elif task == "7":
+            files = []
+            for i in range(4):
+                ret = os.popen("ls " + os.path.join(config.ENSEMBLE_PATH, "*binary%d*" % i))
+                cur_files = ret.read().strip().split('\n')
+                files += cur_files
+            # print(files)
+            selection_list = [{"path": os.path.join(config.ENSEMBLE_PATH, item)} for item in files]
+            print(selection_list)
+            run(selection_list)
+
+
 
 if __name__ == "__main__":
-    main("5", is_test=True)
+    main("7", is_test=True)
     # build_top_ensemble_score_json(os.path.join(config.ENSEMBLE_SCORE_PATH, "output.json"),
     #                               os.path.join(config.ENSEMBLE_SCORE_PATH, "top.json"),
     #                               top=4)

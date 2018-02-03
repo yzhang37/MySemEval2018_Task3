@@ -221,7 +221,7 @@ def get_selected_features():
 
 
 def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=False, ensemble_get_classifier_list=None,
-        is_test=False, classifier_name_affix="", use_proba=False):
+        is_test=False, binary_name_affix="", binary_class_handler=None, use_proba=False):
     """
     运行评估
     :param index_cv: 交叉验证集。如果是测试集，则所有内容放在一个 [] 中使用。
@@ -231,6 +231,9 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
     :param use_ensemble:
     :param ensemble_get_classifier_list:
     :param is_test: 为测试评估提供优化
+    :param binary_name_affix:
+    :param binary_class_handler: A handler for modify the train dataset, for example, duplicate the label, or change the class label
+    :param use_proba: if use_proba, then it will call the classifier to output probability instead of class label.
     :return:
     """
     # define the power file
@@ -280,6 +283,19 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
             train_feature_path_list[i] = config.make_feature_path(dspr="testfold", dev=False)
             dev_feature_path_list[i] = config.make_feature_path(dspr="testfold", dev=True)
 
+        if config.if_multi_binary():
+            if binary_class_handler is not None:
+                binary_class_train_handler = binary_class_handler[0]
+                binary_class_test_handler = binary_class_handler[1]
+                train_tweets = copy.deepcopy(train_tweets)
+
+                if not is_test:
+                    dev_tweets = copy.deepcopy(dev_tweets)
+                    binary_class_train_handler(train_tweets)
+                    binary_class_test_handler(dev_tweets)
+                else:
+                    binary_class_train_handler(train_tweets)
+
         # here, we use many kind of classifier
 
         if len(power_result_path_List) == 0:
@@ -296,7 +312,7 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
             classifier.use_proba = use_proba
 
             classifier_file_name = classifier.idname()
-            classifier_file_name += classifier_name_affix
+            classifier_file_name += binary_name_affix
 
             if is_test:
                 classifier_file_name = "test_" + classifier_file_name
@@ -358,9 +374,17 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
             fresPowerList[handler_idx].flush()
 
-            ensem_list = []
-            for idx, tweet in enumerate(dev_tweets):
-                ensem_list.append((tweet["id"], dev_cls[idx]))
+            try:
+                ensem_list = []
+                for idx, tweet in enumerate(dev_tweets):
+                    ensem_list.append((tweet["id"], dev_cls[idx]))
+            except Exception as e:
+                print(e)
+                print()
+                print("result path: %s" % result_path)
+                print("dev_cls:", dev_cls)
+                print("idx:", idx)
+                raise e
 
             if keep_train:
                 print("--" * 30)
@@ -426,7 +450,7 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
         if use_ensemble:
             ensemble_score_out_path = ""
             if config.if_multi_binary():
-                ensemble_score_out_path = config.make_ensemble_score_path(dspr="train" + classifier_name_affix, unique=False)
+                ensemble_score_out_path = config.make_ensemble_score_path(dspr="train" + binary_name_affix, unique=False)
             else:
                 ensemble_score_out_path = config.make_ensemble_score_path(dspr="train", unique=False)
             ensemble_scores = []
@@ -464,26 +488,31 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
         #                                      current_run_ensemble_path.replace("<algo>", "total"))
     else:
         if use_ensemble:
-            ensemble_score_in_path = config.make_ensemble_score_path(dspr="train", unique=False)
-            ensemble_score_out_path = config.make_ensemble_score_path(dspr="test", unique=False)
-            ensemble_scores = json.load(open(ensemble_score_in_path))
+            try:
+                ensemble_score_in_path = config.make_ensemble_score_path(dspr="train", unique=False)
+                ensemble_score_out_path = config.make_ensemble_score_path(dspr="test", unique=False)
+                ensemble_scores = json.load(open(ensemble_score_in_path))
 
-            print("Copying ensemble scores from Training files: %s" % ensemble_score_in_path)
-            print("To Test files: %s" % ensemble_score_out_path)
+                print("Copying ensemble scores from Training files: %s" % ensemble_score_in_path)
+                print("To Test files: %s" % ensemble_score_out_path)
 
-            handled_id = set()
-            for idx in range(len(ensemble_scores)):
-                algo_name = ensemble_scores[idx]['name']
+                handled_id = set()
+                for idx in range(len(ensemble_scores)):
+                    algo_name = ensemble_scores[idx]['name']
 
-                if algo_name not in classifier_name_list:
-                    print("Algorithm %s not found." % algo_name)
-                else:
-                    _id = classifier_name_list.index(algo_name)
-                    ensemble_scores[idx]["ensemble_path"] = ensemble_file_name_list[_id]
-                    handled_id.add(_id)
-            print("%d algorithm score copied." % len(handled_id))
+                    if algo_name not in classifier_name_list:
+                        print("Algorithm %s not found." % algo_name)
+                    else:
+                        _id = classifier_name_list.index(algo_name)
+                        ensemble_scores[idx]["ensemble_path"] = ensemble_file_name_list[_id]
+                        handled_id.add(_id)
+                print("%d algorithm score copied." % len(handled_id))
 
-            json.dump(ensemble_scores, open(ensemble_score_out_path, "w"), indent=4)
+                json.dump(ensemble_scores, open(ensemble_score_out_path, "w"), indent=4)
+            except Exception as e:
+                print("Copy train file score files failed.")
+                print(e)
+
 
     print("=="*30)
 
@@ -492,18 +521,14 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
 
 def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     # load data and build cv
-    cv_fold = 2
+    cv_fold = 5
 
     if not is_test:
         tweets = load_data(is_test=is_test)
 
         # for multi-class to binary class
         if config.if_multi_binary():
-            binary_tweets = multi2binary.build_binary_tweets_from_multi(tweets)
-            binary_index_cv = [build_cv(cur_tweets,
-                                        lambda x, idx=idx: config.get_binary_label_map(idx, x),
-                                        cv_fold)
-                               for idx, cur_tweets in enumerate(binary_tweets)]
+            index_cv = build_cv(tweets, config.get_label_map, cv_fold)
         else:
             index_cv = build_cv(tweets, config.get_label_map, cv_fold)
     else:
@@ -511,8 +536,7 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
 
         # for multi-class to binary class
         if config.if_multi_binary():
-            binary_tweets = multi2binary.build_binary_tweets_from_multi(tweets)
-            binary_index_cv = [[cur_tweets, test_tweets] for cur_tweets in binary_tweets]
+            index_cv = [tweets, test_tweets]
         else:
             index_cv = [tweets, test_tweets]
 
@@ -532,28 +556,49 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     print()
 
     classifier_list = [
-        # lambda: Classifier(LibLinearSVM(0, 1)),
-        # lambda: Classifier(SkLearnAdaBoostClassifier()),
-        # lambda: Classifier(SkLearnDecisionTree()),
-        # lambda: Classifier(SkLearnKNN()),
-        # lambda: Classifier(SkLearnLogisticRegression()),
-        lambda: Classifier(SkLearnNaiveBayes()),
-        # lambda: Classifier(SkLearnRandomForestClassifier()),
-        # lambda: Classifier(SkLearnSGD()),
-        # lambda: Classifier(SkLearnSVM()),
-        # lambda: Classifier(SkLearnVotingClassifier()),
-        # lambda: Classifier(SkLearnXGBoostClassifier()),
+        lambda: Classifier(LibLinearSVM(0, 1)),
+        lambda: Classifier(SkLearnAdaBoostClassifier()),
+        lambda: Classifier(SkLearnLogisticRegression()),
+        lambda: Classifier(SkLearnRandomForestClassifier()),
+        lambda: Classifier(SkLearnSGD()),
+    ]
+
+    test_classifier_list = [
+        [lambda: Classifier(SkLearnLogisticRegression())],
+        [lambda: Classifier(SkLearnLogisticRegression())],
+        [lambda: Classifier(SkLearnLogisticRegression())],
+        [lambda: Classifier(LibLinearSVM(0, 1))]
     ]
 
     if mode.lower() == "default":
 
         # for multi-class to binary class
         if config.if_multi_binary():
-            for cur_idx, cur_index_cv in enumerate(binary_index_cv):
+            for cur_idx in range(len(config.get_all_label_list())):
+                print("Running on binary %d:" % cur_idx)
+                # if cur_idx != 0:
+                #     continue
+                def train_handler(tweets):
+                    # multi2binary.duplicate_class_data(tweets, ["2", "3"], [5, 9], deep_mode=True)
+                    multi2binary.duplicate_class_data(tweets, ["2", "3"], [9, 19], deep_mode=True)
+                    multi2binary.remap_class_label(tweets, cur_idx)
 
-                cm_list = run(cur_index_cv, features, use_ensemble=True, keep_pw=True,
-                              ensemble_get_classifier_list=classifier_list, is_test=is_test,
-                              classifier_name_affix="_binary%d" % cur_idx, use_proba=True)
+                def dev_handler(tweets):
+                    multi2binary.remap_class_label(tweets, cur_idx)
+
+                if not is_test:
+                    cm_list = run(index_cv, features, use_ensemble=True, keep_pw=True,
+                                  ensemble_get_classifier_list=classifier_list, is_test=is_test,
+                                  binary_name_affix="_binary%d" % cur_idx,
+                                  binary_class_handler=(train_handler, dev_handler),
+                                  use_proba=True)
+                else:
+                    cm_list = run(index_cv, features, use_ensemble=True, keep_pw=True,
+                                  ensemble_get_classifier_list=test_classifier_list[cur_idx], is_test=is_test,
+                                  binary_name_affix="_binary%d" % cur_idx,
+                                  binary_class_handler=(train_handler, dev_handler),
+                                  use_proba=True)
+
                 for cm in cm_list:
                     p, r, f1 = cm.get_prf("1")
         else:
