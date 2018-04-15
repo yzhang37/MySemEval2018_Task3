@@ -188,7 +188,7 @@ def make_partly_result_from_ensemble(json_path, original_golden_path, result_pat
     print(target_golden_path)
 
 
-EXCEL_NAME = "6841_no_drop"
+EXCEL_NAME = "6867"
 OUTPUT_LIST_JSON = config.make_ensemble_score_path(dspr="test", unique=False)
 TOP_LIST_JSON = config.make_ensemble_score_path(dspr="test_top", unique=False)
 NN_PATH = os.path.join(config.ENSEMBLE_PATH, "nn_ali_%s_%s.json" % (EXCEL_NAME, config.get_class().lower()))
@@ -210,13 +210,14 @@ def main(task, is_test=False):
             from src import evaluation
             cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_label_list())
             cm.print_out()
-    elif task == "1": # 仅生成阿里的训练结果的数据，然后进行验证 （只能使用阿里的valid，test是无效的）
-        make_partly_result_from_ensemble(NN_VALID_PATH, config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, PARTLY_GOLDEN)
-
+    elif task == "1": # 仅生成阿里的训练结果的数据，然后进行验证
         if not is_test:
-            from src import evaluation
-            cm = evaluation.Evaluation(PARTLY_GOLDEN, RESULT_PATH, config.get_label_list())
-            cm.print_out()
+            make_partly_result_from_ensemble(NN_VALID_PATH, config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, PARTLY_GOLDEN)
+        else:
+            make_partly_result_from_ensemble(NN_TEST_PATH, config.GOLDEN_TEST_LABEL_FILE, RESULT_PATH, PARTLY_GOLDEN)
+        from src import evaluation
+        cm = evaluation.Evaluation(PARTLY_GOLDEN, RESULT_PATH, config.get_label_list())
+        cm.print_out()
     elif task == "2": # 飞翔的建议：因为阿里的效果较好，则1分类全部使用来自阿里的效果，阿里分类为0 的，则使用剩下来的
         if config.get_class() != 'A':
             raise Exception("不允许使用 B 分类")
@@ -445,10 +446,12 @@ def main(task, is_test=False):
             print(selection_list)
             run(selection_list)
 
+    elif task == "8":
+        make_partly_result_from_ensemble
 
 
 if __name__ == "__main__":
-    main("7", is_test=True)
+    main("1", is_test=False)
     # build_top_ensemble_score_json(os.path.join(config.ENSEMBLE_SCORE_PATH, "output.json"),
     #                               os.path.join(config.ENSEMBLE_SCORE_PATH, "top.json"),
     #                               top=4)

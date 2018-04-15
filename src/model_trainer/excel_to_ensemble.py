@@ -97,4 +97,4 @@ def convert(excel_name, task="0"):
 
 
 if __name__ == "__main__":
-    convert("ali_old", "1")
+    convert("6789_seed13", "1")

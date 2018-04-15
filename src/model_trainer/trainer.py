@@ -180,18 +180,18 @@ def get_Master_Features(feature: list):
         punction,
         elongated
     ]
-    #
-    # for __freq in range(1, 6):
-    #     feature.append(nltk_unigram_t[__freq])
-    #     feature.append(nltk_bigram_t[__freq])
-    #     feature.append(nltk_trigram_t[__freq])
-    #     feature.append(hashtag_t[__freq])
-    #     feature.append(hashtag_unigram_t[__freq])
-    #     feature.append(nltk_unigram_withrf_t[__freq])
-    #     feature.append(nltk_bigram_withrf_t[__freq])
-    #     feature.append(nltk_trigram_withrf_t[__freq])
-    #     feature.append(hashtag_t_withrf_t[__freq])
-    #     feature.append(hashtag_unigram_withrf_t[__freq])
+    # #
+    # # for __freq in range(1, 6):
+    # #     feature.append(nltk_unigram_t[__freq])
+    # #     feature.append(nltk_bigram_t[__freq])
+    # #     feature.append(nltk_trigram_t[__freq])
+    # #     feature.append(hashtag_t[__freq])
+    # #     feature.append(hashtag_unigram_t[__freq])
+    # #     feature.append(nltk_unigram_withrf_t[__freq])
+    # #     feature.append(nltk_bigram_withrf_t[__freq])
+    # #     feature.append(nltk_trigram_withrf_t[__freq])
+    # #     feature.append(hashtag_t_withrf_t[__freq])
+    # #     feature.append(hashtag_unigram_withrf_t[__freq])
     feature += [
         nltk_trigram_withrf_t[4],
         nltk_bigram_withrf_t[2],
@@ -467,6 +467,56 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
     return cm_list
 
 
+def get_Ling_Features(feature: list):
+    feature.append(ners_existed)
+
+    for __freq in range(1, 6):
+        feature.append(nltk_unigram_t[__freq])
+        feature.append(nltk_bigram_t[__freq])
+        feature.append(nltk_trigram_t[__freq])
+        feature.append(hashtag_t[__freq])
+        feature.append(hashtag_unigram_t[__freq])
+        feature.append(nltk_unigram_withrf_t[__freq])
+        feature.append(nltk_bigram_withrf_t[__freq])
+        feature.append(nltk_trigram_withrf_t[__freq])
+        feature.append(hashtag_withrf_t[__freq])
+        feature.append(hashtag_unigram_withrf_t[__freq])
+    # feature += [
+    #     nltk_trigram_withrf_t[4],
+    #     nltk_bigram_withrf_t[2],
+    #     hashtag_withrf_t[2],
+    #     hashtag_unigram_t[1],
+    #     hashtag_withrf_t[1],
+    #     nltk_unigram_withrf_t[2],
+    #     nltk_trigram_withrf_t[2],
+    #     url_unigram_t[2]
+    # ]
+    return feature
+
+
+def get_WordEmbedding(feature: list):
+    feature += [
+        wv_google,
+        wv_GloVe,
+    ]
+    return feature
+
+
+def get_sentilexi(feature: list):
+    feature += [
+        sentilexi
+    ]
+    return feature
+
+
+def get_tweet_domain(feature: list):
+    feature += [
+        emoticon,
+        punction,
+        elongated
+    ]
+
+
 def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     # load data and build cv
     if not is_test:
@@ -478,31 +528,12 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
 
     '''feature_function'''
     features = []
-    # feature_func = get_features_on_NaiveBayes
-    feature_func = get_Master_Features
 
-    print(feature_func.__name__.replace("_", " ").replace("get", "Using"))
-    feature_func(features)
+    feature_func_list = [get_Master_Features]
 
-    # features = [
-    #     ners_existed,
-    #     wv_google,
-    #     wv_GloVe,
-    #     sentilexi,
-    #     emoticon,
-    #     punction,
-    #     elongated
-    # ]
-
-    # for __freq in range(1, 6):
-        # features.append(nltk_unigram_t[__freq])
-        # features.append(nltk_bigram_t[__freq])
-        # features.append(nltk_trigram_t[__freq])
-        # features.append(hashtag_t[__freq])
-        # features.append(nltk_unigram_t_with_rf[__freq])
-        # features.append(nltk_bigram_t_with_rf[__freq])
-        # features.append(nltk_trigram_with_t_rf[__freq])
-        # features.append(hashtag_t_with_rf[__freq])
+    for feature_func in feature_func_list:
+        print(feature_func.__name__.replace("_", " ").replace("get", "Using"))
+        feature_func(features)
 
     print("Using following features:")
     print("=" * 30)
@@ -513,22 +544,22 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
 
     classifier_list = [
         lambda: Classifier(LibLinearSVM(0, 1)),
-        lambda: Classifier(SkLearnAdaBoostClassifier()),
-        lambda: Classifier(SkLearnDecisionTree()),
-        lambda: Classifier(SkLearnKNN()),
+        # lambda: Classifier(SkLearnAdaBoostClassifier()),
+        # lambda: Classifier(SkLearnDecisionTree()),
+        # lambda: Classifier(SkLearnKNN()),
         lambda: Classifier(SkLearnLogisticRegression()),
         lambda: Classifier(SkLearnNaiveBayes()),
-        lambda: Classifier(SkLearnRandomForestClassifier()),
-        lambda: Classifier(SkLearnSGD()),
-        lambda: Classifier(SkLearnSVM()),
-        lambda: Classifier(SkLearnVotingClassifier()),
-        lambda: Classifier(XGBoost()),
+        # lambda: Classifier(SkLearnRandomForestClassifier()),
+        # lambda: Classifier(SkLearnSGD()),
+        # lambda: Classifier(SkLearnSVM()),
+        # lambda: Classifier(SkLearnVotingClassifier()),
+        # lambda: Classifier(XGBoost()),
     ]
 
     if mode.lower() == "default":
 
         cm_list = run(index_cv, features, use_ensemble=True, ensemble_get_classifier_list=classifier_list,
-                      is_test=is_test)
+                      is_test=is_test, keep_pw=True)
 
         for cm in cm_list:
             p, r, f1 = evaluation.get_cm_eval(cm)
@@ -570,7 +601,7 @@ if __name__ == '__main__':
     print("==" * 30)
 
     if task == "default":
-        main("default", is_test=True)
+        main("default", is_test=False)
     elif task == "hc":
         main("hc", hc_output_filename=config.make_result_hc_dict(dspr="licorice"))
 

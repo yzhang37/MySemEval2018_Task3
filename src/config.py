@@ -6,7 +6,7 @@ import time
 import uuid
 
 
-__CLASS = "B"
+__CLASS = "A"
 __MULTIBIN = True
 
 
@@ -93,7 +93,7 @@ def __chkfold(path):
 
 
 if if_multi_binary():
-    MULTI_BINARY_ROOT = __chkfold(os.path.join(CWD, "multi_binary_24"))
+    MULTI_BINARY_ROOT = __chkfold(os.path.join(CWD, "multi_binary_100"))
 
 SLANGS_PATH = PCCMD + "/data/slangs"
 NORMAL_WORDS_PATH = PCCMD + "/data/normal_word.pkl"
@@ -125,6 +125,7 @@ RELATION_FREQ_PATH = __chkfold(os.path.join(CWD, "RelFreq"))
 
 RAW_TRAIN = os.path.join(DATA_PATH, "train", "SemEval2018-T4-train-task%s.txt" % __CLASS.upper())
 RAW_TEST = os.path.join(DATA_PATH, "test", "SemEval2018-T3_input_test_task%s.txt" % __CLASS.upper())
+RAW_GOLDEN_TEST = os.path.join(DATA_PATH, "test", "SemEval2018-T3_gold_test_task%s_emoji.txt" % __CLASS.upper())
 
 # here, we can use config.get_class_map to convert class b to class a.
 PROCESSED_TRAIN = os.path.join(DATA_PATH, "train", "processed_train_%s.json" % "b")
@@ -134,6 +135,7 @@ PROCESSED_TEST = os.path.join(DATA_PATH, "test", "processed_test_%s.json" % "b")
 PROCESSED_URL_DATA = os.path.join(DATA_PATH, "processed_url_%s.json" % "b")
 
 GOLDEN_TRAIN_LABEL_FILE = os.path.join(DATA_PATH, "train", "golden_label_%s.txt" % __CLASS.lower())
+GOLDEN_TEST_LABEL_FILE = os.path.join(DATA_PATH, "test", "golden_label_%s.txt" % __CLASS.lower())
 if if_multi_binary():
     GOLDEN_TRAIN_LABEL_BINARY_FILE = os.path.join(DATA_PATH, "train", "golden_label_binary%%d_%s.txt" % __CLASS.lower())
 ENSEMBLE_RESULT_PATH = os.path.join(RESULT_MYDIR, "ensemble_result.txt")
