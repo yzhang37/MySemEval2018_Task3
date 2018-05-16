@@ -422,8 +422,6 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
     cm_list = []
 
     if not is_test:
-        # for test file, evaluation is not available.
-
         for idx, handler in enumerate(ensemble_get_classifier_list):
             print("Evaluation on %s" % classifier_name_list[idx])
             print("--" * 30)
@@ -487,6 +485,29 @@ def run(index_cv, feature_list, keep_train=False, keep_pw=False, use_ensemble=Fa
         #     ensemble.make_ensemble_from_file(ret.strip().split('\n'),
         #                                      current_run_ensemble_path.replace("<algo>", "total"))
     else:
+        # for idx, handler in enumerate(ensemble_get_classifier_list):
+        #     print("Evaluation on %s" % classifier_name_list[idx])
+        #     print("--" * 30)
+        #     cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_BINARY_FILE, power_result_path_List[idx], config.get_label_list())
+        #     cm_list.append(cm)
+        #     cm.print_out()
+        #     print("--" * 30)
+        #     print()
+        #     if keep_pw:
+        #         print("==" * 30)
+        #         print("Power dev_feature and result file path is:")
+        #         print(power_dev_fea_path)
+        #         print(power_result_path_List[idx])
+        #         print()
+        #     else:
+        #         del_list = [power_result_path_List[idx]]
+        #         if idx == len(ensemble_get_classifier_list) - 1:
+        #             del_list.append(power_dev_fea_path)
+        #         for path in del_list:
+        #             if os.path.exists(path):
+        #                 os.remove(path)
+
+
         if use_ensemble:
             try:
                 ensemble_score_in_path = config.make_ensemble_score_path(dspr="train", unique=False)
@@ -524,6 +545,7 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     cv_fold = 5
 
     if not is_test:
+        print("Run in Train Mode!!!")
         tweets = load_data(is_test=is_test)
 
         # for multi-class to binary class
@@ -532,6 +554,7 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
         else:
             index_cv = build_cv(tweets, config.get_label_map, cv_fold)
     else:
+        print("Run in Test Mode!!!")
         tweets, test_tweets = load_data(is_test=is_test)
 
         # for multi-class to binary class
@@ -556,18 +579,18 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
     print()
 
     classifier_list = [
-        lambda: Classifier(LibLinearSVM(0, 1)),
-        lambda: Classifier(SkLearnAdaBoostClassifier()),
+        lambda: Classifier(LibLinearLR(0, 1)),
+        # lambda: Classifier(SkLearnAdaBoostClassifier()),
         lambda: Classifier(SkLearnLogisticRegression()),
-        lambda: Classifier(SkLearnRandomForestClassifier()),
-        lambda: Classifier(SkLearnSGD()),
+        # lambda: Classifier(SkLearnRandomForestClassifier()),
+        # lambda: Classifier(SkLearnSGD()),
     ]
 
     test_classifier_list = [
         [lambda: Classifier(SkLearnLogisticRegression())],
         [lambda: Classifier(SkLearnLogisticRegression())],
         [lambda: Classifier(SkLearnLogisticRegression())],
-        [lambda: Classifier(LibLinearSVM(0, 1))]
+        [lambda: Classifier(LibLinearLR(0, 1))]
     ]
 
     if mode.lower() == "default":
@@ -579,8 +602,8 @@ def main(mode="default", hc_output_filename="%05d.txt", is_test=False):
                 # if cur_idx != 0:
                 #     continue
                 def train_handler(tweets):
-                    # multi2binary.duplicate_class_data(tweets, ["2", "3"], [5, 9], deep_mode=True)
-                    multi2binary.duplicate_class_data(tweets, ["2", "3"], [9, 19], deep_mode=True)
+                    multi2binary.duplicate_class_data(tweets, ["2", "3"], [5, 9], deep_mode=True)
+                    # multi2binary.duplicate_class_data(tweets, ["2", "3"], [9, 19], deep_mode=True)
                     multi2binary.remap_class_label(tweets, cur_idx)
 
                 def dev_handler(tweets):
@@ -644,7 +667,7 @@ if __name__ == '__main__':
     print("==" * 30)
 
     if task == "default":
-        main("default", is_test=False)
+        main("default", is_test=True)
     elif task == "hc":
         main("hc", hc_output_filename=config.make_result_hc_dict(dspr="licorice"))
 

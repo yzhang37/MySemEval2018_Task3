@@ -6,7 +6,7 @@ import time
 import uuid
 
 
-__CLASS = "A"
+__CLASS = "B"
 __MULTIBIN = True
 
 
@@ -93,7 +93,7 @@ def __chkfold(path):
 
 
 if if_multi_binary():
-    MULTI_BINARY_ROOT = __chkfold(os.path.join(CWD, "multi_binary_100"))
+    MULTI_BINARY_ROOT = __chkfold(os.path.join(CWD, "multi_binary_1000"))
 
 SLANGS_PATH = PCCMD + "/data/slangs"
 NORMAL_WORDS_PATH = PCCMD + "/data/normal_word.pkl"

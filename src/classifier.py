@@ -421,13 +421,13 @@ class XGBoost(Strategy):
 
 '''liblinear'''
 
-class LibLinearSVM(Strategy):
+class LibLinearLR(Strategy):
     def __init__(self, s, c):
         super().__init__()
         self.s = s
         self.c = c
-        self.trainer = "LibLinear SVM"
-        self.idname = "liblinear_svm"
+        self.trainer = "LibLinear Logistic Regression"
+        self.idname = "liblinear_lr"
         print ("Using %s Classfier" % self.trainer)
 
     def train_model(self, train_feature_path, model_path):

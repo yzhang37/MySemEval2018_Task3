@@ -403,11 +403,15 @@ def main(task, is_test=False):
             with open(RESULT_PATH, 'w') as fout:
                 fout.write('\n'.join(map(str, ensemble_result)))
 
+
+            from src import evaluation
             if not is_test:
-                from src import evaluation
                 cm = evaluation.Evaluation(config.GOLDEN_TRAIN_LABEL_FILE, RESULT_PATH, config.get_all_label_list())
-                p, r, f1 = cm.get_average_prf()
-                return f1, cm
+            else:
+                cm = evaluation.Evaluation(config.GOLDEN_TEST_LABEL_FILE, RESULT_PATH, config.get_all_label_list())
+            p, r, f1 = cm.get_average_prf()
+            return f1, cm
+
 
         def make_my_path(id):
             return config.make_ensemble_score_path(dspr="train_binary%d" % id, unique=False)
@@ -431,9 +435,15 @@ def main(task, is_test=False):
                     best_cm.print_out()
 
             else:
-                selection_list = select_ui(ensemble_score_class_list)
+                PATH_LIST = ["/home/zhenghang/projects/python/SemEval2018_T3/multi_binary_1000/ensemble/ensemble.2018-04-20.test_sklearn_logreg_binary0.a23687fc-440b-11e8-98ce-d4ae52cf49b7.b.json",
+                             "/home/zhenghang/projects/python/SemEval2018_T3/multi_binary_1000/ensemble/ensemble.2018-04-20.test_sklearn_logreg_binary1.e972d7f6-440b-11e8-98ce-d4ae52cf49b7.b.json",
+                             "/home/zhenghang/projects/python/SemEval2018_T3/multi_binary_1000/ensemble/ensemble.2018-04-20.test_sklearn_logreg_binary2.34ae4930-440c-11e8-98ce-d4ae52cf49b7.b.json",
+                             "/home/zhenghang/projects/python/SemEval2018_T3/multi_binary_1000/ensemble/ensemble.2018-04-20.test_liblinear_lr_binary3.7659b748-440c-11e8-98ce-d4ae52cf49b7.b.json"]
+                # selection_list=list(map(json.load, map(open, PATH_LIST)))
+                selection_list = [{'path': path} for path in PATH_LIST]
+
                 f1, cm = run(selection_list)
-                list_selection(selection_list)
+                # list_selection(selection_list)
                 cm.print_out()
         elif task == "7":
             files = []
@@ -451,7 +461,7 @@ def main(task, is_test=False):
 
 
 if __name__ == "__main__":
-    main("1", is_test=False)
+    main("6", is_test=True)
     # build_top_ensemble_score_json(os.path.join(config.ENSEMBLE_SCORE_PATH, "output.json"),
     #                               os.path.join(config.ENSEMBLE_SCORE_PATH, "top.json"),
     #                               top=4)
