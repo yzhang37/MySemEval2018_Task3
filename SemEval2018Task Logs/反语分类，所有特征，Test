@@ -1,0 +1,468 @@
+ssh://zhenghang@49.52.10.34:22/home/zhenghang/anaconda3/bin/python3 -u /home/zhenghang/projects/python/SemEval2018_T3/src/model_trainer/trainer.py
+Trainer started at Thu Apr 19 19:47:08 2018
+============================================================
+Run in Test Mode!!!
+Using Master Features
+Using following features:
+==============================
+ners_existed
+wv_google
+wv_GloVe
+sentilexi
+emoticon
+punction
+elongated
+nltk_trigram_withrf_t4
+nltk_bigram_withrf_t2
+hashtag_withrf_t2
+hashtag_unigram_t1
+hashtag_withrf_t1
+nltk_unigram_withrf_t2
+nltk_trigram_withrf_t2
+url_unigram_t2
+==============================
+
+Test Fold
+Using LibLinear Logistic Regression Classfier
+Accuracy = 28.3163% (222/784)
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_liblinear_lr.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:48:08 2018
+
+Using Scikit-Learn AdaBoostClassifier Classifier
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_sklearn_adaboost.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:50:05 2018
+
+Using Scikit-Learn DecisionTree Classifier
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_sklearn_dcstree.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:50:24 2018
+
+Using Scikit-Learn KNN Classifier
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_sklearn_knn.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:50:38 2018
+
+Using Scikit-Learn LogisticRegression Classifier
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_sklearn_logreg.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:51:04 2018
+
+Using Scikit-Learn NaïveBayes Classifier
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_sklearn_navbayes.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:51:09 2018
+
+Using Scikit-Learn RandomForestClassifier Classifier
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_sklearn_rand_forest.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:51:14 2018
+
+Using Scikit-Learn Support Vector Machine Classifier
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_sklearn_svm.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:52:14 2018
+
+Using XGBoost Classifier
+[19:52:14] 3834x26742 matrix with 7153762 entries loaded from /home/zhenghang/projects/python/SemEval2018_T3/feature/train.fea.testfold.63f5f32c-43c7-11e8-958c-d4ae52cf49b7.feature.tmp
+[19:52:14] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:15] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 54 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:15] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:15] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 68 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:15] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 86 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:16] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 72 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:16] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 70 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:16] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 56 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:16] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 60 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:17] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 50 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:17] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 72 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:17] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 100 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:17] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 78 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:18] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 72 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:18] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:18] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 112 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:18] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:19] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:19] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 90 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:19] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 76 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:19] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:20] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 110 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:20] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 68 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:20] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 110 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:20] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 102 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:21] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 94 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:21] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 86 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:21] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 98 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:21] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 68 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:22] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 54 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:22] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 70 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:22] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:22] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:23] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 62 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:23] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 72 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:23] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:23] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 78 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:24] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 100 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:24] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:24] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 62 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:24] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 44 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:25] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:25] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 38 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:25] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 108 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:25] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 64 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:26] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 94 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:26] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 96 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:26] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:26] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 108 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:27] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 58 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:27] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:27] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 48 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:27] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:28] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 68 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:28] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 70 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:28] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 72 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:28] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 78 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:29] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 114 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:29] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 88 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:29] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 108 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:29] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 90 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:30] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 72 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:30] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 44 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:30] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 84 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:30] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 94 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:31] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 54 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:31] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 58 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:31] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 102 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:31] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 48 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:32] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:32] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 68 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:32] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 44 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:32] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 64 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:32] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 44 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:33] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 112 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:33] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 112 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:33] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 104 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:34] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 84 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:34] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 38 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:34] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 102 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:34] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 90 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:34] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 76 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:35] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:35] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 104 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:35] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 86 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:35] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 62 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:36] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 94 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:36] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 106 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:36] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:37] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 110 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:37] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 112 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:37] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:37] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:38] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 118 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:38] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 54 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:38] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 98 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:38] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 78 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:39] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:39] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 58 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:39] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 108 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:39] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 50 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:40] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 76 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:40] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 110 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:40] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 68 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:40] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 96 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:40] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 54 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:41] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:41] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 62 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:41] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:41] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 108 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:42] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 84 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:42] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 106 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:42] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 60 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:42] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 44 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:43] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 98 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:43] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 94 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:43] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:43] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:44] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 94 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:44] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 78 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:44] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 42 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:44] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 100 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:45] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 106 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:45] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 60 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:45] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 108 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:45] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:46] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 70 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:46] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 52 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:46] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 104 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:46] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 40 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:47] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 52 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:47] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 52 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:47] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 116 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:47] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 88 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:48] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 118 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:48] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 110 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:48] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:48] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 92 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:49] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 58 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:49] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 38 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:49] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 64 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:49] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 88 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:50] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:50] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 90 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:50] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 106 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:50] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 76 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:51] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 72 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:51] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:51] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 30 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:51] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 40 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:52] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 74 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:52] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 60 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:52] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 44 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:52] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 40 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:53] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 84 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:53] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:53] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 50 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:53] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 60 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:54] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:54] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 76 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:54] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 88 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:54] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 48 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:55] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 42 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:55] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 78 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:55] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 68 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:55] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 100 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:56] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 52 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:56] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 70 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:56] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:56] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 62 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:57] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:57] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 46 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:57] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 66 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:57] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 96 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:58] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 98 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:58] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 52 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:58] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 60 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:58] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 78 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:59] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 108 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:59] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 80 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:59] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 42 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:59] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 44 extra nodes, 0 pruned nodes, max_depth=6
+[19:52:59] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 76 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:00] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 48 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:00] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 100 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:00] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 76 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:00] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 48 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:01] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 94 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:01] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 48 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:01] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 112 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:01] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 102 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:02] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 62 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:02] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 82 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:02] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 68 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:02] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 116 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:03] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 78 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:03] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 56 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:03] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 54 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:03] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 60 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:04] src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 46 extra nodes, 0 pruned nodes, max_depth=6
+[19:53:04] 784x26742 matrix with 1453534 entries loaded from /home/zhenghang/projects/python/SemEval2018_T3/feature/dev.fea.testfold.63f5fca0-43c7-11e8-958c-d4ae52cf49b7.feature.tmp
+------------------------------------------------------------
+Ensemble data dumped to /home/zhenghang/projects/python/SemEval2018_T3/ensemble/ensemble.2018-04-19.test_xgboost.63f41b38-43c7-11e8-958c-d4ae52cf49b7.b.json
+at Thu Apr 19 19:53:04 2018
+
+Evaluation on Test data: LibLinear Logistic Regression
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 114.0 45.0 21.0 14.0 
+1 74.0  23.0 16.0 11.0 
+2 125.0 39.0 21.0 16.0 
+3 160.0 57.0 27.0 21.0 
+
+0 	precision 0.587629 	recall 0.241015	 F1 0.341829
+1 	precision 0.185484 	recall 0.140244	 F1 0.159722
+2 	precision 0.104478 	recall 0.247059	 F1 0.146853
+3 	precision 0.079245 	recall 0.338710	 F1 0.128440
+* Overall accuracy rate = 0.228316
+* Average precision 0.239209 	 recall 0.241757	 F1 0.194211
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_liblinear_lr.63f6057e-43c7-11e8-958c-d4ae52cf49b7.txt
+
+Evaluation on Test data: Scikit-Learn AdaBoostClassifier
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 126.0 50.0 18.0 12.0 
+1 106.0 38.0 22.0 12.0 
+2 125.0 34.0 22.0 19.0 
+3 116.0 42.0 23.0 19.0 
+
+0 	precision 0.611650 	recall 0.266385	 F1 0.371134
+1 	precision 0.213483 	recall 0.231707	 F1 0.222222
+2 	precision 0.110000 	recall 0.258824	 F1 0.154386
+3 	precision 0.095000 	recall 0.306452	 F1 0.145038
+* Overall accuracy rate = 0.261480
+* Average precision 0.257533 	 recall 0.265842	 F1 0.223195
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_sklearn_adaboost.872d27c0-43c7-11e8-958c-d4ae52cf49b7.txt
+
+Evaluation on Test data: Scikit-Learn DecisionTree
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 128.0 43.0 20.0 14.0 
+1 112.0 29.0 20.0 15.0 
+2 119.0 43.0 24.0 16.0 
+3 114.0 49.0 21.0 17.0 
+
+0 	precision 0.624390 	recall 0.270613	 F1 0.377581
+1 	precision 0.164773 	recall 0.176829	 F1 0.170588
+2 	precision 0.118812 	recall 0.282353	 F1 0.167247
+3 	precision 0.084577 	recall 0.274194	 F1 0.129278
+* Overall accuracy rate = 0.252551
+* Average precision 0.248138 	 recall 0.250997	 F1 0.211174
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_sklearn_dcstree.cd50e16a-43c7-11e8-958c-d4ae52cf49b7.txt
+
+Evaluation on Test data: Scikit-Learn KNN
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 206.0 74.0 37.0 32.0 
+1 102.0 32.0 25.0 11.0 
+2 83.0  24.0 10.0 9.0  
+3 82.0  34.0 13.0 10.0 
+
+0 	precision 0.590258 	recall 0.435518	 F1 0.501217
+1 	precision 0.188235 	recall 0.195122	 F1 0.191617
+2 	precision 0.079365 	recall 0.117647	 F1 0.094787
+3 	precision 0.071942 	recall 0.161290	 F1 0.099502
+* Overall accuracy rate = 0.329082
+* Average precision 0.232450 	 recall 0.227394	 F1 0.221781
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_sklearn_knn.d8840dbe-43c7-11e8-958c-d4ae52cf49b7.txt
+
+Evaluation on Test data: Scikit-Learn LogisticRegression
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 111.0 36.0 21.0 15.0 
+1 87.0  28.0 17.0 9.0  
+2 111.0 41.0 22.0 16.0 
+3 164.0 59.0 25.0 22.0 
+
+0 	precision 0.606557 	recall 0.234672	 F1 0.338415
+1 	precision 0.198582 	recall 0.170732	 F1 0.183607
+2 	precision 0.115789 	recall 0.258824	 F1 0.160000
+3 	precision 0.081481 	recall 0.354839	 F1 0.132530
+* Overall accuracy rate = 0.233418
+* Average precision 0.250602 	 recall 0.254767	 F1 0.203638
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_sklearn_logreg.e0a1d260-43c7-11e8-958c-d4ae52cf49b7.txt
+
+Evaluation on Test data: Scikit-Learn NaïveBayes
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 80.0  27.0 14.0 9.0  
+1 161.0 53.0 29.0 21.0 
+2 143.0 48.0 23.0 23.0 
+3 89.0  36.0 19.0 9.0  
+
+0 	precision 0.615385 	recall 0.169133	 F1 0.265340
+1 	precision 0.200758 	recall 0.323171	 F1 0.247664
+2 	precision 0.097046 	recall 0.270588	 F1 0.142857
+3 	precision 0.058824 	recall 0.145161	 F1 0.083721
+* Overall accuracy rate = 0.210459
+* Average precision 0.243003 	 recall 0.227013	 F1 0.184895
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_sklearn_navbayes.f053bdb8-43c7-11e8-958c-d4ae52cf49b7.txt
+
+Evaluation on Test data: Scikit-Learn RandomForestClassifier
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 145.0 61.0 25.0 20.0 
+1 120.0 38.0 26.0 18.0 
+2 114.0 34.0 24.0 10.0 
+3 94.0  31.0 10.0 14.0 
+
+0 	precision 0.577689 	recall 0.306554	 F1 0.400552
+1 	precision 0.188119 	recall 0.231707	 F1 0.207650
+2 	precision 0.131868 	recall 0.282353	 F1 0.179775
+3 	precision 0.093960 	recall 0.225806	 F1 0.132701
+* Overall accuracy rate = 0.281888
+* Average precision 0.247909 	 recall 0.261605	 F1 0.230170
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_sklearn_rand_forest.f3a01368-43c7-11e8-958c-d4ae52cf49b7.txt
+
+Evaluation on Test data: Scikit-Learn Support Vector Machine
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 103.0 38.0 17.0 12.0 
+1 54.0  23.0 11.0 6.0  
+2 209.0 60.0 37.0 31.0 
+3 107.0 43.0 20.0 13.0 
+
+0 	precision 0.605882 	recall 0.217759	 F1 0.320373
+1 	precision 0.244681 	recall 0.140244	 F1 0.178295
+2 	precision 0.109792 	recall 0.435294	 F1 0.175355
+3 	precision 0.071038 	recall 0.209677	 F1 0.106122
+* Overall accuracy rate = 0.224490
+* Average precision 0.257848 	 recall 0.250744	 F1 0.195036
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_sklearn_svm.f6689818-43c7-11e8-958c-d4ae52cf49b7.txt
+
+Evaluation on Test data: XGBoost
+------------------------------------------------------------------------------------------
+row = predicted, column = truth
+  0     1    2    3    
+0 112.0 43.0 22.0 19.0 
+1 90.0  39.0 17.0 8.0  
+2 118.0 38.0 20.0 21.0 
+3 153.0 44.0 26.0 14.0 
+
+0 	precision 0.571429 	recall 0.236786	 F1 0.334828
+1 	precision 0.253247 	recall 0.237805	 F1 0.245283
+2 	precision 0.101523 	recall 0.235294	 F1 0.141844
+3 	precision 0.059072 	recall 0.225806	 F1 0.093645
+* Overall accuracy rate = 0.235969
+* Average precision 0.246317 	 recall 0.233923	 F1 0.203900
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+Result file path is:
+/home/zhenghang/projects/python/SemEval2018_T3/result/predict.power.test_xgboost.19d8b2e2-43c8-11e8-958c-d4ae52cf49b7.txt
+
+Copying ensemble scores from Training files: /home/zhenghang/projects/python/SemEval2018_T3/ensemble_score/score.2018-04-19.train.b.json
+To Test files: /home/zhenghang/projects/python/SemEval2018_T3/ensemble_score/score.2018-04-19.test.b.json
+9 algorithm score copied.
+============================================================
+
+Process finished with exit code 0
